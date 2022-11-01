@@ -10,8 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Example {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Target {
+  id        String           @id @default(cuid())
+  name      String
+  resources TargetResource[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model TargetResource {
+  id       String  @id @default(cuid())
+  name     String
+  link     String
+  main     Boolean @default(false)
+  Target   Target? @relation(fields: [targetId], references: [id])
+  targetId String?
 }
