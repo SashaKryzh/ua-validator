@@ -13,7 +13,11 @@ datasource db {
 model Target {
   id        String           @id @default(cuid())
   name      String
+  slug      String           @unique
+  verdict   Verdict          @relation(fields: [verdictId], references: [id])
+  verdictId String
   resources TargetResource[]
+  evidences Evidence[]
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 }
@@ -23,6 +27,34 @@ model TargetResource {
   name     String
   link     String
   main     Boolean @default(false)
-  Target   Target? @relation(fields: [targetId], references: [id])
-  targetId String?
+  target   Target  @relation(fields: [targetId], references: [id])
+  targetId String
+}
+
+model Verdict {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Target    Target[]
+}
+
+model Evidence {
+  id          String   @id @default(cuid())
+  text        String
+  Target      Target   @relation(fields: [targetId], references: [id])
+  targetId    String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Evidence  Evidence[]
 }
