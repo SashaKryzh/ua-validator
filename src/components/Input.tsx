@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { forwardRef } from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: string;
 }
 
