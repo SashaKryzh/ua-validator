@@ -12,14 +12,13 @@ export interface SearchFieldProps {
 export default function SearchField(props: SearchFieldProps) {
   return (
     <div className="relative">
-      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-        <BiSearch className="h-6 w-6" />
-      </div>
       <Input
         placeholder="Пошук за іменем або нікнеймом"
         autoComplete="off"
+        icon={<BiSearch />}
         {...props.inputProps}
         className="pr-10"
+        rounded={true}
       />
       <div
         className={clsx(

@@ -15,9 +15,9 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex items-center">
-            {/* <Button href="/sign-in" variant="triatery">
-              Увійти
-            </Button> */}
+            <Button href="/add-target" variant="triatery">
+              Додати
+            </Button>
           </div>
         </div>
       </nav>

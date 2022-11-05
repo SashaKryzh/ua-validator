@@ -5,19 +5,26 @@ import Link from "next/link";
 const buttonStyle = cva(["font-mono"], {
   variants: {
     variant: {
-      primary: "bg-blue-800 rounded-md",
+      primary: "rounded-md",
       secondary: "",
-      triatery: "text-black hover:underline underline-offset-2",
+      triatery: "hover:underline underline-offset-2",
     },
     size: {
       sm: "py-1",
       md: "px-4 py-2",
       lg: "px-2 py-3",
     },
+    color: {
+      default: "",
+      blue: "bg-blue-700 text-white",
+      yellow: "bg-yellow-300 text-black",
+    },
   },
+  compoundVariants: [{ variant: "primary", class: "bg-blue-700 text-white" }],
   defaultVariants: {
     variant: "primary",
     size: "md",
+    color: "default",
   },
 });
 
@@ -44,8 +51,7 @@ const hasHref = (
 
 export default function Button(props: ButtonProps | LinkButtonProps) {
   const className = buttonStyle({
-    variant: props.variant,
-    size: props.size,
+    ...(props as buttonStyleProps),
     class: props.className,
   });
 
@@ -54,6 +60,8 @@ export default function Button(props: ButtonProps | LinkButtonProps) {
       {props.children}
     </Link>
   ) : (
-    <button className={className}>{props.children}</button>
+    <button {...(props as ButtonProps)} className={className}>
+      {props.children}
+    </button>
   );
 }
