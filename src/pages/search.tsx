@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import SearchField from "@/components/SearchField";
 import Target from "@/components/Target";
+import { useScrollRestoration } from "@/utils/hooks/useScrollRestoration";
 import { useFormik } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -16,9 +17,9 @@ const Search: NextPageWithLayout<SearchProps> = ({ targets }) => {
   });
 
   return (
-    <div>
-      <div className="">
-        <div className="px-2">
+    <div className="flex flex-col items-center px-2">
+      <div className="w-full max-w-screen-md">
+        <div className="">
           <form onSubmit={formik.handleSubmit}>
             <SearchField
               inputProps={{
@@ -31,7 +32,7 @@ const Search: NextPageWithLayout<SearchProps> = ({ targets }) => {
         <div className="h-2" />
         <div className="px-2">Filters</div>
         <div className="h-2" />
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {targets.map((target) => (
             <Target key={target} target={target} />
           ))}

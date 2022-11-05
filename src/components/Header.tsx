@@ -1,11 +1,11 @@
+import Button from "@/ui/Button";
 import Link from "next/link";
-import Button from "./Button";
 
 export default function Header() {
   return (
     <header>
       <nav className="bg-white px-4 py-4">
-        <div className="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between">
+        <div className="mx-auto flex max-w-screen-md flex-wrap items-center justify-between">
           <div className="flex items-center">
             <Link
               href="/"
@@ -15,9 +15,9 @@ export default function Header() {
             </Link>
           </div>
           <div className="flex items-center">
-            <Button href="/sign-in" variant="triatery">
+            {/* <Button href="/sign-in" variant="triatery">
               Увійти
-            </Button>
+            </Button> */}
           </div>
         </div>
       </nav>

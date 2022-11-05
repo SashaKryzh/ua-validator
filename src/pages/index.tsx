@@ -25,7 +25,6 @@ const Home: NextPageWithLayout = () => {
               name: "query",
               onChange: formik.handleChange,
               value: formik.values.query,
-              autoFocus: true,
             }}
             onClear={() => formik.setFieldValue("query", "")}
           />
