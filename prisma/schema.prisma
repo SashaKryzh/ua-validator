@@ -10,51 +10,152 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Target {
-  id        String           @id @default(cuid())
-  name      String
-  slug      String           @unique
-  verdict   Verdict          @relation(fields: [verdictId], references: [id])
-  verdictId String
-  resources TargetResource[]
+model ViewOnWar {
+  id     String   @id @default(cuid())
+  code   String
+  target Target[]
+}
+
+model Nationality {
+  id      String   @id @default(cuid())
+  code    String
+  targets Target[]
+}
+
+model Job {
+  id      String   @id @default(cuid())
+  code    String
+  targets Target[] @relation("TargetJob")
+}
+
+model Creator {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  targets   Target[]
   evidences Evidence[]
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+
+  @@index(email)
+}
+
+model Nickname {
+  id       String @id @default(cuid())
+  value    String
+  target   Target @relation(fields: [targetId], references: [id])
+  targetId String
+
+  @@index(value)
 }
 
 model TargetResource {
-  id       String  @id @default(cuid())
-  name     String
-  link     String
-  main     Boolean @default(false)
-  target   Target  @relation(fields: [targetId], references: [id])
+  id       String @id @default(cuid())
+  url      String
+  target   Target @relation(fields: [targetId], references: [id])
   targetId String
 }
 
-model Verdict {
-  id        String   @id @default(cuid())
-  name      String
+model TargetReview {
+  id             String  @id @default(cuid())
+  review_comment String
+  accepted       Boolean @default(false)
+
+  target   Target @relation(fields: [targetId], references: [id])
+  targetId String @unique
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Target    Target[]
+}
+
+model Target {
+  id       String @id @default(cuid())
+  realName String
+  slug     String
+  imageUrl String
+
+  nicknames     Nickname[]
+  resources     TargetResource[]
+  jobs          Job[]            @relation("TargetJob")
+  nationality   Nationality      @relation(fields: [nationalityId], references: [id])
+  nationalityId String
+  viewOnWar     ViewOnWar        @relation(fields: [viewOnWarId], references: [id])
+  viewOnWarId   String
+
+  evidences Evidence[]
+  creator   Creator?   @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  review    TargetReview?
+  deleted   Boolean       @default(false)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index(realName)
 }
 
 model Evidence {
-  id          String   @id @default(cuid())
-  text        String
-  Target      Target   @relation(fields: [targetId], references: [id])
-  targetId    String
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  createdById String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id     String          @id @default(cuid())
+  resume String
+  urls   EvidenceUrl[]
+  images EvidenceImage[]
+
+  target    Target          @relation(fields: [targetId], references: [id])
+  targetId  String
+  creator   Creator?        @relation(fields: [creatorId], references: [id])
+  creatorId String
+  review    EvidenceReview?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
-model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
-  name      String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Evidence  Evidence[]
+model EvidenceReview {
+  id             String  @id @default(cuid())
+  review_comment String
+  accepted       Boolean @default(false)
+
+  evidence   Evidence @relation(fields: [evidenceId], references: [id])
+  evidenceId String   @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+model EvidenceUrl {
+  id         String   @id @default(cuid())
+  url        String
+  evidence   Evidence @relation(fields: [evidenceId], references: [id])
+  evidenceId String
+}
+
+model EvidenceImage {
+  id         String   @id @default(cuid())
+  path       String
+  evidence   Evidence @relation(fields: [evidenceId], references: [id])
+  evidenceId String
+}
+
+// types
+// todo replace strings with enums?
+
+// enum CountryCode {
+//   UA
+//   RU
+//   US
+//   EU
+// }
+
+// enum JobCode {
+//   UNEMPLOYED
+//   BLOGGER
+//   JOURNALIST
+//   POLITICIAN
+//   MILITARY
+//   BUSINESSMAN
+//   OTHER
+// }
+
+// enum ViewOnWarCode {
+//   FOR
+//   AGAINST
+//   NEUTRAL
+// }
