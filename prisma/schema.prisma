@@ -12,19 +12,19 @@ datasource db {
 
 model ViewOnWar {
   id     String   @id @default(cuid())
-  code   String
+  code   String   @unique
   target Target[]
 }
 
 model Nationality {
   id      String   @id @default(cuid())
-  code    String
+  code    String   @unique
   targets Target[]
 }
 
 model Job {
   id      String   @id @default(cuid())
-  code    String
+  code    String   @unique
   targets Target[] @relation("TargetJob")
 }
 
@@ -70,7 +70,7 @@ model TargetReview {
 model Target {
   id       String @id @default(cuid())
   realName String
-  slug     String
+  slug     String @unique
   imageUrl String
 
   nicknames     Nickname[]
