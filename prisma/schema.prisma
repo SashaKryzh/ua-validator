@@ -56,9 +56,9 @@ model TargetResource {
 }
 
 model TargetReview {
-  id             String  @id @default(cuid())
-  review_comment String
-  accepted       Boolean @default(false)
+  id            String  @id @default(cuid())
+  reviewComment String
+  accepted      Boolean @default(false)
 
   target   Target @relation(fields: [targetId], references: [id])
   targetId String @unique
@@ -69,10 +69,10 @@ model TargetReview {
 
 model Target {
   id       String @id @default(cuid())
-  realName String
   slug     String @unique
   imageUrl String
 
+  realName      String
   nicknames     Nickname[]
   resources     TargetResource[]
   jobs          Job[]            @relation("TargetJob")
@@ -81,8 +81,11 @@ model Target {
   viewOnWar     ViewOnWar        @relation(fields: [viewOnWarId], references: [id])
   viewOnWarId   String
 
-  evidences Evidence[]
-  creator   Creator?   @relation(fields: [creatorId], references: [id])
+  mainEvidence   Evidence   @relation("TargetMainEvidence", fields: [mainEvidenceId], references: [id])
+  mainEvidenceId String     @unique
+  evidences      Evidence[]
+
+  creator   Creator? @relation(fields: [creatorId], references: [id])
   creatorId String
 
   review    TargetReview?
@@ -99,19 +102,21 @@ model Evidence {
   urls   EvidenceUrl[]
   images EvidenceImage[]
 
-  target    Target          @relation(fields: [targetId], references: [id])
-  targetId  String
-  creator   Creator?        @relation(fields: [creatorId], references: [id])
-  creatorId String
+  targetId           String
+  target             Target   @relation(fields: [targetId], references: [id])
+  targetMainEvidence Target?  @relation("TargetMainEvidence")
+  creator            Creator? @relation(fields: [creatorId], references: [id])
+  creatorId          String
+
   review    EvidenceReview?
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 }
 
 model EvidenceReview {
-  id             String  @id @default(cuid())
-  review_comment String
-  accepted       Boolean @default(false)
+  id            String  @id @default(cuid())
+  reviewComment String
+  accepted      Boolean @default(false)
 
   evidence   Evidence @relation(fields: [evidenceId], references: [id])
   evidenceId String   @unique
