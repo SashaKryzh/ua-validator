@@ -24,7 +24,11 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  return <>{getLayout(<Component {...pageProps} />)}</>;
+  return (
+    <div className="font-eUkraine">
+      {getLayout(<Component {...pageProps} />)}
+    </div>
+  );
 };
 
 export default trpc.withTRPC(MyApp);

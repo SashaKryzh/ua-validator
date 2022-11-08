@@ -16,7 +16,7 @@ const Home: NextPageWithLayout = () => {
   return (
     <div className="flex flex-col items-center">
       <div className="h-24" />
-      <h1 className="text-3xl font-bold">Ukrainian validator</h1>
+      <h1 className="text-h1">Ukrainian validator</h1>
       <div className="h-6" />
       <div className="w-full max-w-xl px-6">
         <form onSubmit={formik.handleSubmit}>
@@ -31,7 +31,7 @@ const Home: NextPageWithLayout = () => {
         </form>
       </div>
       <div className="h-8" />
-      <p className="px-4 text-center text-xl">
+      <p className="px-4 text-center text-h3">
         Перевір ставлення людини до війни в Україні 🇺🇦
       </p>
     </div>
