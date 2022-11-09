@@ -1,8 +1,14 @@
 import { router } from "../trpc";
-import { targetsRouter } from "./targets";
+import { jobRouter } from "./job";
+import { nationalityRouter } from "./nationality";
+import { targetRouter } from "./target";
+import { viewOnWarRouter } from "./viewOnWar";
 
 export const appRouter = router({
-  targets: targetsRouter,
+  target: targetRouter,
+  viewOnWar: viewOnWarRouter,
+  job: jobRouter,
+  nationality: nationalityRouter,
 });
 
 // export type definition of API
