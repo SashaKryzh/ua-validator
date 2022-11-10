@@ -45,6 +45,9 @@ module.exports = {
           { lineHeight: "14px", fontWeight: "400", letterSpacing: "-0.02em" },
         ],
       },
+      colors: {
+        error: "#FA594F",
+      },
     },
   },
   plugins: [],

@@ -29,12 +29,11 @@ const AddTarget: NextPageWithLayout = () => {
         <Label slug="real-name">Справжнє імʼя</Label>
         <Input
           id="real-name"
-          placeholder="Справжнє імʼя людини (якщо відомо)"
+          autoComplete="off"
+          placeholderLabel="Справжнє імʼя людини (якщо відомо)"
         />
         <Spacer className="h-4" />
-        <Button onClick={handleSubmit}>
-          Додати
-        </Button>
+        <Button onClick={handleSubmit}>Додати</Button>
       </div>
     </div>
   );

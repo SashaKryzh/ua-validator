@@ -15,10 +15,10 @@ export default function SearchField(props: SearchFieldProps) {
       <Input
         placeholder="Пошук за іменем або нікнеймом"
         autoComplete="off"
-        icon={<BiSearch />}
+        prefix={<BiSearch />}
         {...props.inputProps}
         className="pr-10"
-        rounded={true}
+        variant="rounded"
       />
       <div
         className={clsx(
