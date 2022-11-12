@@ -1,16 +1,13 @@
-import Button from "@/ui/Button";
+import { Button } from "@/ui/Button";
 import Link from "next/link";
 
 export default function Header() {
   return (
     <header>
-      <nav className="bg-white px-4 py-4">
+      <nav className="bg-white px-2 py-4">
         <div className="mx-auto flex max-w-screen-md flex-wrap items-center justify-between">
           <div className="flex items-center">
-            <Link
-              href="/"
-              className="self-center whitespace-nowrap text-xl font-semibold"
-            >
+            <Link href="/" className="h-3 self-center whitespace-nowrap">
               UA Validator
             </Link>
           </div>

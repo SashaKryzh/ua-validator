@@ -2,6 +2,9 @@ import { cva, type VariantProps } from "class-variance-authority";
 import clsx from "clsx";
 import { forwardRef } from "react";
 import { IconContext } from "react-icons";
+import TextareaAutosize, {
+  type TextareaAutosizeProps,
+} from "react-textarea-autosize";
 
 const inputStyle = cva("w-full outline-none text-h7", {
   variants: {
@@ -22,6 +25,8 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
   inputStyleProps & {
     placeholderLabel?: string;
     error?: string;
+    // Don't know why, but the disabled property is always false
+    disabled2?: boolean;
     prefix?: JSX.Element;
     suffix?: JSX.Element;
   };
@@ -42,6 +47,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         <input
           ref={ref}
           {...props}
+          disabled={props.disabled2}
           placeholder=" "
           className={clsx(
             inputStyle({ variant: props.variant }),
@@ -74,3 +80,41 @@ export const Label: React.FC<{ slug: string; children: string }> = (props) => (
     {props.children}
   </label>
 );
+
+type TextAreaProps = TextareaAutosizeProps &
+  React.RefAttributes<HTMLTextAreaElement> & {
+    error?: string;
+    placeholderLabel?: string;
+  };
+
+export function TextArea(props: TextAreaProps) {
+  return (
+    <div className="py-1">
+      <div className="relative z-0">
+        <TextareaAutosize
+          {...props}
+          id={props.id}
+          minRows={3}
+          placeholder=" "
+          className={clsx(
+            "peer block w-full resize-none appearance-none border-0 border-b-2 border-black bg-transparent px-1 py-3 text-h7 text-black outline-none autofill:bg-transparent focus:outline-none focus:ring-0",
+            "bg-gray-50",
+            props.error && "border-error",
+            props.className
+          )}
+        />
+        {props.placeholderLabel && (
+          <label
+            htmlFor={props.id}
+            className={clsx(
+              "absolute top-3 z-10 origin-[0] -translate-y-7 scale-75 transform text-h7 text-black opacity-50 duration-300 peer-placeholder-shown:left-1 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-7 peer-focus:scale-75",
+              props.error && "text-error opacity-100"
+            )}
+          >
+            {props.placeholderLabel}
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
