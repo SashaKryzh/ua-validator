@@ -9,11 +9,31 @@ import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
 import usePreventNavigation from "@/utils/hooks/usePreventNavigation";
+import { type Prisma } from "@prisma/client";
+import { prisma } from "@/server/db/client";
+import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { type NextPageWithLayout } from "./_app";
 
-const AddTarget: NextPageWithLayout = () => {
+interface AddTargetProps {
+  jobs: Prisma.JobSelect[];
+  nationalities: Prisma.NationalitySelect[];
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const jobs = await prisma?.job.findMany();
+  const nationalities = await prisma?.nationality.findMany();
+
+  return {
+    props: {
+      jobs,
+      nationalities,
+    },
+  };
+};
+
+const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const router = useRouter();
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 

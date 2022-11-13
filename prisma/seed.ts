@@ -120,15 +120,13 @@ async function main() {
       imageUrl: "url",
       realName: "Стас Васильев",
       jobs: {
-        connect: [
-          job_blogger
-        ],
+        connect: [{ id: job_blogger.id }],
       },
       nationality: {
-        connect: nationality_ru
+        connect: { id: nationality_ru.id },
       },
       viewOnWar: {
-        connect: vow_russia
+        connect: { id: vow_russia.id },
       },
       nicknames: {
         create: [
@@ -137,19 +135,36 @@ async function main() {
           },
           {
             value: "stas",
-          }
-        ]
+          },
+        ],
       },
       resources: {
         create: [
           {
             url: "https://example.com",
-          }
+          },
         ],
       },
       creator: {
-        connect: creator_denys
-      }
+        connect: { id: creator_denys.id },
+      },
+      mainEvidence: {
+        create: {
+          resume: "resume",
+          // target: {
+          //   connect: this,
+          // },
+          urls: {
+            create: [],
+          },
+          images: {
+            create: [],
+          },
+          creator: {
+            connect: { id: creator_denys.id },
+          },
+        },
+      },
     },
   });
 }
