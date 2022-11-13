@@ -1,99 +1,100 @@
 import { PrismaClient } from "@prisma/client";
+import { CountryCode, JobCode, ViewOnWarCode } from "../shared/common_types";
 
 const prisma = new PrismaClient();
 
 async function main() {
   const nationality_ua = await prisma.nationality.upsert({
-    where: { code: "UA" },
+    where: { code: CountryCode.UA },
     update: {},
     create: {
-      code: "UA",
+      code: CountryCode.UA,
     },
   });
   const nationality_ru = await prisma.nationality.upsert({
-    where: { code: "RU" },
+    where: { code: CountryCode.RU },
     update: {},
     create: {
-      code: "RU",
+      code: CountryCode.RU,
     },
   });
   const nationality_other = await prisma.nationality.upsert({
-    where: { code: "OTHER" },
+    where: { code: CountryCode.OTHER },
     update: {},
     create: {
-      code: "OTHER",
+      code: CountryCode.OTHER,
     },
   });
 
   const job_blogger = await prisma.job.upsert({
-    where: { code: "BLOGGER" },
+    where: { code: JobCode.BLOGGER },
     update: {},
     create: {
-      code: "BLOGGER",
+      code: JobCode.BLOGGER,
     },
   });
   const job_journalist = await prisma.job.upsert({
-    where: { code: "JOURNALIST" },
+    where: { code: JobCode.JOURNALIST },
     update: {},
     create: {
-      code: "JOURNALIST",
+      code: JobCode.JOURNALIST,
     },
   });
   const job_actor = await prisma.job.upsert({
-    where: { code: "ACTOR" },
+    where: { code: JobCode.ACTOR },
     update: {},
     create: {
-      code: "ACTOR",
+      code: JobCode.ACTOR,
     },
   });
   const job_singer = await prisma.job.upsert({
-    where: { code: "SINGER" },
+    where: { code: JobCode.SINGER },
     update: {},
     create: {
-      code: "SINGER",
+      code: JobCode.SINGER,
     },
   });
   const job_military = await prisma.job.upsert({
-    where: { code: "MILITARY" },
+    where: { code: JobCode.MILITARY },
     update: {},
     create: {
-      code: "MILITARY",
+      code: JobCode.MILITARY,
     },
   });
   const job_other = await prisma.job.upsert({
-    where: { code: "OTHER" },
+    where: { code: JobCode.OTHER },
     update: {},
     create: {
-      code: "OTHER",
+      code: JobCode.OTHER,
     },
   });
 
   const vow_ukraine = await prisma.viewOnWar.upsert({
-    where: { code: "UKRAINE" },
+    where: { code: ViewOnWarCode.WITH_UKRAINE },
     update: {},
     create: {
-      code: "UKRAINE",
+      code: ViewOnWarCode.WITH_UKRAINE,
     },
   });
   const vow_russia = await prisma.viewOnWar.upsert({
-    where: { code: "RUSSIA" },
+    where: { code: ViewOnWarCode.WITH_ORKY },
     update: {},
     create: {
-      code: "RUSSIA",
+      code: ViewOnWarCode.WITH_ORKY,
     },
   });
   const vow_quiet = await prisma.viewOnWar.upsert({
-    where: { code: "QUIET" },
+    where: { code: ViewOnWarCode.QUIET },
     update: {},
     create: {
-      code: "QUIET",
+      code: ViewOnWarCode.QUIET,
     },
   });
   const vow_peacedeath = await prisma.viewOnWar.upsert({
-    where: { code: "PEACE_DEATH" },
+    where: { code: ViewOnWarCode.PEACE_DEATH },
     update: {},
     create: {
-      code: "PEACE_DEATH",
+      code: ViewOnWarCode.PEACE_DEATH,
     },
   });
 

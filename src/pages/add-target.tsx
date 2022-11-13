@@ -15,6 +15,7 @@ import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { type NextPageWithLayout } from "./_app";
+import { ViewOnWarCode } from "shared/common_types";
 
 interface AddTargetProps {
   jobs: Prisma.JobSelect[];
@@ -212,19 +213,23 @@ function ViewOnWar() {
           label={"За Україну 🇺🇦"}
           selected={false}
           className="grow py-5"
+          onClick={() => console.log(ViewOnWarCode.WITH_UKRAINE)}
         />
         <SelectBox
           label={"За росію 🇷🇺"}
           selected={false}
           className="grow py-5"
+          onClick={() => console.log(ViewOnWarCode.WITH_ORKY)}
         />
       </div>
       <SelectBox
         label={"За мір во всьом мірє 🤡"}
         selected={false}
         className="py-5"
+        onClick={() => console.log(ViewOnWarCode.PEACE_DEATH)}
       />
-      <SelectBox label={"Мовчить 😬"} selected={false} className="py-5" />
+      <SelectBox label={"Мовчить 😬"} selected={false} className="py-5" 
+      onClick={() => console.log(ViewOnWarCode.QUIET)}/>
     </div>
   );
 }

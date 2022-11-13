@@ -138,29 +138,3 @@ model EvidenceImage {
   evidence   Evidence @relation(fields: [evidenceId], references: [id])
   evidenceId String
 }
-
-// types
-// todo replace strings with enums?
-
-// enum CountryCode {
-//   UA
-//   RU
-//   US
-//   EU
-// }
-
-// enum JobCode {
-//   UNEMPLOYED
-//   BLOGGER
-//   JOURNALIST
-//   POLITICIAN
-//   MILITARY
-//   BUSINESSMAN
-//   OTHER
-// }
-
-// enum ViewOnWarCode {
-//   FOR
-//   AGAINST
-//   NEUTRAL
-// }
