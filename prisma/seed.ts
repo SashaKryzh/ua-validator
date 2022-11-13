@@ -116,6 +116,7 @@ async function main() {
     where: { slug: "i-kak-prosto" },
     update: {},
     create: {
+      id: "stas",
       slug: "i-kak-prosto",
       imageUrl: "url",
       realName: "Стас Васильев",
@@ -148,22 +149,71 @@ async function main() {
       creator: {
         connect: { id: creator_denys.id },
       },
-      mainEvidence: {
-        create: {
-          resume: "resume",
-          // target: {
-          //   connect: this,
-          // },
-          urls: {
-            create: [],
-          },
-          images: {
-            create: [],
-          },
-          creator: {
-            connect: { id: creator_denys.id },
-          },
-        },
+    },
+  });
+
+  const evid_ikak = await prisma.evidence.upsert({
+    where: { id: "stas_evid" },
+    update: {},
+    create: {
+      id: "stas_evid",
+      resume: "resume",
+      target: {
+        connect: { id: target_ikak.id },
+      },
+      targetMainEvidence: {
+        connect: { id: target_ikak.id },
+      },
+      urls: {
+        create: [],
+      },
+      images: {
+        create: [],
+      },
+      creator: {
+        connect: { id: creator_denys.id },
+      },
+    },
+  });
+  
+  const evid_ikak_1 = await prisma.evidence.upsert({
+    where: { id: "stas_evid_1" },
+    update: {},
+    create: {
+      id: "stas_evid_1",
+      resume: "resume",
+      target: {
+        connect: { id: target_ikak.id },
+      },
+      urls: {
+        create: [],
+      },
+      images: {
+        create: [],
+      },
+      creator: {
+        connect: { id: creator_denys.id },
+      },
+    },
+  });
+  
+  const evid_ikak_2 = await prisma.evidence.upsert({
+    where: { id: "stas_evid_2" },
+    update: {},
+    create: {
+      id: "stas_evid_2",
+      resume: "resume",
+      target: {
+        connect: { id: target_ikak.id },
+      },
+      urls: {
+        create: [],
+      },
+      images: {
+        create: [],
+      },
+      creator: {
+        connect: { id: creator_denys.id },
       },
     },
   });

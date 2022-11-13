@@ -34,3 +34,13 @@ Also checkout these awesome tutorials on `create-t3-app`.
 ## How do I deploy this?
 
 Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deployment/vercel) and [Docker](https://beta.create.t3.gg/en/deployment/docker) for more information.
+
+
+## Usefull
+
+- To update local prisma client: `pnpx prisma generate`
+- To format schema: `pnpx prisma format`
+- To populate DB: `pnpx prisma db seed`
+- To update actual DB: `pnpx prisma migrate dev --name MESSAGE`
+                    or `pnpx prisma db push`
+ 

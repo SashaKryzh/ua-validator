@@ -81,8 +81,8 @@ model Target {
   viewOnWar     ViewOnWar        @relation(fields: [viewOnWarId], references: [id])
   viewOnWarId   String
 
-  mainEvidence   Evidence?  @relation("TargetMainEvidence", fields: [mainEvidenceId], references: [id])
-  mainEvidenceId String     @unique
+  mainEvidence   Evidence?   @relation("TargetMainEvidence", fields: [mainEvidenceId], references: [id])
+  mainEvidenceId String?     @unique
   evidences      Evidence[]
 
   creator   Creator? @relation(fields: [creatorId], references: [id])
