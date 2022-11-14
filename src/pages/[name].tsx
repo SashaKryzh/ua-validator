@@ -1,4 +1,6 @@
 import Layout from "@/components/Layout";
+import { trpc } from "@/utils/trpc";
+import { prisma } from '@/server/db/client';
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { type NextPageWithLayout } from "./_app";
@@ -39,13 +41,19 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
 };
 
 TargetPage.getLayout = (page) => {
+  // query example for trpc
+  const userQuery = trpc.target.all.useQuery();
+  userQuery.data?.forEach((user) => {
+    console.log(user);
+  });
+
   return <Layout>{page}</Layout>;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // TODO: return existing slugs in DB
   return {
-    paths: [{ params: { name: "Target1" } }, { params: { name: "Target2" } }],
+    paths: [{ params: { name: "i-kak-prosto" } }, { params: { name: "Target2" } }],
     fallback: "blocking",
   };
 };
@@ -53,10 +61,19 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<TargetPageProps> = async (
   context
 ) => {
-  const name = context.params?.name;
+  const slug: string = context.params?.name as string;
+
+  // query example for prisma
+  const result = await prisma.target.findUnique({
+    where: {
+      slug,
+    },
+  });
+  console.log(result);
+
 
   // TODO: check slug in DB
-  if (name === "Target3") {
+  if (slug === "Target3") {
     return {
       notFound: true,
     };
@@ -66,7 +83,7 @@ export const getStaticProps: GetStaticProps<TargetPageProps> = async (
 
   return {
     props: {
-      target: "Target1",
+      target: "i-kak-prosto",
     },
   };
 };

@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps<SearchProps> = async (
   console.log(q);
 
   // TODO: fetch data from API
-  const targets = ["Target1", "Target2", "Target3", "Target4", "Target5"];
+  const targets = ["i-kak-prosto", "Target2", "Target3", "Target4", "Target5"];
 
   return {
     props: {
