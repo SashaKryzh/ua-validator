@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { type NextPageWithLayout } from "./_app";
 import { ViewOnWarCode } from "shared/common_types";
+import { useTranslation } from "react-i18next";
 
 interface AddTargetProps {
   jobs: Prisma.JobSelect[];
@@ -35,6 +36,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
@@ -57,9 +59,9 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
           <Input
             id="real-name"
             autoComplete="off"
-            placeholderLabel="Справжнє імʼя людини (якщо відомо)"
+            placeholderLabel={t("page.add-target.real-name")}
           />
-          <SectionHeader title="Псевдоніми (до 10)" />
+          <SectionHeader title={t("page.add-target.section-header.nickname")} />
           <InputGroup
             count={2}
             builder={(i) => (
@@ -70,9 +72,9 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
               />
             )}
           />
-          <SectionHeader title="Ставлення до війни" />
+          <SectionHeader title={t("page.add-target.section-header.view-on-war")} />
           <ViewOnWar />
-          <SectionHeader title="Сфера діяльності" />
+          <SectionHeader title={t("page.add-target.section-header.job")} />
           <div className="flex flex-wrap gap-1.5">
             <Chip label="Блогер" selected={false} />
             <Chip label="Співак" selected={false} />
@@ -81,8 +83,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
             <Chip label="Інше" selected={true} />
           </div>
           <SectionHeader
-            title="Посилання на ресурси людини (до 10)"
-            subtitle="Telegram, Instagram, YouTube, TikTok..."
+            title={t("page.add-target.section-header.resourses")}
+            subtitle={t("page.add-target.section-header.resourses.subtitle")}
           />
           <InputGroup
             count={2}
@@ -96,7 +98,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
           />
           <Spacer className="h-5" />
           <Dropdown
-            placeholderLabel={"Національність (якщо відома)"}
+            placeholderLabel={t("page.add-target.section-header.nationality")}
             selected={undefined}
             options={["Українська", "Свиняча", "Інша"]}
           />
@@ -115,8 +117,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
             autoComplete="off"
           />
           <SectionHeader
-            title="Посилання на докази (до 10)"
-            subtitle="Посилання на відео, допис, статью і тд."
+            title={t("page.add-target.section-header.evidence")}
+            subtitle={t("page.add-target.section-header.evidence.subtitle")}
           />
           <InputGroup
             count={2}
@@ -201,6 +203,7 @@ function InputGroup(props: {
 }
 
 function ViewOnWar() {
+  const { t } = useTranslation();
   // function handleClick(e: React.MouseEvent, value: string) {
   //   e.preventDefault();
   //   console.log(value);
@@ -210,25 +213,25 @@ function ViewOnWar() {
     <div className="flex flex-col gap-1">
       <div className="flex gap-1">
         <SelectBox
-          label={"За Україну 🇺🇦"}
+          label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_UKRAINE}`)}
           selected={false}
           className="grow py-5"
           onClick={() => console.log(ViewOnWarCode.WITH_UKRAINE)}
         />
         <SelectBox
-          label={"За росію 🇷🇺"}
+          label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_ORKY}`)}
           selected={false}
           className="grow py-5"
           onClick={() => console.log(ViewOnWarCode.WITH_ORKY)}
         />
       </div>
       <SelectBox
-        label={"За мір во всьом мірє 🤡"}
+        label={t(`ViewOnWarCode.${ViewOnWarCode.PEACE_DEATH}`)}
         selected={false}
         className="py-5"
         onClick={() => console.log(ViewOnWarCode.PEACE_DEATH)}
       />
-      <SelectBox label={"Мовчить 😬"} selected={false} className="py-5" 
+      <SelectBox label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)} selected={false} className="py-5" 
       onClick={() => console.log(ViewOnWarCode.QUIET)}/>
     </div>
   );

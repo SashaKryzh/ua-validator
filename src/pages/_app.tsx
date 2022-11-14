@@ -7,6 +7,7 @@ import type { ReactElement, ReactNode } from "react";
 import "../styles/globals.css";
 import { useRouter } from "next/router";
 import { useScrollRestoration } from "@/utils/hooks/useScrollRestoration";
+import './i18n';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
