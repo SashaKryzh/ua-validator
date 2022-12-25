@@ -1,6 +1,6 @@
 import { Listbox, Transition } from "@headlessui/react";
 import clsx from "clsx";
-import React from "react";
+import { useState } from "react";
 import { Input } from "./Input";
 
 export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -10,7 +10,7 @@ export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Dropdown(props: DropdownProps) {
-  const [selected, setSelected] = React.useState(props.selected);
+  const [selected, setSelected] = useState(props.selected);
 
   return (
     <Listbox as="div" value={selected} onChange={setSelected}>

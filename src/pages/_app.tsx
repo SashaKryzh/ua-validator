@@ -1,7 +1,5 @@
 import type { AppProps } from "next/app";
-
-import { trpc } from "../utils/trpc";
-
+import { trpc } from "@/utils/trpc";
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 import "../styles/globals.css";

@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import React from "react";
 import { BiSearch } from "react-icons/bi";
 import { MdClear } from "react-icons/md";
 import { Input, type InputProps } from "../ui/Input";

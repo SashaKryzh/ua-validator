@@ -10,6 +10,12 @@ interface TargetPageProps {
 }
 
 const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
+  // example of the runnable TRPC inside react page
+  const userQuery = trpc.target.all.useQuery();
+  userQuery.data?.forEach((user) => {
+    console.log(user);
+  });
+
   return (
     <div className="flex flex-col items-center px-2">
       <div className="flex w-full max-w-screen-md flex-col items-center">
@@ -41,12 +47,6 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
 };
 
 TargetPage.getLayout = (page) => {
-  // query example for trpc
-  const userQuery = trpc.target.all.useQuery();
-  userQuery.data?.forEach((user) => {
-    console.log(user);
-  });
-
   return <Layout>{page}</Layout>;
 };
 

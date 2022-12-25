@@ -23,7 +23,7 @@ export type inputStyleProps = VariantProps<typeof inputStyle>;
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
   inputStyleProps & {
-    placeholderLabel?: string;
+    placeholderLabel?: string | null;
     error?: string;
     // Don't know why, but the disabled property is always false
     disabled2?: boolean;

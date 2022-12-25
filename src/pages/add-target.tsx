@@ -9,12 +9,12 @@ import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
 import usePreventNavigation from "@/utils/hooks/usePreventNavigation";
-import { type Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/server/db/client";
-import { type GetServerSideProps } from "next";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { type NextPageWithLayout } from "./_app";
+import type { NextPageWithLayout } from "./_app";
 import { ViewOnWarCode } from "shared/common_types";
 import { useTranslation } from "react-i18next";
 
@@ -231,8 +231,8 @@ function ViewOnWar() {
         className="py-5"
         onClick={() => console.log(ViewOnWarCode.PEACE_DEATH)}
       />
-      <SelectBox label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)} selected={false} className="py-5" 
-      onClick={() => console.log(ViewOnWarCode.QUIET)}/>
+      <SelectBox label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)} selected={false} className="py-5"
+        onClick={() => console.log(ViewOnWarCode.QUIET)} />
     </div>
   );
 }

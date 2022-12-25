@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export interface TargetProps {
-  target: string;
+export interface TargetComponentProps {
+  target?: string;
 }
 
-export default function Target({ target }: TargetProps) {
+export default function TargetComponent({ target }: TargetComponentProps) {
   return (
     <Link href={`/${target}`}>
       <div className="aspect-[3/4]">
@@ -17,7 +17,7 @@ export default function Target({ target }: TargetProps) {
             className="overflow-hidden object-cover"
           />
         </div>
-        <div>🇷🇺 Target name</div>
+        <div>🇷🇺 {target}</div>
         <div>За мір</div>
       </div>
     </Link>

@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
-import React from "react";
+import { Fragment } from "react";
 
 const NonSSRWrapper = (props: { children: React.ReactNode }) => (
-  <React.Fragment>{props.children}</React.Fragment>
+  <Fragment>{props.children}</Fragment>
 );
 
 export default dynamic(() => Promise.resolve(NonSSRWrapper), {
