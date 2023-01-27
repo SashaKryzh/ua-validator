@@ -10,7 +10,7 @@ import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
 import type { Prisma } from "@prisma/client";
-import { FieldArray, Form, Formik} from "formik";
+import { FieldArray, Form, Formik, useField } from "formik";
 import type { FormikErrors } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
@@ -67,7 +67,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     photo: "",
     realName: "",
     nicknames: [""],
-    viewOnWar: ViewOnWarCode.WITH_UKRAINE,
+    viewOnWar: undefined,
     jobs: [],
     resources: [],
     summary: "",
@@ -91,7 +91,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
       .array()
       .of(yup.object().shape({ value: yup.string() }))
       .required(),
-    // viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)),
+    viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
     // jobs: yup.array(yup.mixed().oneOf(props.jobs)).min(1),
   });
 
@@ -135,7 +135,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       return (
                         <div className="flex flex-col gap-2.5">
                           {/* TODO: make better error component */}
-                          {error && <p>{error}</p>}
+                          {formik.touched.nicknames && error && <p>{error}</p>}
                           {nicknames.map((nickname, i) => (
                             <InputField
                               key={i}
@@ -145,6 +145,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                             />
                           ))}
                           <Button
+                            type="button"
                             variant="triatery"
                             onClick={() => {
                               arrayHelpers.push("");
@@ -306,38 +307,39 @@ function InputGroup(props: {
 
 function ViewOnWar() {
   const { t } = useTranslation();
-  // function handleClick(e: React.MouseEvent, value: string) {
-  //   e.preventDefault();
-  //   console.log(value);
-  // }
+  const [field, meta, helpers] = useField("viewOnWar");
 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-1">
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_UKRAINE}`)}
-          selected={false}
+          value1={ViewOnWarCode.WITH_UKRAINE}
+          groupValue={meta.value}
           className="grow py-5"
-          onClick={() => console.log(ViewOnWarCode.WITH_UKRAINE)}
+          handleClick={(i) => helpers.setValue(i)}
         />
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_ORKY}`)}
-          selected={false}
+          value1={ViewOnWarCode.WITH_ORKY}
+          groupValue={meta.value}
           className="grow py-5"
-          onClick={() => console.log(ViewOnWarCode.WITH_ORKY)}
+          handleClick={(i) => helpers.setValue(i)}
         />
       </div>
       <SelectBox
         label={t(`ViewOnWarCode.${ViewOnWarCode.PEACE_DEATH}`)}
-        selected={false}
+        value1={ViewOnWarCode.PEACE_DEATH}
+        groupValue={meta.value}
         className="py-5"
-        onClick={() => console.log(ViewOnWarCode.PEACE_DEATH)}
+        handleClick={(i) => helpers.setValue(i)}
       />
       <SelectBox
         label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)}
-        selected={false}
+        value1={ViewOnWarCode.QUIET}
+        groupValue={meta.value}
         className="py-5"
-        onClick={() => console.log(ViewOnWarCode.QUIET)}
+        handleClick={(i) => helpers.setValue(i)}
       />
     </div>
   );
