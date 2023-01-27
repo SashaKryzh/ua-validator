@@ -60,6 +60,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     viewOnWar?: ViewOnWarCode;
     jobs: string[];
     resources: string[];
+    nationality?: string;
     summary: string;
     links: string[];
     photos: string[];
@@ -71,6 +72,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     nicknames: [""],
     viewOnWar: undefined,
     jobs: [],
+    nationality: undefined,
     resources: [],
     summary: "",
     links: [],
@@ -95,6 +97,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
       .required(),
     viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
     jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
+    nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
   });
 
   return (
@@ -109,6 +112,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
         validate={validate}
       >
         {(formik) => {
+          console.log(formik.values);
+
           return (
             <Form>
               <div className="flex flex-col items-center px-2">
@@ -209,13 +214,22 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                     )}
                   />
                   <Spacer className="h-5" />
-                  <Dropdown
-                    placeholderLabel={t(
-                      "page.add-target.section-header.nationality"
-                    )}
-                    selected={undefined}
-                    options={["Українська", "Свиняча", "Інша"]}
-                  />
+                  <Field name="nationality">
+                    {({ field, form, meta }: FieldProps) => {
+                      return (
+                        <Dropdown
+                          placeholderLabel={t(
+                            "page.add-target.section-header.nationality"
+                          )}
+                          selected={meta.value}
+                          options={props.nationalities.map((n) => n.code)}
+                          onChange1={(value) =>
+                            form.setFieldValue(field.name, value)
+                          }
+                        />
+                      );
+                    }}
+                  </Field>
                   <SectionHeader
                     title={
                       <div className="text-h3">

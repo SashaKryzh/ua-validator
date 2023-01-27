@@ -7,13 +7,21 @@ export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   placeholderLabel: string;
   selected?: string;
   options: string[];
+  onChange1?: (value: string) => void;
 }
 
 export default function Dropdown(props: DropdownProps) {
   const [selected, setSelected] = useState(props.selected);
 
   return (
-    <Listbox as="div" value={selected} onChange={setSelected}>
+    <Listbox
+      as="div"
+      value={selected}
+      onChange={(value) => {
+        setSelected(value);
+        props.onChange1?.(value);
+      }}
+    >
       <div className="relative">
         <Listbox.Button as="div">
           <Input
