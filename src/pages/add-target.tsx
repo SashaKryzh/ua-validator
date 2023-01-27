@@ -9,9 +9,9 @@ import { Input, InputField, TextArea } from "@/ui/Input";
 import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
-import type { Prisma } from "@prisma/client";
-import { FieldArray, Form, Formik, useField } from "formik";
-import type { FormikErrors } from "formik";
+import type { Job, Nationality } from "@prisma/client";
+import type { FieldProps, FormikErrors } from "formik";
+import { Field, FieldArray, Form, Formik, useField } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import * as React from "react";
@@ -22,13 +22,15 @@ import * as yup from "yup";
 import type { NextPageWithLayout } from "./_app";
 
 interface AddTargetProps {
-  jobs: Prisma.JobSelect[];
-  nationalities: Prisma.NationalitySelect[];
+  jobs: Job[];
+  nationalities: Nationality[];
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const jobs = await prisma?.job.findMany();
   const nationalities = await prisma?.nationality.findMany();
+
+  console.log(typeof jobs);
 
   return {
     props: {
@@ -37,18 +39,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-
-interface AddTargetForm {
-  photo: string;
-  realName: string;
-  nicknames: string[];
-  viewOnWar?: ViewOnWarCode;
-  jobs: string[];
-  resources: string[];
-  summary: string;
-  links: string[];
-  photos: string[];
-}
 
 const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const { t } = useTranslation();
@@ -62,6 +52,18 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     // setUnsavedChanges(false);
     // router.replace("/");
   };
+
+  interface AddTargetForm {
+    photo: string;
+    realName: string;
+    nicknames: string[];
+    viewOnWar?: ViewOnWarCode;
+    jobs: string[];
+    resources: string[];
+    summary: string;
+    links: string[];
+    photos: string[];
+  }
 
   const initialValues: AddTargetForm = {
     photo: "",
@@ -92,7 +94,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
       .of(yup.object().shape({ value: yup.string() }))
       .required(),
     viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
-    // jobs: yup.array(yup.mixed().oneOf(props.jobs)).min(1),
+    jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
   });
 
   return (
@@ -164,13 +166,32 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                   <SectionHeader
                     title={t("page.add-target.section-header.job")}
                   />
-                  <div className="flex flex-wrap gap-1.5">
-                    <Chip label="Блогер" selected={false} />
-                    <Chip label="Співак" selected={false} />
-                    <Chip label="Спортсмен" selected={true} />
-                    <Chip label="Актор" selected={false} />
-                    <Chip label="Інше" selected={true} />
-                  </div>
+                  <Field name="jobs">
+                    {({ field, form, meta }: FieldProps) => {
+                      return (
+                        <div className="flex flex-wrap gap-1.5">
+                          {props.jobs.map((job, i) => (
+                            <Chip
+                              key={i}
+                              label={job.code}
+                              selected={meta.value.includes(job.code)}
+                              onClick={() => {
+                                let nextValue = [...meta.value];
+                                if (meta.value.includes(job.code)) {
+                                  nextValue = nextValue.filter(
+                                    (j) => j !== job.code
+                                  );
+                                } else {
+                                  nextValue.push(job.code);
+                                }
+                                form.setFieldValue(field.name, nextValue);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      );
+                    }}
+                  </Field>
                   <SectionHeader
                     title={t("page.add-target.section-header.resourses")}
                     subtitle={t(
