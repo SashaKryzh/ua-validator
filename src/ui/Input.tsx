@@ -109,6 +109,7 @@ type TextAreaProps = TextareaAutosizeProps &
     placeholderLabel?: string;
   };
 
+// TODO: Show error text
 export function TextArea(props: TextAreaProps) {
   return (
     <div className="py-1">

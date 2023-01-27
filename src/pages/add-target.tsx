@@ -61,7 +61,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     jobs: string[];
     resources: string[];
     nationality?: string;
-    summary: string;
+    proof: string;
     links: string[];
     photos: string[];
   }
@@ -74,7 +74,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     jobs: [],
     nationality: undefined,
     resources: [],
-    summary: "",
+    proof: "",
     links: [],
     photos: [],
   };
@@ -98,6 +98,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
     jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
     nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
+    proof: yup.string().min(20),
   });
 
   return (
@@ -243,11 +244,19 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       </div>
                     }
                   />
-                  <TextArea
-                    id="proof"
-                    placeholderLabel="Короткий опис дій людини"
-                    autoComplete="off"
-                  />
+                  <Field name="proof">
+                    {({ field, form, meta }: FieldProps) => {
+                      return (
+                        <TextArea
+                          id="proof"
+                          placeholderLabel="Короткий опис дій людини"
+                          autoComplete="off"
+                          error={meta.touched ? meta.error : undefined}
+                          {...field}
+                        />
+                      );
+                    }}
+                  </Field>
                   <SectionHeader
                     title={t("page.add-target.section-header.evidence")}
                     subtitle={t(
