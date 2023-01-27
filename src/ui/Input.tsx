@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import clsx from "clsx";
-import { FieldProps } from "formik";
+import type { FieldHookConfig } from "formik";
+import { useField } from "formik";
 import { forwardRef } from "react";
 import { IconContext } from "react-icons";
 import TextareaAutosize, {
@@ -32,19 +33,25 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
     suffix?: JSX.Element;
   };
 
-export const InputField = forwardRef<HTMLInputElement, InputProps & FieldProps>(
-  ({ field, form: { touched, errors }, ...props }, ref) => {
-    const error = props.error ?? errors[field.name];
+export const InputField = forwardRef<
+  HTMLInputElement,
+  InputProps & FieldHookConfig<string>
+>((props, ref) => {
+  const [field, meta] = useField(props);
 
-    return (
-      <Input
-        ref={ref}
-        error={typeof error === "string" ? error : undefined}
-        {...props}
-      />
-    );
-  }
-);
+  const error = meta.touched && meta.error;
+
+  return (
+    <Input
+      ref={ref}
+      error={typeof error === "string" ? error : undefined}
+      {...field}
+      {...props}
+    />
+  );
+});
+
+InputField.displayName = "InputField";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   return (

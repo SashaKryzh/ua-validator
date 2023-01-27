@@ -10,13 +10,15 @@ import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
 import type { Prisma } from "@prisma/client";
-import { Field, Form, Formik, FormikErrors } from "formik";
+import { FieldArray, Form, Formik} from "formik";
+import type { FormikErrors } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ViewOnWarCode } from "shared/common_types";
+import * as yup from "yup";
 import type { NextPageWithLayout } from "./_app";
 
 interface AddTargetProps {
@@ -64,7 +66,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const initialValues: AddTargetForm = {
     photo: "",
     realName: "",
-    nicknames: [],
+    nicknames: [""],
     viewOnWar: ViewOnWarCode.WITH_UKRAINE,
     jobs: [],
     resources: [],
@@ -73,19 +75,25 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     photos: [],
   };
 
-  console.log(props.jobs);
-  console.log(props.nationalities);
-
   const validate = (values: AddTargetForm) => {
     const errors: FormikErrors<AddTargetForm> = {};
 
-    if (!values.realName) {
-      console.log("realName is required");
-      errors.realName = "Required";
+    if (!values.nicknames.find((nickname) => nickname !== "")) {
+      errors.nicknames = "At least 1";
     }
 
     return errors;
   };
+
+  const validationSchema = yup.object().shape({
+    realName: yup.string().min(2),
+    nicknames: yup
+      .array()
+      .of(yup.object().shape({ value: yup.string() }))
+      .required(),
+    // viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)),
+    // jobs: yup.array(yup.mixed().oneOf(props.jobs)).min(1),
+  });
 
   return (
     <NoSSRWrapper>
@@ -94,137 +102,169 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
         onSubmit={(values, actions) => {
           console.log({ values, actions });
         }}
+        validationSchema={validationSchema}
+        validateOnChange={true}
         validate={validate}
-        validateOnBlur={true}
       >
-        <Form>
-          <div className="flex flex-col items-center px-2">
-            <div className="w-full max-w-screen-md"></div>
-            <div className="flex w-full max-w-lg flex-col">
-              <Spacer className="h-6" />
-              <Photo className="w-1/2 self-center" />
-              <Spacer className="h-6" />
-              <Field
-                id="realName"
-                name="realName"
-                component={InputField}
-                autoComplete="off"
-                placeholderLabel={t("page.add-target.real-name")}
-              />
-              <SectionHeader
-                title={t("page.add-target.section-header.nickname")}
-              />
-              <InputGroup
-                count={2}
-                builder={(i) => (
-                  <Input
-                    id={`nickname-${i}`}
+        {(formik) => {
+          return (
+            <Form>
+              <div className="flex flex-col items-center px-2">
+                <div className="w-full max-w-screen-md"></div>
+                <div className="flex w-full max-w-lg flex-col">
+                  <Spacer className="h-6" />
+                  <Photo className="w-1/2 self-center" />
+                  <Spacer className="h-6" />
+                  <InputField
+                    name="realName"
                     autoComplete="off"
-                    placeholderLabel={`Псевдонім ${i + 1}`}
+                    placeholderLabel={t("page.add-target.real-name")}
                   />
-                )}
-              />
-              <SectionHeader
-                title={t("page.add-target.section-header.view-on-war")}
-              />
-              <ViewOnWar />
-              <SectionHeader title={t("page.add-target.section-header.job")} />
-              <div className="flex flex-wrap gap-1.5">
-                <Chip label="Блогер" selected={false} />
-                <Chip label="Співак" selected={false} />
-                <Chip label="Спортсмен" selected={true} />
-                <Chip label="Актор" selected={false} />
-                <Chip label="Інше" selected={true} />
-              </div>
-              <SectionHeader
-                title={t("page.add-target.section-header.resourses")}
-                subtitle={t(
-                  "page.add-target.section-header.resourses.subtitle"
-                )}
-              />
-              <InputGroup
-                count={2}
-                builder={(i) => (
-                  <Input
-                    id={`nickname-${i}`}
-                    autoComplete="off"
-                    placeholderLabel={`Посилання ${i + 1}`}
+                  <SectionHeader
+                    title={t("page.add-target.section-header.nickname")}
                   />
-                )}
-              />
-              <Spacer className="h-5" />
-              <Dropdown
-                placeholderLabel={t(
-                  "page.add-target.section-header.nationality"
-                )}
-                selected={undefined}
-                options={["Українська", "Свиняча", "Інша"]}
-              />
-              <SectionHeader
-                title={
-                  <div className="text-h3">Підтвердження позиції людини</div>
-                }
-                subtitle={
-                  <div className="text-h8">
-                    Заповніть хоча б{" "}
-                    <span className="font-bold">одне з полів нижче</span>.
+                  <FieldArray
+                    name="nicknames"
+                    render={(arrayHelpers) => {
+                      const nicknames = formik.values.nicknames;
+
+                      const error =
+                        typeof formik.errors.nicknames === "string" &&
+                        formik.errors.nicknames;
+
+                      return (
+                        <div className="flex flex-col gap-2.5">
+                          {/* TODO: make better error component */}
+                          {error && <p>{error}</p>}
+                          {nicknames.map((nickname, i) => (
+                            <InputField
+                              key={i}
+                              name={`nicknames.${i}.value`}
+                              autoComplete="off"
+                              placeholderLabel={`Псевдонім ${i + 1}`}
+                            />
+                          ))}
+                          <Button
+                            variant="triatery"
+                            onClick={() => {
+                              arrayHelpers.push("");
+                            }}
+                          >
+                            Add more
+                          </Button>
+                        </div>
+                      );
+                    }}
+                  />
+                  <SectionHeader
+                    title={t("page.add-target.section-header.view-on-war")}
+                  />
+                  <ViewOnWar />
+                  <SectionHeader
+                    title={t("page.add-target.section-header.job")}
+                  />
+                  <div className="flex flex-wrap gap-1.5">
+                    <Chip label="Блогер" selected={false} />
+                    <Chip label="Співак" selected={false} />
+                    <Chip label="Спортсмен" selected={true} />
+                    <Chip label="Актор" selected={false} />
+                    <Chip label="Інше" selected={true} />
                   </div>
-                }
-              />
-              <TextArea
-                id="proof"
-                placeholderLabel="Короткий опис дій людини"
-                autoComplete="off"
-              />
-              <SectionHeader
-                title={t("page.add-target.section-header.evidence")}
-                subtitle={t("page.add-target.section-header.evidence.subtitle")}
-              />
-              <InputGroup
-                count={2}
-                builder={(i) => (
-                  <Input
-                    id={`nickname-${i}`}
-                    autoComplete="off"
-                    placeholderLabel={`Посилання ${i + 1}`}
+                  <SectionHeader
+                    title={t("page.add-target.section-header.resourses")}
+                    subtitle={t(
+                      "page.add-target.section-header.resourses.subtitle"
+                    )}
                   />
-                )}
-              />
-              <SectionHeader
-                title="Фотопідтвердження доказів (до 10)"
-                subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <Photo />
-                <Photo />
-                <Photo />
-              </div>
-              <Spacer className="h-10" />
-              <GradientContainer>
-                <div className="flex flex-col px-4 py-5 text-h8">
-                  <div className="text-h4">Про додавання</div>
-                  <br />
-                  <p>
-                    Після додавання людини, вона буде перевірена адміном і
-                    додана на сайт.
-                  </p>
-                  <br />
-                  <p>
-                    Якщо бажаєте{" "}
-                    <span className="font-bold">отримати сповіщення</span>, коли
-                    адмін перевірить додану вами людини, будь ласка, залишіть
-                    ваш email.
-                  </p>
-                  <br />
-                  <Input placeholderLabel="Ваш email (необовʼязково)" />
+                  <InputGroup
+                    count={2}
+                    builder={(i) => (
+                      <Input
+                        id={`nickname-${i}`}
+                        autoComplete="off"
+                        placeholderLabel={`Посилання ${i + 1}`}
+                      />
+                    )}
+                  />
+                  <Spacer className="h-5" />
+                  <Dropdown
+                    placeholderLabel={t(
+                      "page.add-target.section-header.nationality"
+                    )}
+                    selected={undefined}
+                    options={["Українська", "Свиняча", "Інша"]}
+                  />
+                  <SectionHeader
+                    title={
+                      <div className="text-h3">
+                        Підтвердження позиції людини
+                      </div>
+                    }
+                    subtitle={
+                      <div className="text-h8">
+                        Заповніть хоча б{" "}
+                        <span className="font-bold">одне з полів нижче</span>.
+                      </div>
+                    }
+                  />
+                  <TextArea
+                    id="proof"
+                    placeholderLabel="Короткий опис дій людини"
+                    autoComplete="off"
+                  />
+                  <SectionHeader
+                    title={t("page.add-target.section-header.evidence")}
+                    subtitle={t(
+                      "page.add-target.section-header.evidence.subtitle"
+                    )}
+                  />
+                  <InputGroup
+                    count={2}
+                    builder={(i) => (
+                      <Input
+                        id={`nickname-${i}`}
+                        autoComplete="off"
+                        placeholderLabel={`Посилання ${i + 1}`}
+                      />
+                    )}
+                  />
+                  <SectionHeader
+                    title="Фотопідтвердження доказів (до 10)"
+                    subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <Photo />
+                    <Photo />
+                    <Photo />
+                  </div>
+                  <Spacer className="h-10" />
+                  <GradientContainer>
+                    <div className="flex flex-col px-4 py-5 text-h8">
+                      <div className="text-h4">Про додавання</div>
+                      <br />
+                      <p>
+                        Після додавання людини, вона буде перевірена адміном і
+                        додана на сайт.
+                      </p>
+                      <br />
+                      <p>
+                        Якщо бажаєте{" "}
+                        <span className="font-bold">отримати сповіщення</span>,
+                        коли адмін перевірить додану вами людини, будь ласка,
+                        залишіть ваш email.
+                      </p>
+                      <br />
+                      <Input placeholderLabel="Ваш email (необовʼязково)" />
+                    </div>
+                  </GradientContainer>
+                  <Spacer className="h-10" />
+                  <Button type="submit">Додати</Button>
+                  <Spacer className="h-10" />
                 </div>
-              </GradientContainer>
-              <Spacer className="h-10" />
-              <Button type="submit">Додати</Button>
-              <Spacer className="h-10" />
-            </div>
-          </div>
-        </Form>
+              </div>
+            </Form>
+          );
+        }}
       </Formik>
     </NoSSRWrapper>
   );
