@@ -64,6 +64,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     proof: string;
     links: string[];
     photos: string[];
+    email: string;
   }
 
   const initialValues: AddTargetForm = {
@@ -77,6 +78,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     proof: "",
     links: [],
     photos: [],
+    email: "",
   };
 
   const validate = (values: AddTargetForm) => {
@@ -99,6 +101,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
     nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
     proof: yup.string().min(20),
+    email: yup.string().email(),
   });
 
   return (
@@ -299,7 +302,10 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                         залишіть ваш email.
                       </p>
                       <br />
-                      <Input placeholderLabel="Ваш email (необовʼязково)" />
+                      <InputField
+                        name="email"
+                        placeholderLabel="Ваш email (необовʼязково)"
+                      />
                     </div>
                   </GradientContainer>
                   <Spacer className="h-10" />
