@@ -35,15 +35,14 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
 
 export const InputField = forwardRef<
   HTMLInputElement,
-  InputProps & { name: string }
+  InputProps & { name: string; showError?: boolean }
 >((props, ref) => {
+  const showError = props.showError ?? true;
+
   return (
     <Field name={props.name}>
       {({ field, form, meta }: FieldProps) => {
-        const error =
-          meta.touched &&
-          typeof form.errors[props.name] == "string" &&
-          meta.error;
+        const error = showError && meta.touched && meta.error;
 
         return (
           <Input

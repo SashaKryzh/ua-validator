@@ -49,7 +49,7 @@ interface AddTargetForm {
   resources: string[];
   nationality?: string;
   proof: string;
-  links: string[];
+  proofLinks: string[];
   photos: string[];
   email: string;
 }
@@ -76,7 +76,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     nationality: undefined,
     resources: [],
     proof: "",
-    links: [],
+    proofLinks: [""],
     photos: [],
     email: "",
   };
@@ -98,6 +98,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
     nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
     proof: yup.string().min(20),
+    proofLinks: yup.array().of(yup.string().url()),
     email: yup.string().email(),
   });
 
@@ -113,9 +114,6 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
         validate={validate}
       >
         {(formik) => {
-          // console.log(formik.values);
-          // console.log(formik.errors);
-
           return (
             <Form>
               <div className="flex flex-col items-center px-2">
@@ -234,15 +232,9 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       "page.add-target.section-header.evidence.subtitle"
                     )}
                   />
-                  <InputGroup
-                    count={2}
-                    builder={(i) => (
-                      <Input
-                        id={`nickname-${i}`}
-                        autoComplete="off"
-                        placeholderLabel={`Посилання ${i + 1}`}
-                      />
-                    )}
+                  <InputFieldArray
+                    name="proofLinks"
+                    placeholderLabel="Посилання"
                   />
                   <SectionHeader
                     title="Фотопідтвердження доказів (до 10)"
@@ -272,6 +264,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       <br />
                       <InputField
                         name="email"
+                        showError={true}
                         placeholderLabel="Ваш email (необовʼязково)"
                       />
                     </div>
@@ -279,6 +272,10 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                   <Spacer className="h-10" />
                   <Button type="submit">Додати</Button>
                   <Spacer className="h-10" />
+                  {/* TODO: remove */}
+                  {formik.submitCount > 0 && !formik.isValid && (
+                    <div>{JSON.stringify(formik.errors)}</div>
+                  )}
                 </div>
               </div>
             </Form>
@@ -385,6 +382,7 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
               <InputField
                 key={i}
                 name={`${props.name}.${i}`}
+                showError={!errorString}
                 autoComplete="off"
                 placeholderLabel={`${props.placeholderLabel} ${i + 1}`}
               />
