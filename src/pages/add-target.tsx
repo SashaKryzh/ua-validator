@@ -40,6 +40,20 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
+interface AddTargetForm {
+  photo: string;
+  realName: string;
+  nicknames: string[];
+  viewOnWar?: ViewOnWarCode;
+  jobs: string[];
+  resources: string[];
+  nationality?: string;
+  proof: string;
+  links: string[];
+  photos: string[];
+  email: string;
+}
+
 const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const { t } = useTranslation();
   const router = useRouter();
@@ -52,20 +66,6 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     // setUnsavedChanges(false);
     // router.replace("/");
   };
-
-  interface AddTargetForm {
-    photo: string;
-    realName: string;
-    nicknames: string[];
-    viewOnWar?: ViewOnWarCode;
-    jobs: string[];
-    resources: string[];
-    nationality?: string;
-    proof: string;
-    links: string[];
-    photos: string[];
-    email: string;
-  }
 
   const initialValues: AddTargetForm = {
     photo: "",
@@ -84,8 +84,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const validate = (values: AddTargetForm) => {
     const errors: FormikErrors<AddTargetForm> = {};
 
-    if (!values.nicknames.find((nickname) => nickname !== "")) {
-      errors.nicknames = "At least 1";
+    if (!values.nicknames.find((n) => n !== "")) {
+      errors.nicknames = "Required";
     }
 
     return errors;
@@ -93,10 +93,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 
   const validationSchema = yup.object().shape({
     realName: yup.string().min(2),
-    nicknames: yup
-      .array()
-      .of(yup.object().shape({ value: yup.string() }))
-      .required(),
+    nicknames: yup.array().of(yup.string()).required(),
     viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
     jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
     nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
@@ -116,7 +113,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
         validate={validate}
       >
         {(formik) => {
-          console.log(formik.values);
+          // console.log(formik.values);
+          // console.log(formik.errors);
 
           return (
             <Form>
@@ -134,39 +132,9 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                   <SectionHeader
                     title={t("page.add-target.section-header.nickname")}
                   />
-                  <FieldArray
+                  <InputFieldArray
                     name="nicknames"
-                    render={(arrayHelpers) => {
-                      const nicknames = formik.values.nicknames;
-
-                      const error =
-                        typeof formik.errors.nicknames === "string" &&
-                        formik.errors.nicknames;
-
-                      return (
-                        <div className="flex flex-col gap-2.5">
-                          {/* TODO: make better error component */}
-                          {formik.touched.nicknames && error && <p>{error}</p>}
-                          {nicknames.map((nickname, i) => (
-                            <InputField
-                              key={i}
-                              name={`nicknames.${i}.value`}
-                              autoComplete="off"
-                              placeholderLabel={`Псевдонім ${i + 1}`}
-                            />
-                          ))}
-                          <Button
-                            type="button"
-                            variant="triatery"
-                            onClick={() => {
-                              arrayHelpers.push("");
-                            }}
-                          >
-                            Add more
-                          </Button>
-                        </div>
-                      );
-                    }}
+                    placeholderLabel="Псевдонім"
                   />
                   <SectionHeader
                     title={t("page.add-target.section-header.view-on-war")}
@@ -394,3 +362,47 @@ function ViewOnWar() {
     </div>
   );
 }
+
+const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
+  const [field, meta, helpers] = useField<string[]>(props.name);
+
+  const values = meta.value;
+  const error = meta.error;
+
+  return (
+    <FieldArray
+      name={props.name}
+      render={(arrayHelpers) => {
+        const errorString = typeof error === "string" && error;
+
+        return (
+          <div className="flex flex-col gap-2.5">
+            {/* TODO: make better error component */}
+            {meta.touched && errorString && (
+              <p className="text-error">{errorString}</p>
+            )}
+            {values.map((value, i) => (
+              <InputField
+                key={i}
+                name={`${props.name}.${i}`}
+                autoComplete="off"
+                placeholderLabel={`${props.placeholderLabel} ${i + 1}`}
+              />
+            ))}
+            {meta.value.length < 10 && (
+              <AddMoreButton onClick={() => arrayHelpers.push("")} />
+            )}
+          </div>
+        );
+      }}
+    />
+  );
+};
+
+const AddMoreButton = (props: { onClick: () => void }) => {
+  return (
+    <Button type="button" variant="triatery" onClick={props.onClick}>
+      Add more
+    </Button>
+  );
+};
