@@ -5,7 +5,7 @@ import { Button } from "@/ui/Button";
 import Chip from "@/ui/Chip";
 import Dropdown from "@/ui/Dropdown";
 import { GradientContainer } from "@/ui/GradientContainer";
-import { Input, InputField, TextArea } from "@/ui/Input";
+import { InputField, TextArea } from "@/ui/Input";
 import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
@@ -46,7 +46,7 @@ interface AddTargetForm {
   nicknames: string[];
   viewOnWar?: ViewOnWarCode;
   jobs: string[];
-  resources: string[];
+  resourceLinks: string[];
   nationality?: string;
   proof: string;
   proofLinks: string[];
@@ -74,7 +74,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     viewOnWar: undefined,
     jobs: [],
     nationality: undefined,
-    resources: [],
+    resourceLinks: [""],
     proof: "",
     proofLinks: [""],
     photos: [],
@@ -88,6 +88,14 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
       errors.nicknames = "Required";
     }
 
+    if (!values.resourceLinks.find((n) => n !== "")) {
+      errors.resourceLinks = "Required";
+    }
+
+    if (!values.proofLinks.find((n) => n !== "")) {
+      errors.proofLinks = "Required";
+    }
+
     return errors;
   };
 
@@ -95,9 +103,13 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
     realName: yup.string().min(2),
     nicknames: yup.array().of(yup.string()).required(),
     viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
-    jobs: yup.array(yup.mixed().oneOf(props.jobs.map((j) => j.code))).min(1),
+    jobs: yup
+      .array(yup.mixed().oneOf(props.jobs.map((j) => j.code)))
+      .required()
+      .min(1),
+    resourceLinks: yup.array().of(yup.string().url()).required().min(1),
     nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
-    proof: yup.string().min(20),
+    proof: yup.string().min(30),
     proofLinks: yup.array().of(yup.string().url()),
     email: yup.string().email(),
   });
@@ -173,28 +185,30 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       "page.add-target.section-header.resourses.subtitle"
                     )}
                   />
-                  <InputGroup
-                    count={2}
-                    builder={(i) => (
-                      <Input
-                        id={`nickname-${i}`}
-                        autoComplete="off"
-                        placeholderLabel={`Посилання ${i + 1}`}
-                      />
-                    )}
+                  <InputFieldArray
+                    name="resourceLinks"
+                    placeholderLabel={`Посилання`}
                   />
                   <Spacer className="h-5" />
                   <Field name="nationality">
                     {({ field, form, meta }: FieldProps) => {
+                      const options = [
+                        ...props.nationalities.map((n) => n.code),
+                        "Unknown",
+                      ];
+
                       return (
                         <Dropdown
                           placeholderLabel={t(
                             "page.add-target.section-header.nationality"
                           )}
                           selected={meta.value}
-                          options={props.nationalities.map((n) => n.code)}
+                          options={options}
                           onChange1={(value) =>
-                            form.setFieldValue(field.name, value)
+                            form.setFieldValue(
+                              field.name,
+                              value === "Unknown" ? null : value
+                            )
                           }
                         />
                       );
@@ -241,7 +255,6 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                     subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
                   />
                   <div className="grid grid-cols-2 gap-2">
-                    <Photo />
                     <Photo />
                     <Photo />
                   </div>
@@ -292,6 +305,8 @@ AddTarget.getLayout = (page) => {
 
 export default AddTarget;
 
+//
+
 function SectionHeader(props: {
   title: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
@@ -305,17 +320,6 @@ function SectionHeader(props: {
           <p className="text-h8 opacity-50">{props.subtitle}</p>
         </>
       )}
-    </div>
-  );
-}
-
-function InputGroup(props: {
-  count: number;
-  builder: (i: number) => React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-2.5">
-      {Array.from({ length: props.count }, (_, i) => props.builder(i))}
     </div>
   );
 }
