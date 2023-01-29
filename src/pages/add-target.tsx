@@ -30,8 +30,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const jobs = await prisma?.job.findMany();
   const nationalities = await prisma?.nationality.findMany();
 
-  console.log(typeof jobs);
-
   return {
     props: {
       jobs,
@@ -204,7 +202,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                           )}
                           selected={meta.value}
                           options={options}
-                          onChange1={(value) =>
+                          onChange={(value) =>
                             form.setFieldValue(
                               field.name,
                               value === "Unknown" ? null : value

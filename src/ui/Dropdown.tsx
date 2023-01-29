@@ -3,11 +3,11 @@ import clsx from "clsx";
 import { useState } from "react";
 import { Input } from "./Input";
 
-export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DropdownProps {
   placeholderLabel: string;
   selected?: string;
   options: string[];
-  onChange1?: (value: string) => void;
+  onChange?: (value: string) => void;
 }
 
 export default function Dropdown(props: DropdownProps) {
@@ -19,7 +19,7 @@ export default function Dropdown(props: DropdownProps) {
       value={selected}
       onChange={(value) => {
         setSelected(value);
-        props.onChange1?.(value);
+        props.onChange?.(value);
       }}
     >
       <div className="relative">
