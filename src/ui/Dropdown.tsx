@@ -3,17 +3,25 @@ import clsx from "clsx";
 import { useState } from "react";
 import { Input } from "./Input";
 
-export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface DropdownProps {
   placeholderLabel: string;
   selected?: string;
   options: string[];
+  onChange?: (value: string) => void;
 }
 
 export default function Dropdown(props: DropdownProps) {
   const [selected, setSelected] = useState(props.selected);
 
   return (
-    <Listbox as="div" value={selected} onChange={setSelected}>
+    <Listbox
+      as="div"
+      value={selected}
+      onChange={(value) => {
+        setSelected(value);
+        props.onChange?.(value);
+      }}
+    >
       <div className="relative">
         <Listbox.Button as="div">
           <Input
