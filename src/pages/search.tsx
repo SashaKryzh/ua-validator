@@ -3,8 +3,8 @@ import { useFormik } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import type { NextPageWithLayout } from "./_app";
-import { prisma } from '@/server/db/client';
 import type { Target } from "@prisma/client";
+import { retrieveShortTargetByName } from "@/server/repository/target_actions";
 
 interface SearchProps {
   targets: Target[];
@@ -55,26 +55,7 @@ export const getServerSideProps: GetServerSideProps<SearchProps> = async (
 ) => {
   const name: string = context.query.q as string;
 
-  const results: Target[] = await prisma.target.findMany({
-    where: {
-      OR: [
-        {
-          realName: {
-            contains: name,
-          },
-        },
-        {
-          nicknames: {
-            some: {
-              value: {
-                contains: name,
-              },
-            },
-          },
-        },
-      ],
-    },
-  });
+  const results: Target[] = await retrieveShortTargetByName(name);
 
   return {
     props: {
