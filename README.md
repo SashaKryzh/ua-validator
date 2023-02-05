@@ -44,3 +44,4 @@ Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deploymen
 - To update actual DB: `pnpx prisma migrate dev --name MESSAGE`
                     or `pnpx prisma db push`
  
+- To see DB via UI: `pnpx prisma studio`
