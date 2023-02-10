@@ -1,11 +1,13 @@
-import type { Target } from '@prisma/client';
+import CyrillicToTranslit from 'cyrillic-to-translit-js';
 import { CountryCode, JobCode, ViewOnWarCode } from "../../../../shared/common_types";
 import { prisma } from '@/server/db/client';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { retrieveFullTargetByName, retrieveAllFullTarget } from '@/server/repository/target_actions';
 import { randomUUID } from 'crypto';
 
-export default function handler(
+const transliterator = CyrillicToTranslit({ preset: 'uk' });
+
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -20,88 +22,169 @@ export default function handler(
         });
       } else {
         retrieveFullTargetByName(name as string).then((data) => {
-          // TODO: HOW TO LIMIT NUMBER OF FIELDS RETURNED? REMOVE IDS
+          // TODO: INVESTIGATE HOW TO LIMIT NUMBER OF FIELDS RETURNED? (REMOVE IDS)
           res.status(200).json(data);
         });
       }
       break;
     }
     case 'POST': {
-      const inputTarget: InputTarget = req.body;
+      const inputTargets: InputTarget[] = req.body;
+      const errorList: string[] = [];
+      const failedTargets: InputTarget[] = [];
 
-      // TODO: processing to convert nationality, job... into correct Enum values
-      const slug = inputTarget.realName.toLowerCase().replace(/ /g, '-');
+      for (const inputTarget of inputTargets) {
+        // TODO: processing to convert nationality, job... into correct Enum values
+        const slug = transliterator.transform(inputTarget.realName, '-').toLowerCase();
+        const creatorId = req.headers['user_name'] as string;
 
-      prisma.target.upsert({
-        where: {
-          slug: slug,
-        },
-        create: {
-          id: randomUUID(),
-          slug: slug,
-          imageUrl: inputTarget.photo,
-          realName: inputTarget.realName,
-          nationality: {
-            connect: {
-              code: CountryCode.RU
-            }
-          },
-          viewOnWar: {
-            connect: {
-              code: ViewOnWarCode.PEACE_DEATH
-            }
-          },
-          jobs: {
-            connect: [
-              {
-                code: JobCode.BLOGGER
-              }
-            ]
-          },
-          nicknames: {
-
-          },
-          evidences: {
-
-          },
-          resources: {
-            create: inputTarget.resourceLinks.map(rl => {
-              return {
-                url: rl
-              }
-            })
-          },
-          creator: {
-            connectOrCreate: {
-              where: {
-                id: req.headers['user_name'] as string,
+        try {
+          const target = await prisma.target.upsert({
+            where: {
+              slug: slug,
+            },
+            create: {
+              id: randomUUID(),
+              slug: slug,
+              imageUrl: inputTarget.photo,
+              realName: inputTarget.realName,
+              nationality: {
+                connect: {
+                  code: mapToCountryCode(inputTarget.nationality)
+                }
               },
-              create: {
-                id: req.headers['user_name'] as string,
-                email: req.headers['user_name'] as string,
+              viewOnWar: {
+                connect: {
+                  code: ViewOnWarCode.WITH_ORKY
+                }
+              },
+              jobs: {
+                connect: [
+                  {
+                    code: mapToJobCode(inputTarget.job)
+                  }
+                ]
+              },
+              nicknames: {
+
+              },
+              evidences: {
+                create: [
+                  {
+                    resume: inputTarget.proof,
+                    images: {
+                      create: inputTarget.photos.map(photo => {
+                        return { path: photo }
+                      })
+                    },
+                    creator: {
+                      connectOrCreate: {
+                        where: {
+                          id: creatorId,
+                        },
+                        create: {
+                          id: creatorId,
+                          email: creatorId,
+                        },
+                      },
+                    },
+                  }
+                ]
+              },
+              resources: {
+                create: inputTarget.resourceLinks.map(rl => {
+                  return { url: rl }
+                })
+              },
+              creator: {
+                connectOrCreate: {
+                  where: {
+                    id: creatorId,
+                  },
+                  create: {
+                    id: creatorId,
+                    email: creatorId,
+                  },
+                },
               },
             },
-          },
-        },
-        update: {
-          imageUrl: inputTarget.photo,
-          realName: inputTarget.realName,
+            update: {
+              review: undefined,
+              slug: slug,
+              imageUrl: inputTarget.photo,
+              realName: inputTarget.realName,
+              nationality: {
+                connect: {
+                  code: mapToCountryCode(inputTarget.nationality)
+                }
+              },
+              viewOnWar: {
+                connect: {
+                  code: ViewOnWarCode.WITH_ORKY
+                }
+              },
+              jobs: {
+                connect: [
+                  {
+                    code: mapToJobCode(inputTarget.job)
+                  }
+                ]
+              },
+              nicknames: {
 
-          resources: {
-            create: inputTarget.resourceLinks.map(rl => {
-              return {
-                url: rl
-              }
-            })
-          },
-
-          review: undefined,
+              },
+              evidences: {
+                create: [
+                  {
+                    resume: inputTarget.proof,
+                    images: {
+                      create: inputTarget.photos.map(photo => {
+                        return { path: photo }
+                      })
+                    },
+                    creator: {
+                      connectOrCreate: {
+                        where: {
+                          id: creatorId,
+                        },
+                        create: {
+                          id: creatorId,
+                          email: creatorId,
+                        },
+                      },
+                    },
+                  }
+                ]
+              },
+              resources: {
+                create: inputTarget.resourceLinks.map(rl => {
+                  return { url: rl }
+                })
+              },
+              creator: {
+                connectOrCreate: {
+                  where: {
+                    id: creatorId,
+                  },
+                  create: {
+                    id: creatorId,
+                    email: creatorId,
+                  },
+                },
+              },
+            }
+          });
+        } catch (e) {
+          console.log(e);
+          errorList.push(inputTarget.realName);
+          failedTargets.push(inputTarget);
         }
-      }).then((data) => {
-        res.status(200).json(data)
-      }).catch((err) => {
-        res.status(400).json({ result: 'Error saving' })
-      });
+      }
+      if (errorList.length > 0) {
+        res.status(400).json({ result: 'Error', errorList: errorList, failedTargets: failedTargets });
+      } else {
+        res.status(200).json({ result: 'Success' });
+      }
       break;
     }
     default:
@@ -122,6 +205,37 @@ interface InputTarget {
   photo: string;
   photos: string[]; // evidences
 }
+
+// MAPPERS
+
+function mapToCountryCode(country: string): CountryCode {
+  return nationalityMap[country as keyof typeof nationalityMap] || CountryCode.OTHER;
+}
+
+const nationalityMap = {
+  'uk': CountryCode.UA,
+  'ru': CountryCode.RU,
+};
+// uk
+// ru
+// by
+
+function mapToJobCode(job: string): JobCode {
+  return jobMap[job as keyof typeof jobMap] || JobCode.OTHER;
+}
+
+const jobMap = {
+  'Політичні діячі': JobCode.POLITICIAN,
+  'Influencers': JobCode.BLOGGER,
+  'Артисти': JobCode.ACTOR,
+  'other': JobCode.OTHER,
+}
+// Артисти
+// Політичні діячі
+// Influencers
+// Спортсмени
+
+
 
 // "job": "Артисти",
 // "nationality": "uk",
