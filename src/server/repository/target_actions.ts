@@ -1,6 +1,9 @@
 import { prisma } from '@/server/db/client';
 import type { Target } from '@prisma/client';
 
+// TODO: move these actions to new service and controller.
+
+// Deprecated
 export async function retrieveAllFullTarget() {
   return prisma.target.findMany({
     include: {
@@ -16,6 +19,7 @@ export async function retrieveAllFullTarget() {
   });
 }
 
+// Deprecated
 export async function retrieveFullTargetByName(name: string) {
   return prisma.target.findMany({
     where: {
@@ -49,6 +53,7 @@ export async function retrieveFullTargetByName(name: string) {
   });
 }
 
+// Deprecated
 export async function retrieveShortTargetByName(name: string): Promise<Target[]> {
   return prisma.target.findMany({
     where: {
@@ -72,6 +77,7 @@ export async function retrieveShortTargetByName(name: string): Promise<Target[]>
   })
 }
 
+// Deprecated
 export async function retrieveBySlug(slug: string): Promise<Target | null> {
   return prisma.target.findUnique({
     where: {

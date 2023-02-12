@@ -45,3 +45,9 @@ Follow our deployment guides for [Vercel](https://beta.create.t3.gg/en/deploymen
                     or `pnpx prisma db push`
  
 - To see DB via UI: `pnpx prisma studio`
+
+### Init DB
+- delete prisma/db.sqlite
+- `pnpx prisma generate`
+- `pnpx prisma db push`
+- `pnpx prisma db seed`
