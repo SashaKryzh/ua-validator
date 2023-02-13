@@ -1,6 +1,8 @@
-import { type InputTarget, createTargetHandler, getTargetHandler, updateTargetHandler } from '@/server/controller/target.controller';
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { retrieveFullTargetByName, retrieveAllFullTarget } from '@/server/repository/target_actions';
+import { createTargetHandler } from '@/server/controller/target.controller';
+import { retrieveAllFullTarget, retrieveFullTargetByName } from '@/server/repository/target_actions';
+import type { CreateTargetSchema } from '@/server/schema/target.schema';
+import { createTargetSchema } from '@/server/schema/target.schema';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,39 +23,45 @@ export default async function handler(
           res.status(200).json(data);
         });
       }
+      
       break;
     }
+
     case 'POST': {
-      const inputTargets: InputTarget[] = req.body;
       const errorList: string[] = [];
-      const failedTargets: InputTarget[] = [];
+      const failedTargets = [];
 
-      for (const inputTarget of inputTargets) {
-        const creatorId = req.headers['user_name'] as string;
+      const rawArray: [] = req.body;
+      const targets: CreateTargetSchema[] = [];
 
+      rawArray.forEach(e => {
         try {
-          // TODO: optimize this flow (looks like hits performance.)
-          const exsitingTarget = await getTargetHandler({ realName: inputTarget.realName });
+          targets.push(createTargetSchema.parse(e));
+        } catch (err) {
+          console.log(err);
+          
+          failedTargets.push(e);
+        }
+      });
 
-          if (exsitingTarget) {
-            await updateTargetHandler({ targetId: exsitingTarget.id, input: inputTarget, creatorId: creatorId });
-          } else {
-            await createTargetHandler({ input: inputTarget, creatorId: creatorId });
-          }
-
-        } catch (e) {
-          errorList.push(inputTarget.realName);
-          failedTargets.push(inputTarget);
+      for (const target of targets) {
+        try {
+          await createTargetHandler({ input: target });
+        } catch (err) {
+          errorList.push(target.realName);
+          failedTargets.push(target);
         }
       }
 
-      if (errorList.length > 0) {
-        res.status(400).json({ result: 'Error', errorList: errorList, failedTargets: failedTargets });
+      if (failedTargets.length > 0) {
+        res.status(400).json({ result: `Error: ${rawArray.length}/${failedTargets.length} failed`, errorList: errorList, failedTargets: failedTargets, });
       } else {
         res.status(200).json({ result: 'Success' });
       }
+
       break;
     }
+
     default:
       res.status(400).json({ result: 'Error' })
   }
@@ -62,14 +70,3 @@ export default async function handler(
 function verifyAuth(req: NextApiRequest, res: NextApiResponse) {
   req.headers['user_name'] === process.env.USER_NAME ? null : res.status(401).json({ result: 'Error' });
 }
-
-// "job": "Артисти",
-// "nationality": "uk",
-// "realName": "Ані Лорак",
-// "proof": "Замовчування агресора та реальної ситуації в Україні. Мовчазна підтримка путінського режиму.",
-// "resourceLinks": [],
-// "photo": "/media/brand/img_4615.jpg",
-// "photos": [
-// 	"/media/brand/2_XgH6CjM.jpg",
-// 	"/media/brand/1_Db9UCuo.jpg"
-// ]

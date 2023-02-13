@@ -1,5 +1,5 @@
-import type { Prisma, Target } from "@prisma/client";
 import { prisma } from '@/server/db/client';
+import type { Prisma, Target } from "@prisma/client";
 
 export const createTarget = async (input: Prisma.TargetCreateInput) => {
   return (await prisma.target.create({
