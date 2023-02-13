@@ -1,6 +1,9 @@
+import { createTargetHandler } from '@/server/controller/target.controller';
+import { createTargetSchema } from './../../schema/target.schema';
+
 import { z } from "zod";
 
-import { router, publicProcedure } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 
 export const targetRouter = router({
   all: publicProcedure.query(({ ctx }) => {
@@ -39,4 +42,7 @@ export const targetRouter = router({
         where: { slug },
       });
     }),
+  create: publicProcedure
+    .input(createTargetSchema)
+    .mutation(({ input }) => createTargetHandler({ input })),
 });

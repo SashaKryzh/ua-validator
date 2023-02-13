@@ -16,6 +16,7 @@ specifiers:
   autoprefixer: ^10.4.7
   class-variance-authority: ^0.2.4
   clsx: ^1.2.1
+  cyrillic-to-translit-js: ^3.2.1
   eslint: 8.22.0
   eslint-config-next: 13.0.0
   formik: ^2.2.9
@@ -47,6 +48,7 @@ dependencies:
   '@trpc/server': 10.0.0-rc.0
   class-variance-authority: 0.2.4_typescript@4.8.4
   clsx: 1.2.1
+  cyrillic-to-translit-js: 3.2.1
   formik: 2.2.9_react@18.2.0
   i18next: 22.0.5
   next: 13.0.0_biqbaboplfbrettd7655fr4n2y
@@ -895,6 +897,12 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
+
+  /cyrillic-to-translit-js/3.2.1:
+    resolution: {integrity: sha512-HFO+fx4t9J6bfeV5DUKmkzav15ktg+6LDjODj6+CRzrFil8YuzR6wRQiDI7OxwY5q4alCEP+sNEjhdQ65TIDzw==}
+    dependencies:
+      lodash.invert: 4.3.0
+    dev: false
 
   /damerau-levenshtein/1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -1808,6 +1816,10 @@ packages:
 
   /lodash-es/4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: false
+
+  /lodash.invert/4.3.0:
+    resolution: {integrity: sha512-3CJmOxN5y47rd+g5XjdZNcq2SorJkvlSqBwPomT094p6LZ4p7b5bUoRzYYMjwsTGWTW77z/dFZlCzeVQxBrZVg==}
     dev: false
 
   /lodash.merge/4.6.2:

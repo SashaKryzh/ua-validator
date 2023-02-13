@@ -61,6 +61,13 @@ async function main() {
       code: JobCode.MILITARY,
     },
   });
+  const job_politician = await prisma.job.upsert({
+    where: { code: JobCode.POLITICIAN },
+    update: {},
+    create: {
+      code: JobCode.POLITICIAN,
+    },
+  });
   const job_other = await prisma.job.upsert({
     where: { code: JobCode.OTHER },
     update: {},
