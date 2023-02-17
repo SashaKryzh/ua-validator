@@ -1,22 +1,15 @@
 import Layout from "@/components/Layout";
-import { trpc } from "@/utils/trpc";
+import { findTargets, findUniqueTarget } from "@/server/service/target.service";
+import type { Target } from "@prisma/client";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { type NextPageWithLayout } from "./_app";
-import { retrieveBySlug } from "@/server/repository/target_actions";
-import type { Target } from "@prisma/client";
 
 interface TargetPageProps {
   target: Target;
 }
 
 const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
-  // TODO: remove this example of the runnable TRPC inside react page
-  const userQuery = trpc.target.all.useQuery();
-  userQuery.data?.forEach((user) => {
-    console.log(user);
-  });
-
   return (
     <div className="flex flex-col items-center px-2">
       <div className="flex w-full max-w-screen-md flex-col items-center">
@@ -44,6 +37,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           <div>Evidence photo</div>
         </div>
       </div>
+      {JSON.stringify(target)}
     </div>
   );
 };
@@ -53,9 +47,10 @@ TargetPage.getLayout = (page) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // TODO: return existing slugs in DB
+  const targets = await findTargets({ select: { slug: true } });
+
   return {
-    paths: [{ params: { name: "i-kak-prosto" } }, { params: { name: "Target2" } }],
+    paths: targets.map((target) => ({ params: { name: target.slug } })),
     fallback: "blocking",
   };
 };
@@ -63,18 +58,18 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<TargetPageProps> = async (
   context
 ) => {
-  const slug: string = context.params?.name as string;
+  const slug = context.params?.name as string;
 
-  const result = await retrieveBySlug(slug);
-  if (!result) {
+  const target = await findUniqueTarget({ slug: slug });
+  if (!target) {
     return {
       notFound: true,
     };
   }
-  
+
   return {
     props: {
-      target: JSON.parse(JSON.stringify(result)) as Target,
+      target: target,
     },
   };
 };

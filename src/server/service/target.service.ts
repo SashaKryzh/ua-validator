@@ -1,4 +1,4 @@
-import { prisma } from '@/server/db/client';
+import { prisma } from "@/server/db/client";
 import type { Prisma, Target } from "@prisma/client";
 
 export const createTarget = async (input: Prisma.TargetCreateInput) => {
@@ -7,14 +7,46 @@ export const createTarget = async (input: Prisma.TargetCreateInput) => {
   })) as Target;
 };
 
-export const findTarget = async (
+export const findTargets = async ({
+  where,
+  select,
+  take,
+  skip,
+}: {
+  where?: Partial<Prisma.TargetWhereInput>;
+  select?: Prisma.TargetSelect;
+  take?: number;
+  skip?: number;
+}) => {
+  const targets = await prisma.target.findMany({
+    where,
+    select,
+    take,
+    skip,
+  });
+  return targets && (targets as Target[]);
+};
+
+export const findFirstTarget = async (
   where: Partial<Prisma.TargetWhereInput>,
   select?: Prisma.TargetSelect
 ) => {
-  return (await prisma.target.findFirst({
+  const target = await prisma.target.findFirst({
     where,
     select,
-  })) as Target;
+  });
+  return target && (target as Target);
+};
+
+export const findUniqueTarget = async (
+  where: Partial<Prisma.TargetWhereUniqueInput>,
+  select?: Prisma.TargetSelect
+) => {
+  const target = await prisma.target.findUnique({
+    where,
+    select,
+  });
+  return target && (target as Target);
 };
 
 export const updateTarget = async (

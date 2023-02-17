@@ -1,10 +1,10 @@
 import { Layout, SearchField, TargetComponent } from "@/components";
+import { findTargetsHandler } from "@/server/controller/target.controller";
+import type { Target } from "@prisma/client";
 import { useFormik } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import type { NextPageWithLayout } from "./_app";
-import type { Target } from "@prisma/client";
-import { retrieveShortTargetByName } from "@/server/repository/target_actions";
 
 interface SearchProps {
   targets: Target[];
@@ -53,14 +53,13 @@ Search.getLayout = (page) => {
 export const getServerSideProps: GetServerSideProps<SearchProps> = async (
   context
 ) => {
-  const name: string = context.query.q as string;
+  const query = context.query.q as string;
 
-  const results: Target[] = await retrieveShortTargetByName(name);
+  const targets = await findTargetsHandler({ query });
 
   return {
     props: {
-      // TODO check how to remove this json parse      
-      targets: JSON.parse(JSON.stringify(results)) as Target[],
+      targets: targets,
     },
   };
 };

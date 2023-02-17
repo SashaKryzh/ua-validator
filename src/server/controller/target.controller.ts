@@ -1,19 +1,24 @@
-import { createTarget, findTarget } from '@/server/service/target.service';
-import CyrillicToTranslit from 'cyrillic-to-translit-js';
-import { CountryCode, JobCode, ViewOnWarCode } from "../../../shared/common_types";
-import type { CreateTargetSchema } from '../schema/target.schema';
+import { createTarget, findTargets } from "@/server/service/target.service";
+import CyrillicToTranslit from "cyrillic-to-translit-js";
+import { z } from "zod";
+import {
+  CountryCode,
+  JobCode,
+  ViewOnWarCode,
+} from "../../../shared/common_types";
+import type { CreateTargetSchema } from "../schema/target.schema";
 
-const transliterator = CyrillicToTranslit({ preset: 'uk' });
+const transliterator = CyrillicToTranslit({ preset: "uk" });
 
 export const createTargetHandler = async ({
-  input
+  input,
 }: {
   input: CreateTargetSchema;
 }) => {
   try {
     // TODO: handle dublicate slugs
     // TODO: handle creation of slug from nickname if
-    const slug = transliterator.transform(input.realName, '-').toLowerCase();
+    const slug = transliterator.transform(input.realName, "-").toLowerCase();
 
     const target = await createTarget({
       slug: slug,
@@ -21,24 +26,22 @@ export const createTargetHandler = async ({
       realName: input.realName,
       nationality: {
         connect: {
-          code: CountryCode.UA
-        }
+          code: CountryCode.UA,
+        },
       },
       viewOnWar: {
         connect: {
-          code: ViewOnWarCode.WITH_ORKY
-        }
+          code: ViewOnWarCode.WITH_ORKY,
+        },
       },
       jobs: {
         connect: [
           {
             code: JobCode.OTHER,
-          }
-        ]
+          },
+        ],
       },
-      nicknames: {
-
-      },
+      nicknames: {},
       evidences: {
         create: [
           {
@@ -46,7 +49,7 @@ export const createTargetHandler = async ({
             images: {
               create: {
                 path: "url",
-              }
+              },
             },
             creator: {
               connectOrCreate: {
@@ -59,11 +62,11 @@ export const createTargetHandler = async ({
                 },
               },
             },
-          }
-        ]
+          },
+        ],
       },
       resources: {
-        create: { url: "rl" }
+        create: { url: "rl" },
       },
       creator: {
         connectOrCreate: {
@@ -84,23 +87,29 @@ export const createTargetHandler = async ({
   }
 };
 
-
-export const getTargetHandler = async ({
-  realName, // TODO: not really good to base on name only (add more unique params)
+export const findTargetsHandler = async ({
+  query = "",
+  page = 1,
+  limit = 10,
 }: {
-  realName: string;
+  query: string;
+  page?: number;
+  limit?: number;
 }) => {
-  try {
-    const slug = transliterator.transform(realName, '-').toLowerCase();
+  query = query.trim();
 
-    const target = await findTarget({ slug: slug });
+  const isUrl = z.string().url().safeParse(query).success;
 
-    if (!target) {
-      return null;
-    }
-
-    return target;
-  } catch (e) {
-    throw e;
-  }
+  return findTargets({
+    where: isUrl
+      ? { resources: { some: { url: query } } }
+      : {
+          OR: [
+            { realName: { contains: query } },
+            { nicknames: { some: { value: { contains: query } } } },
+          ],
+        },
+    take: limit,
+    skip: (page - 1) * limit,
+  });
 };
