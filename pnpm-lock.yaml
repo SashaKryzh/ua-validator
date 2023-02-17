@@ -22,6 +22,7 @@ specifiers:
   formik: ^2.2.9
   i18next: ^22.0.5
   next: 13.0.0
+  next-superjson-plugin: ^0.5.4
   postcss: ^8.4.14
   prettier: ^2.7.1
   prettier-plugin-tailwindcss: ^0.1.13
@@ -52,6 +53,7 @@ dependencies:
   formik: 2.2.9_react@18.2.0
   i18next: 22.0.5
   next: 13.0.0_biqbaboplfbrettd7655fr4n2y
+  next-superjson-plugin: 0.5.4_cstnvxw4arak3iequ6kqraxbne
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-i18next: 12.0.0_e52s5leb62x5eudkmfoztpifde
@@ -1898,6 +1900,17 @@ packages:
   /natural-compare/1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
+
+  /next-superjson-plugin/0.5.4_cstnvxw4arak3iequ6kqraxbne:
+    resolution: {integrity: sha512-AUAqdL+yv/jqnkd583jffimRYbfbztkKkNf7qv0WhOVUGW0cIFYdtQHbOEseeCHK95hcPy7rDZY94nujjjRseQ==}
+    peerDependencies:
+      next: ^13
+      superjson: ^1
+    dependencies:
+      hoist-non-react-statics: 3.3.2
+      next: 13.0.0_biqbaboplfbrettd7655fr4n2y
+      superjson: 1.9.1
+    dev: false
 
   /next/13.0.0_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-puH1WGM6rGeFOoFdXXYfUxN9Sgi4LMytCV5HkQJvVUOhHfC1DoVqOfvzaEteyp6P04IW+gbtK2Q9pInVSrltPA==}

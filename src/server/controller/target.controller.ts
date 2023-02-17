@@ -1,4 +1,4 @@
-import { createTarget, findTarget } from '@/server/service/target.service';
+import { createTarget } from '@/server/service/target.service';
 import CyrillicToTranslit from 'cyrillic-to-translit-js';
 import { CountryCode, JobCode, ViewOnWarCode } from "../../../shared/common_types";
 import type { CreateTargetSchema } from '../schema/target.schema';
@@ -81,26 +81,5 @@ export const createTargetHandler = async ({
     return target;
   } catch (e) {
     throw e; // TODO: turn into custom error
-  }
-};
-
-
-export const getTargetHandler = async ({
-  realName, // TODO: not really good to base on name only (add more unique params)
-}: {
-  realName: string;
-}) => {
-  try {
-    const slug = transliterator.transform(realName, '-').toLowerCase();
-
-    const target = await findTarget({ slug: slug });
-
-    if (!target) {
-      return null;
-    }
-
-    return target;
-  } catch (e) {
-    throw e;
   }
 };
