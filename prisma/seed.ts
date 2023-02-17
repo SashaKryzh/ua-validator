@@ -1,124 +1,63 @@
+import type { Job, Nationality, ViewOnWar } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { CountryCode, JobCode, ViewOnWarCode } from "../shared/common_types";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const nationality_ua = await prisma.nationality.upsert({
-    where: { code: CountryCode.UA },
+  // Nationalities
+
+  const nationalities: { [key: string]: Nationality } = {};
+
+  for (const code of Object.keys(CountryCode)) {
+    nationalities[code] = await prisma.nationality.upsert({
+      where: { code: code },
+      update: {},
+      create: {
+        code: code,
+      },
+    });
+  }
+
+  // Jobs
+
+  const jobs: { [key: string]: Job } = {};
+
+  for (const code of Object.keys(JobCode)) {
+    jobs[code] = await prisma.job.upsert({
+      where: { code: code },
+      update: {},
+      create: {
+        code: code,
+      },
+    });
+  }
+
+  // View on war
+
+  const views: { [key: string]: ViewOnWar } = {};
+
+  for (const code of Object.keys(ViewOnWarCode)) {
+    views[code] = await prisma.viewOnWar.upsert({
+      where: { code: code },
+      update: {},
+      create: {
+        code: code,
+      },
+    });
+  }
+
+  // Creators
+
+  const uav = await prisma.creator.upsert({
+    where: { email: "admin@uav.com" },
     update: {},
     create: {
-      code: CountryCode.UA,
-    },
-  });
-  const nationality_ru = await prisma.nationality.upsert({
-    where: { code: CountryCode.RU },
-    update: {},
-    create: {
-      code: CountryCode.RU,
-    },
-  });
-  const nationality_other = await prisma.nationality.upsert({
-    where: { code: CountryCode.OTHER },
-    update: {},
-    create: {
-      code: CountryCode.OTHER,
+      email: "admin@uav.com",
     },
   });
 
-  const job_blogger = await prisma.job.upsert({
-    where: { code: JobCode.BLOGGER },
-    update: {},
-    create: {
-      code: JobCode.BLOGGER,
-    },
-  });
-  const job_journalist = await prisma.job.upsert({
-    where: { code: JobCode.JOURNALIST },
-    update: {},
-    create: {
-      code: JobCode.JOURNALIST,
-    },
-  });
-  const job_actor = await prisma.job.upsert({
-    where: { code: JobCode.ACTOR },
-    update: {},
-    create: {
-      code: JobCode.ACTOR,
-    },
-  });
-  const job_singer = await prisma.job.upsert({
-    where: { code: JobCode.SINGER },
-    update: {},
-    create: {
-      code: JobCode.SINGER,
-    },
-  });
-  const job_military = await prisma.job.upsert({
-    where: { code: JobCode.MILITARY },
-    update: {},
-    create: {
-      code: JobCode.MILITARY,
-    },
-  });
-  const job_politician = await prisma.job.upsert({
-    where: { code: JobCode.POLITICIAN },
-    update: {},
-    create: {
-      code: JobCode.POLITICIAN,
-    },
-  });
-  const job_other = await prisma.job.upsert({
-    where: { code: JobCode.OTHER },
-    update: {},
-    create: {
-      code: JobCode.OTHER,
-    },
-  });
-
-  const vow_ukraine = await prisma.viewOnWar.upsert({
-    where: { code: ViewOnWarCode.WITH_UKRAINE },
-    update: {},
-    create: {
-      code: ViewOnWarCode.WITH_UKRAINE,
-    },
-  });
-  const vow_russia = await prisma.viewOnWar.upsert({
-    where: { code: ViewOnWarCode.WITH_ORKY },
-    update: {},
-    create: {
-      code: ViewOnWarCode.WITH_ORKY,
-    },
-  });
-  const vow_quiet = await prisma.viewOnWar.upsert({
-    where: { code: ViewOnWarCode.QUIET },
-    update: {},
-    create: {
-      code: ViewOnWarCode.QUIET,
-    },
-  });
-  const vow_peacedeath = await prisma.viewOnWar.upsert({
-    where: { code: ViewOnWarCode.PEACE_DEATH },
-    update: {},
-    create: {
-      code: ViewOnWarCode.PEACE_DEATH,
-    },
-  });
-
-  const creator_denys = await prisma.creator.upsert({
-    where: { email: "denys@uav.com" },
-    update: {},
-    create: {
-      email: "denys@uav.com",
-    },
-  });
-  const creator_alex = await prisma.creator.upsert({
-    where: { email: "alex@uav.com" },
-    update: {},
-    create: {
-      email: "alex@uav.com",
-    },
-  });
+  // Targets
 
   const target_ikak = await prisma.target.upsert({
     where: { slug: "i-kak-prosto" },
@@ -129,13 +68,13 @@ async function main() {
       imageUrl: "url",
       realName: "Стас Васильев",
       jobs: {
-        connect: [{ id: job_blogger.id }],
+        connect: [{ id: jobs[JobCode.BLOGGER]?.id }],
       },
       nationality: {
-        connect: { id: nationality_ru.id },
+        connect: { id: nationalities[CountryCode.RU]?.id },
       },
       viewOnWar: {
-        connect: { id: vow_russia.id },
+        connect: { id: views[ViewOnWarCode.WITH_ORKY]?.id },
       },
       nicknames: {
         create: [
@@ -155,7 +94,7 @@ async function main() {
         ],
       },
       creator: {
-        connect: { id: creator_denys.id },
+        connect: { id: uav.id },
       },
     },
   });
@@ -179,11 +118,11 @@ async function main() {
         create: [],
       },
       creator: {
-        connect: { id: creator_denys.id },
+        connect: { id: uav.id },
       },
     },
   });
-  
+
   const evid_ikak_1 = await prisma.evidence.upsert({
     where: { id: "stas_evid_1" },
     update: {},
@@ -200,11 +139,11 @@ async function main() {
         create: [],
       },
       creator: {
-        connect: { id: creator_denys.id },
+        connect: { id: uav.id },
       },
     },
   });
-  
+
   const evid_ikak_2 = await prisma.evidence.upsert({
     where: { id: "stas_evid_2" },
     update: {},
@@ -221,7 +160,7 @@ async function main() {
         create: [],
       },
       creator: {
-        connect: { id: creator_denys.id },
+        connect: { id: uav.id },
       },
     },
   });
