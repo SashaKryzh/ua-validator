@@ -1,3 +1,9 @@
+/**
+ * Enum values with available types in database.
+ * Please keep this in sync with Zod validation schema.
+ * @see CreateTargetSchema
+ */
+
 export enum CountryCode {
     UA = "UA",
     RU = "RU",
@@ -12,6 +18,7 @@ export enum JobCode {
     MILITARY = "MILITARY",
     SINGER = "SINGER",
     ACTOR = "ACTOR",
+    SPORTSMAN = "SPORTSMAN",
     OTHER = "OTHER",
 }
 

@@ -57,6 +57,14 @@ async function main() {
     },
   });
 
+  const anonymous = await prisma.creator.upsert({
+    where: { email: "anonymous" },
+    update: {},
+    create: {
+      email: "anonymous",
+    },
+  });
+
   // Targets
 
   const target_ikak = await prisma.target.upsert({
