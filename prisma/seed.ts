@@ -99,6 +99,48 @@ async function main() {
     },
   });
 
+  const target_putin = await prisma.target.upsert({
+    where: { slug: "putin-huy" },
+    update: {},
+    create: {
+      id: "putin-huy",
+      slug: "putin-huy",
+      imageUrl: "url",
+      realName: "Путин",
+      jobs: {
+        connect: [{ id: jobs[JobCode.POLITICIAN]?.id }],
+      },
+      nationality: {
+        connect: { id: nationalities[CountryCode.RU]?.id },
+      },
+      viewOnWar: {
+        connect: { id: views[ViewOnWarCode.WITH_ORKY]?.id },
+      },
+      nicknames: {
+        create: [
+          {
+            value: "putinhuy",
+          },
+          {
+            value: "putin",
+          },
+        ],
+      },
+      resources: {
+        create: [
+          {
+            url: "https://example.com",
+          },
+        ],
+      },
+      creator: {
+        connect: { id: uav.id },
+      },
+    },
+  });
+
+  // Evidences
+
   const evid_ikak = await prisma.evidence.upsert({
     where: { id: "stas_evid" },
     update: {},
