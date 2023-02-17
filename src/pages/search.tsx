@@ -1,5 +1,5 @@
 import { Layout, SearchField, TargetComponent } from "@/components";
-import { findTargets } from "@/server/service/target.service";
+import { findTargetsHandler } from "@/server/controller/target.controller";
 import type { Target } from "@prisma/client";
 import { useFormik } from "formik";
 import type { GetServerSideProps } from "next";
@@ -53,19 +53,13 @@ Search.getLayout = (page) => {
 export const getServerSideProps: GetServerSideProps<SearchProps> = async (
   context
 ) => {
-  const name = context.query.q as string;
+  const query = context.query.q as string;
 
-  let results: Target[] = [];
-
-  if (!name) {
-    results = await findTargets({});
-  } else {
-    results = await findTargets({ realName: { contains: name } });
-  }
+  const targets = await findTargetsHandler({ query });
 
   return {
     props: {
-      targets: results,
+      targets: targets,
     },
   };
 };

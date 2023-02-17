@@ -47,7 +47,7 @@ TargetPage.getLayout = (page) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const targets = await findTargets({}, { slug: true });
+  const targets = await findTargets({ select: { slug: true } });
 
   return {
     paths: targets.map((target) => ({ params: { name: target.slug } })),

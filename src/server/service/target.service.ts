@@ -7,13 +7,22 @@ export const createTarget = async (input: Prisma.TargetCreateInput) => {
   })) as Target;
 };
 
-export const findTargets = async (
-  where: Partial<Prisma.TargetWhereInput>,
-  select?: Prisma.TargetSelect
-) => {
+export const findTargets = async ({
+  where,
+  select,
+  take,
+  skip,
+}: {
+  where?: Partial<Prisma.TargetWhereInput>;
+  select?: Prisma.TargetSelect;
+  take?: number;
+  skip?: number;
+}) => {
   const targets = await prisma.target.findMany({
     where,
     select,
+    take,
+    skip,
   });
   return targets && (targets as Target[]);
 };
