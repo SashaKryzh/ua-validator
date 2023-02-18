@@ -1,9 +1,9 @@
 import Layout from "@/components/Layout";
-import { findTargets, findUniqueTarget } from "@/server/service/target.service";
 import type { Target } from "@prisma/client";
 import type { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import { type NextPageWithLayout } from "./_app";
+import { prisma } from "@/server/db/client";
 
 interface TargetPageProps {
   target: Target;
@@ -47,7 +47,7 @@ TargetPage.getLayout = (page) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const targets = await findTargets({ select: { slug: true } });
+  const targets = await prisma.target.findMany({ select: { slug: true } });
 
   return {
     paths: targets.map((target) => ({ params: { name: target.slug } })),
@@ -60,7 +60,7 @@ export const getStaticProps: GetStaticProps<TargetPageProps> = async (
 ) => {
   const slug = context.params?.name as string;
 
-  const target = await findUniqueTarget({ slug: slug });
+  const target = await prisma.target.findUnique({ where: { slug: slug } });
   if (!target) {
     return {
       notFound: true,
