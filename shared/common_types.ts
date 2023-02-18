@@ -12,6 +12,7 @@ export enum JobCode {
     MILITARY = "MILITARY",
     SINGER = "SINGER",
     ACTOR = "ACTOR",
+    SPORTSMAN = "SPORTSMAN",
     OTHER = "OTHER",
 }
 

@@ -4,6 +4,7 @@ import { CountryCode, JobCode, ViewOnWarCode } from "../shared/common_types";
 
 const prisma = new PrismaClient();
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 async function main() {
   // Nationalities
 

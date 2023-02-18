@@ -6,26 +6,32 @@ generator client {
 }
 
 datasource db {
-  provider     = "sqlite"
-  url          = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model ViewOnWar {
   id     String   @id @default(cuid())
   code   String   @unique
   target Target[]
+
+  @@index(code)
 }
 
 model Nationality {
   id      String   @id @default(cuid())
   code    String   @unique
   targets Target[]
+
+  @@index(code)
 }
 
 model Job {
   id      String   @id @default(cuid())
   code    String   @unique
   targets Target[] @relation("TargetJob")
+
+  @@index(code)
 }
 
 model Creator {
@@ -53,6 +59,8 @@ model TargetResource {
   url      String
   target   Target @relation(fields: [targetId], references: [id])
   targetId String
+
+  @@index(url)
 }
 
 model TargetReview {
@@ -72,7 +80,7 @@ model Target {
   slug     String @unique
   imageUrl String
 
-  realName      String
+  realName      String?
   nicknames     Nickname[]
   resources     TargetResource[]
   jobs          Job[]            @relation("TargetJob")
@@ -94,6 +102,7 @@ model Target {
   updatedAt DateTime      @updatedAt
 
   @@index(realName)
+  @@index(slug)
 }
 
 model Evidence {
@@ -130,6 +139,8 @@ model EvidenceUrl {
   url        String
   evidence   Evidence @relation(fields: [evidenceId], references: [id])
   evidenceId String
+
+  @@index(url)
 }
 
 model EvidenceImage {

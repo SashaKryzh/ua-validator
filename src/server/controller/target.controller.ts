@@ -1,87 +1,60 @@
 import { createTarget, findTargets } from "@/server/service/target.service";
 import CyrillicToTranslit from "cyrillic-to-translit-js";
 import { z } from "zod";
-import {
-  CountryCode,
-  JobCode,
-  ViewOnWarCode,
-} from "../../../shared/common_types";
 import type { CreateTargetSchema } from "../schema/target.schema";
 
 const transliterator = CyrillicToTranslit({ preset: "uk" });
 
 export const createTargetHandler = async ({
   input,
+  creatorEmail,
 }: {
   input: CreateTargetSchema;
+  creatorEmail: string | null;
 }) => {
   try {
-    // TODO: handle dublicate slugs
-    // TODO: handle creation of slug from nickname if
-    const slug = transliterator.transform(input.realName, "-").toLowerCase();
+    const slug = await findAvailableSlug(input);
 
-    const target = await createTarget({
+    return await createTarget({
       slug: slug,
-      imageUrl: "imageUrl",
+      imageUrl: input.imageUrl,
       realName: input.realName,
       nationality: {
         connect: {
-          code: CountryCode.UA,
+          code: input.nationality,
         },
       },
       viewOnWar: {
         connect: {
-          code: ViewOnWarCode.WITH_ORKY,
+          code: input.viewOnWar,
         },
       },
       jobs: {
         connect: [
           {
-            code: JobCode.OTHER,
+            code: input.job,
           },
         ],
       },
-      nicknames: {},
+      nicknames: {
+        create: input.nicknames.map((n) => ({ value: n })),
+      },
       evidences: {
         create: [
           {
-            resume: "about",
+            resume: input.evidence.resume,
             images: {
-              create: {
-                path: "url",
-              },
+              create: input.evidence.images.map((i) => ({ path: i })),
             },
-            creator: {
-              connectOrCreate: {
-                where: {
-                  id: "id",
-                },
-                create: {
-                  id: "id",
-                  email: "email",
-                },
-              },
-            },
+            creator: connectIfAny(creatorEmail),
           },
         ],
       },
       resources: {
-        create: { url: "rl" },
+        create: input.resources.map((r) => ({ url: r })),
       },
-      creator: {
-        connectOrCreate: {
-          where: {
-            id: "id",
-          },
-          create: {
-            id: "id",
-            email: "id",
-          },
-        },
-      },
+      creator: connectIfAny(creatorEmail),
     });
-
-    return target;
   } catch (e) {
     throw e; // TODO: turn into custom error
   }
@@ -92,7 +65,7 @@ export const findTargetsHandler = async ({
   page = 1,
   limit = 10,
 }: {
-  query: string;
+  query?: string;
   page?: number;
   limit?: number;
 }) => {
@@ -113,3 +86,45 @@ export const findTargetsHandler = async ({
     skip: (page - 1) * limit,
   });
 };
+
+/**
+ * Converts target name to a slug.
+ * Adding a number to the end if the slug is already taken.
+ * @param input target data
+ */
+async function findAvailableSlug(input: CreateTargetSchema) {
+  const knownName = input.realName ?? input.nicknames[0] ?? "unknown";
+  let slug = transliterator.transform(knownName, "-").toLowerCase();
+
+  const existingTargets = await findTargets({
+    where: {
+      slug: {
+        contains: slug,
+      },
+    },
+  });
+  if (existingTargets.length > 0) {
+    console.log(existingTargets.length);
+    slug += `-${existingTargets.length}`;
+  }
+  return slug;
+}
+
+/**
+ * Connects to a user if email is provided.
+ * @param creatorEmail email of the user
+ */
+function connectIfAny(creatorEmail: string | null) {
+  return creatorEmail !== null
+    ? {
+        connectOrCreate: {
+          where: {
+            email: creatorEmail,
+          },
+          create: {
+            email: creatorEmail,
+          },
+        },
+      }
+    : undefined;
+}
