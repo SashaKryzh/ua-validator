@@ -23,7 +23,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
         </div>
         <h1 className="text-2xl">🇷🇺 {target.realName}</h1>
         <div>Псевдонім 1, 2, 3, 4 (in progress)</div>
-        <div>{target.viewOnWarId} Мір во всьом мірє</div>
+        <div>{target.viewOnWarCode} Мір во всьом мірє</div>
         <p className="max-w-xl">
           {target.mainEvidenceId}
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.

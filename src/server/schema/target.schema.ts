@@ -12,12 +12,10 @@ export const createTargetSchema = z.object({
   realName: z.string().nullish(),
   nicknames: z.array(z.string()).min(1),
   imageUrl: z.string(),
-
   evidence: z.object({
     resume: z.string(),
     images: z.array(z.string()),
   }),
-
   resources: z.array(z.string().url()),
 });
 
