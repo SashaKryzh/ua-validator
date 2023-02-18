@@ -1,13 +1,14 @@
-import Link from "next/link";
+import type { TargetFindTargets } from "@/server/controller/target.controller";
 import Image from "next/image";
+import Link from "next/link";
 
 export interface TargetComponentProps {
-  target?: string;
+  target: TargetFindTargets;
 }
 
 export default function TargetComponent({ target }: TargetComponentProps) {
   return (
-    <Link href={`/${target}`}>
+    <Link href={`/${target.slug}`}>
       <div className="aspect-[3/4]">
         <div className="relative h-full bg-slate-400">
           <Image
@@ -17,7 +18,7 @@ export default function TargetComponent({ target }: TargetComponentProps) {
             className="overflow-hidden object-cover"
           />
         </div>
-        <div>🇷🇺 {target}</div>
+        <div>🇷🇺 {target.realName}</div>
         <div>За мір</div>
       </div>
     </Link>

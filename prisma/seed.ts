@@ -66,7 +66,7 @@ async function main() {
     create: {
       id: "stas",
       slug: "i-kak-prosto",
-      imageUrl: "url",
+      imageUrl: "",
       realName: "Стас Васильев",
       jobs: {
         connect: [{ id: jobs[JobCode.BLOGGER]?.id }],
