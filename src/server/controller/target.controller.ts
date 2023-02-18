@@ -15,7 +15,7 @@ export const createTargetHandler = async ({
   try {
     const slug = await findAvailableSlug(input);
 
-    const target = await createTarget({
+    return await createTarget({
       slug: slug,
       imageUrl: input.imageUrl,
       realName: input.realName,
@@ -46,35 +46,15 @@ export const createTargetHandler = async ({
             images: {
               create: input.evidence.images.map((i) => ({ path: i })),
             },
-            creator: {
-              connectOrCreate: {
-                where: {
-                  email: creatorEmail ?? "anonymous",
-                },
-                create: {
-                  email: creatorEmail ?? "anonymous",
-                },
-              },
-            },
+            creator: connectIfAny(creatorEmail),
           },
         ],
       },
       resources: {
         create: input.resources.map((r) => ({ url: r })),
       },
-      creator: {
-        connectOrCreate: {
-          where: {
-            email: creatorEmail ?? "anonymous",
-          },
-          create: {
-            email: creatorEmail ?? "anonymous",
-          },
-        },
-      },
+      creator: connectIfAny(creatorEmail),
     });
-
-    return target;
   } catch (e) {
     throw e; // TODO: turn into custom error
   }
@@ -128,4 +108,23 @@ async function findAvailableSlug(input: CreateTargetSchema) {
     slug += `-${existingTargets.length}`;
   }
   return slug;
+}
+
+/**
+ * Connects to a user if email is provided.
+ * @param creatorEmail email of the user
+ */
+function connectIfAny(creatorEmail: string | null) {
+  return creatorEmail !== null
+    ? {
+        connectOrCreate: {
+          where: {
+            email: creatorEmail,
+          },
+          create: {
+            email: creatorEmail,
+          },
+        },
+      }
+    : undefined;
 }

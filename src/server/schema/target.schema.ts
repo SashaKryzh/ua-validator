@@ -6,24 +6,9 @@ import {
 } from "../../../shared/common_types";
 
 export const createTargetSchema = z.object({
-  job: z.enum([
-    JobCode.UNEMPLOYED,
-    JobCode.BLOGGER,
-    JobCode.JOURNALIST,
-    JobCode.POLITICIAN,
-    JobCode.MILITARY,
-    JobCode.SINGER,
-    JobCode.ACTOR,
-    JobCode.SPORTSMAN,
-    JobCode.OTHER,
-  ]),
-  nationality: z.enum([CountryCode.UA, CountryCode.RU, CountryCode.OTHER]),
-  viewOnWar: z.enum([
-    ViewOnWarCode.WITH_ORKY,
-    ViewOnWarCode.WITH_UKRAINE,
-    ViewOnWarCode.QUIET,
-    ViewOnWarCode.PEACE_DEATH,
-  ]),
+  job: z.nativeEnum(JobCode),
+  nationality: z.nativeEnum(CountryCode),
+  viewOnWar: z.nativeEnum(ViewOnWarCode),
   realName: z.string().nullish(),
   nicknames: z.array(z.string()).min(1),
   imageUrl: z.string(),

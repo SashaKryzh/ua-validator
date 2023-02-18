@@ -4,6 +4,7 @@ import { CountryCode, JobCode, ViewOnWarCode } from "../shared/common_types";
 
 const prisma = new PrismaClient();
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 async function main() {
   // Nationalities
 
@@ -54,14 +55,6 @@ async function main() {
     update: {},
     create: {
       email: "admin@uav.com",
-    },
-  });
-
-  const anonymous = await prisma.creator.upsert({
-    where: { email: "anonymous" },
-    update: {},
-    create: {
-      email: "anonymous",
     },
   });
 
