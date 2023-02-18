@@ -1,5 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import clsx from "clsx";
+import type { FieldProps } from "formik";
+import { Field } from "formik";
 import { forwardRef } from "react";
 import { IconContext } from "react-icons";
 import TextareaAutosize, {
@@ -30,6 +32,32 @@ export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
     prefix?: JSX.Element;
     suffix?: JSX.Element;
   };
+
+export const InputField = forwardRef<
+  HTMLInputElement,
+  InputProps & { name: string; showError?: boolean }
+>((props, ref) => {
+  const showError = props.showError ?? true;
+
+  return (
+    <Field name={props.name}>
+      {({ field, form, meta }: FieldProps) => {
+        const error = showError && meta.touched && meta.error;
+
+        return (
+          <Input
+            ref={ref}
+            error={typeof error === "string" ? error : undefined}
+            {...field}
+            {...props}
+          />
+        );
+      }}
+    </Field>
+  );
+});
+
+InputField.displayName = "InputField";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   return (
@@ -87,6 +115,7 @@ type TextAreaProps = TextareaAutosizeProps &
     placeholderLabel?: string;
   };
 
+// TODO: Show error text
 export function TextArea(props: TextAreaProps) {
   return (
     <div className="py-1">

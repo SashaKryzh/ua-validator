@@ -1,26 +1,29 @@
 import Layout from "@/components/Layout";
 import NoSSRWrapper from "@/components/NoSSRWrapper";
+import { prisma } from "@/server/db/client";
 import { Button } from "@/ui/Button";
 import Chip from "@/ui/Chip";
 import Dropdown from "@/ui/Dropdown";
 import { GradientContainer } from "@/ui/GradientContainer";
-import { Input, TextArea } from "@/ui/Input";
+import { InputField, TextArea } from "@/ui/Input";
 import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
-import usePreventNavigation from "@/utils/hooks/usePreventNavigation";
-import type { Prisma } from "@prisma/client";
-import { prisma } from "@/server/db/client";
+import type { Job, Nationality } from "@prisma/client";
+import type { FieldProps, FormikErrors } from "formik";
+import { Field, FieldArray, Form, Formik, useField } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import * as React from "react";
 import { useState } from "react";
-import type { NextPageWithLayout } from "./_app";
-import { ViewOnWarCode } from "shared/common_types";
 import { useTranslation } from "react-i18next";
+import { ViewOnWarCode } from "shared/common_types";
+import * as yup from "yup";
+import type { NextPageWithLayout } from "./_app";
 
 interface AddTargetProps {
-  jobs: Prisma.JobSelect[];
-  nationalities: Prisma.NationalitySelect[];
+  jobs: Job[];
+  nationalities: Nationality[];
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -35,135 +38,261 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 };
 
+interface AddTargetForm {
+  photo: string;
+  realName: string;
+  nicknames: string[];
+  viewOnWar?: ViewOnWarCode;
+  jobs: string[];
+  resourceLinks: string[];
+  nationality?: string;
+  proof: string;
+  proofLinks: string[];
+  photos: string[];
+  email: string;
+}
+
 const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [unsavedChanges, setUnsavedChanges] = useState(true);
 
-  usePreventNavigation(router, unsavedChanges, "You have unsaved changes");
+  // usePreventNavigation(router, unsavedChanges, "You have unsaved changes");
 
   const handleSubmit: React.MouseEventHandler = (e) => {
     e.preventDefault();
-    setUnsavedChanges(false);
-    router.replace("/");
+    // setUnsavedChanges(false);
+    // router.replace("/");
   };
+
+  const initialValues: AddTargetForm = {
+    photo: "",
+    realName: "",
+    nicknames: [""],
+    viewOnWar: undefined,
+    jobs: [],
+    nationality: undefined,
+    resourceLinks: [""],
+    proof: "",
+    proofLinks: [""],
+    photos: [],
+    email: "",
+  };
+
+  const validate = (values: AddTargetForm) => {
+    const errors: FormikErrors<AddTargetForm> = {};
+
+    if (!values.nicknames.find((n) => n !== "")) {
+      errors.nicknames = "Required";
+    }
+
+    if (!values.resourceLinks.find((n) => n !== "")) {
+      errors.resourceLinks = "Required";
+    }
+
+    if (!values.proofLinks.find((n) => n !== "")) {
+      errors.proofLinks = "Required";
+    }
+
+    return errors;
+  };
+
+  const validationSchema = yup.object().shape({
+    realName: yup.string().min(2),
+    nicknames: yup.array().of(yup.string()).required(),
+    viewOnWar: yup.mixed().oneOf(Object.values(ViewOnWarCode)).required(),
+    jobs: yup
+      .array(yup.mixed().oneOf(props.jobs.map((j) => j.code)))
+      .required()
+      .min(1),
+    resourceLinks: yup.array().of(yup.string().url()).required().min(1),
+    nationality: yup.mixed().oneOf(props.nationalities.map((n) => n.code)),
+    proof: yup.string().min(30),
+    proofLinks: yup.array().of(yup.string().url()),
+    email: yup.string().email(),
+  });
 
   return (
     <NoSSRWrapper>
-      <div className="flex flex-col items-center px-2">
-        <div className="w-full max-w-screen-md"></div>
-        <div className="flex w-full max-w-lg flex-col">
-          <Spacer className="h-6" />
-          <Photo className="w-1/2 self-center" />
-          <Spacer className="h-6" />
-          <Input
-            id="real-name"
-            autoComplete="off"
-            placeholderLabel={t("page.add-target.real-name")}
-          />
-          <SectionHeader title={t("page.add-target.section-header.nickname")} />
-          <InputGroup
-            count={2}
-            builder={(i) => (
-              <Input
-                id={`nickname-${i}`}
-                autoComplete="off"
-                placeholderLabel={`Псевдонім ${i + 1}`}
-              />
-            )}
-          />
-          <SectionHeader title={t("page.add-target.section-header.view-on-war")} />
-          <ViewOnWar />
-          <SectionHeader title={t("page.add-target.section-header.job")} />
-          <div className="flex flex-wrap gap-1.5">
-            <Chip label="Блогер" selected={false} />
-            <Chip label="Співак" selected={false} />
-            <Chip label="Спортсмен" selected={true} />
-            <Chip label="Актор" selected={false} />
-            <Chip label="Інше" selected={true} />
-          </div>
-          <SectionHeader
-            title={t("page.add-target.section-header.resourses")}
-            subtitle={t("page.add-target.section-header.resourses.subtitle")}
-          />
-          <InputGroup
-            count={2}
-            builder={(i) => (
-              <Input
-                id={`nickname-${i}`}
-                autoComplete="off"
-                placeholderLabel={`Посилання ${i + 1}`}
-              />
-            )}
-          />
-          <Spacer className="h-5" />
-          <Dropdown
-            placeholderLabel={t("page.add-target.section-header.nationality")}
-            selected={undefined}
-            options={["Українська", "Свиняча", "Інша"]}
-          />
-          <SectionHeader
-            title={<div className="text-h3">Підтвердження позиції людини</div>}
-            subtitle={
-              <div className="text-h8">
-                Заповніть хоча б{" "}
-                <span className="font-bold">одне з полів нижче</span>.
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values, actions) => {
+          console.log({ values, actions });
+        }}
+        validationSchema={validationSchema}
+        validateOnChange={true}
+        validate={validate}
+      >
+        {(formik) => {
+          return (
+            <Form>
+              <div className="flex flex-col items-center px-2">
+                <div className="w-full max-w-screen-md"></div>
+                <div className="flex w-full max-w-lg flex-col">
+                  <Spacer className="h-6" />
+                  <Photo className="w-1/2 self-center" />
+                  <Spacer className="h-6" />
+                  <InputField
+                    name="realName"
+                    autoComplete="off"
+                    placeholderLabel={t("page.add-target.real-name")}
+                  />
+                  <SectionHeader
+                    title={t("page.add-target.section-header.nickname")}
+                  />
+                  <InputFieldArray
+                    name="nicknames"
+                    placeholderLabel="Псевдонім"
+                  />
+                  <SectionHeader
+                    title={t("page.add-target.section-header.view-on-war")}
+                  />
+                  <ViewOnWar />
+                  <SectionHeader
+                    title={t("page.add-target.section-header.job")}
+                  />
+                  <Field name="jobs">
+                    {({ field, form, meta }: FieldProps) => {
+                      return (
+                        <div className="flex flex-wrap gap-1.5">
+                          {props.jobs.map((job, i) => (
+                            <Chip
+                              key={i}
+                              label={job.code}
+                              selected={meta.value.includes(job.code)}
+                              onClick={() => {
+                                let nextValue = [...meta.value];
+                                if (meta.value.includes(job.code)) {
+                                  nextValue = nextValue.filter(
+                                    (j) => j !== job.code
+                                  );
+                                } else {
+                                  nextValue.push(job.code);
+                                }
+                                form.setFieldValue(field.name, nextValue);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      );
+                    }}
+                  </Field>
+                  <SectionHeader
+                    title={t("page.add-target.section-header.resourses")}
+                    subtitle={t(
+                      "page.add-target.section-header.resourses.subtitle"
+                    )}
+                  />
+                  <InputFieldArray
+                    name="resourceLinks"
+                    placeholderLabel={`Посилання`}
+                  />
+                  <Spacer className="h-5" />
+                  <Field name="nationality">
+                    {({ field, form, meta }: FieldProps) => {
+                      const options = [
+                        ...props.nationalities.map((n) => n.code),
+                        "Unknown",
+                      ];
+
+                      return (
+                        <Dropdown
+                          placeholderLabel={t(
+                            "page.add-target.section-header.nationality"
+                          )}
+                          selected={meta.value}
+                          options={options}
+                          onChange={(value) =>
+                            form.setFieldValue(
+                              field.name,
+                              value === "Unknown" ? null : value
+                            )
+                          }
+                        />
+                      );
+                    }}
+                  </Field>
+                  <SectionHeader
+                    title={
+                      <div className="text-h3">
+                        Підтвердження позиції людини
+                      </div>
+                    }
+                    subtitle={
+                      <div className="text-h8">
+                        Заповніть хоча б{" "}
+                        <span className="font-bold">одне з полів нижче</span>.
+                      </div>
+                    }
+                  />
+                  <Field name="proof">
+                    {({ field, form, meta }: FieldProps) => {
+                      return (
+                        <TextArea
+                          id="proof"
+                          placeholderLabel="Короткий опис дій людини"
+                          autoComplete="off"
+                          error={meta.touched ? meta.error : undefined}
+                          {...field}
+                        />
+                      );
+                    }}
+                  </Field>
+                  <SectionHeader
+                    title={t("page.add-target.section-header.evidence")}
+                    subtitle={t(
+                      "page.add-target.section-header.evidence.subtitle"
+                    )}
+                  />
+                  <InputFieldArray
+                    name="proofLinks"
+                    placeholderLabel="Посилання"
+                  />
+                  <SectionHeader
+                    title="Фотопідтвердження доказів (до 10)"
+                    subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <Photo />
+                    <Photo />
+                  </div>
+                  <Spacer className="h-10" />
+                  <GradientContainer>
+                    <div className="flex flex-col px-4 py-5 text-h8">
+                      <div className="text-h4">Про додавання</div>
+                      <br />
+                      <p>
+                        Після додавання людини, вона буде перевірена адміном і
+                        додана на сайт.
+                      </p>
+                      <br />
+                      <p>
+                        Якщо бажаєте{" "}
+                        <span className="font-bold">отримати сповіщення</span>,
+                        коли адмін перевірить додану вами людини, будь ласка,
+                        залишіть ваш email.
+                      </p>
+                      <br />
+                      <InputField
+                        name="email"
+                        showError={true}
+                        placeholderLabel="Ваш email (необовʼязково)"
+                      />
+                    </div>
+                  </GradientContainer>
+                  <Spacer className="h-10" />
+                  <Button type="submit">Додати</Button>
+                  <Spacer className="h-10" />
+                  {/* TODO: remove */}
+                  {formik.submitCount > 0 && !formik.isValid && (
+                    <div>{JSON.stringify(formik.errors)}</div>
+                  )}
+                </div>
               </div>
-            }
-          />
-          <TextArea
-            id="proof"
-            placeholderLabel="Короткий опис дій людини"
-            autoComplete="off"
-          />
-          <SectionHeader
-            title={t("page.add-target.section-header.evidence")}
-            subtitle={t("page.add-target.section-header.evidence.subtitle")}
-          />
-          <InputGroup
-            count={2}
-            builder={(i) => (
-              <Input
-                id={`nickname-${i}`}
-                autoComplete="off"
-                placeholderLabel={`Посилання ${i + 1}`}
-              />
-            )}
-          />
-          <SectionHeader
-            title="Фотопідтвердження доказів (до 10)"
-            subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
-          />
-          <div className="grid grid-cols-2 gap-2">
-            <Photo />
-            <Photo />
-            <Photo />
-          </div>
-          <Spacer className="h-10" />
-          <GradientContainer>
-            <div className="flex flex-col px-4 py-5 text-h8">
-              <div className="text-h4">Про додавання</div>
-              <br />
-              <p>
-                Після додавання людини, вона буде перевірена адміном і додана на
-                сайт.
-              </p>
-              <br />
-              <p>
-                Якщо бажаєте{" "}
-                <span className="font-bold">отримати сповіщення</span>, коли
-                адмін перевірить додану вами людини, будь ласка, залишіть ваш
-                email.
-              </p>
-              <br />
-              <Input placeholderLabel="Ваш email (необовʼязково)" />
-            </div>
-          </GradientContainer>
-          <Spacer className="h-10" />
-          <Button onClick={handleSubmit}>Додати</Button>
-          <Spacer className="h-10" />
-        </div>
-      </div>
+            </Form>
+          );
+        }}
+      </Formik>
     </NoSSRWrapper>
   );
 };
@@ -173,6 +302,8 @@ AddTarget.getLayout = (page) => {
 };
 
 export default AddTarget;
+
+//
 
 function SectionHeader(props: {
   title: string | React.ReactNode;
@@ -191,48 +322,87 @@ function SectionHeader(props: {
   );
 }
 
-function InputGroup(props: {
-  count: number;
-  builder: (i: number) => React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-2.5">
-      {Array.from({ length: props.count }, (_, i) => props.builder(i))}
-    </div>
-  );
-}
-
 function ViewOnWar() {
   const { t } = useTranslation();
-  // function handleClick(e: React.MouseEvent, value: string) {
-  //   e.preventDefault();
-  //   console.log(value);
-  // }
+  const [field, meta, helpers] = useField("viewOnWar");
 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-1">
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_UKRAINE}`)}
-          selected={false}
+          value1={ViewOnWarCode.WITH_UKRAINE}
+          groupValue={meta.value}
           className="grow py-5"
-          onClick={() => console.log(ViewOnWarCode.WITH_UKRAINE)}
+          handleClick={(i) => helpers.setValue(i)}
         />
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_ORKY}`)}
-          selected={false}
+          value1={ViewOnWarCode.WITH_ORKY}
+          groupValue={meta.value}
           className="grow py-5"
-          onClick={() => console.log(ViewOnWarCode.WITH_ORKY)}
+          handleClick={(i) => helpers.setValue(i)}
         />
       </div>
       <SelectBox
         label={t(`ViewOnWarCode.${ViewOnWarCode.PEACE_DEATH}`)}
-        selected={false}
+        value1={ViewOnWarCode.PEACE_DEATH}
+        groupValue={meta.value}
         className="py-5"
-        onClick={() => console.log(ViewOnWarCode.PEACE_DEATH)}
+        handleClick={(i) => helpers.setValue(i)}
       />
-      <SelectBox label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)} selected={false} className="py-5"
-        onClick={() => console.log(ViewOnWarCode.QUIET)} />
+      <SelectBox
+        label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)}
+        value1={ViewOnWarCode.QUIET}
+        groupValue={meta.value}
+        className="py-5"
+        handleClick={(i) => helpers.setValue(i)}
+      />
     </div>
   );
 }
+
+const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
+  const [field, meta, helpers] = useField<string[]>(props.name);
+
+  const values = meta.value;
+  const error = meta.error;
+
+  return (
+    <FieldArray
+      name={props.name}
+      render={(arrayHelpers) => {
+        const errorString = typeof error === "string" && error;
+
+        return (
+          <div className="flex flex-col gap-2.5">
+            {/* TODO: make better error component */}
+            {meta.touched && errorString && (
+              <p className="text-error">{errorString}</p>
+            )}
+            {values.map((value, i) => (
+              <InputField
+                key={i}
+                name={`${props.name}.${i}`}
+                showError={!errorString}
+                autoComplete="off"
+                placeholderLabel={`${props.placeholderLabel} ${i + 1}`}
+              />
+            ))}
+            {meta.value.length < 10 && (
+              <AddMoreButton onClick={() => arrayHelpers.push("")} />
+            )}
+          </div>
+        );
+      }}
+    />
+  );
+};
+
+const AddMoreButton = (props: { onClick: () => void }) => {
+  return (
+    <Button type="button" variant="triatery" onClick={props.onClick}>
+      Add more
+    </Button>
+  );
+};

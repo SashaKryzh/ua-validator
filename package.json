@@ -19,15 +19,18 @@
     "@trpc/server": "10.0.0-rc.0",
     "class-variance-authority": "^0.2.4",
     "clsx": "^1.2.1",
+    "cyrillic-to-translit-js": "^3.2.1",
     "formik": "^2.2.9",
     "i18next": "^22.0.5",
     "next": "13.0.0",
+    "next-superjson-plugin": "^0.5.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-i18next": "^12.0.0",
     "react-icons": "^4.6.0",
     "react-textarea-autosize": "^8.4.0",
     "superjson": "1.9.1",
+    "yup": "^0.32.11",
     "zod": "^3.18.0"
   },
   "devDependencies": {
