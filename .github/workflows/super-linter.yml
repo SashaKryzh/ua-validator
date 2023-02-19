@@ -7,13 +7,13 @@ on:
     branches: [ "main" ]
 jobs:
   run-lint:
+    name: esLint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
+          fetch-depth: 0 # Full git history is needed to get a proper list of changed files within `super-linter`
 
       # For more information, see: https://github.com/github/super-linter
       - name: Lint Code Base
@@ -24,19 +24,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   tsc:
-    name: tsc
+    name: TCS
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: install node v16
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: install node
         uses: actions/setup-node@v1
         with:
           node-version: 16
+
       - name: yarn install
         run: yarn install
+
       - name: tsc
         uses: icrawl/action-tsc@v1
-#      - name: TSC actions
-#        uses: stepek/tsc-action@1.0.0
-#        with:
-#          args: --noEmit
+
+
