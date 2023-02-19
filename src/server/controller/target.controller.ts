@@ -48,14 +48,14 @@ export const createTargetHandler = async ({
               images: {
                 create: input.evidence.images.map((i) => ({ path: i })),
               },
-              creator: tryConnectCreator(creatorEmail),
+              creator: connectIfAny(creatorEmail),
             },
           ],
         },
         resources: {
           create: input.resources.map((r) => ({ url: r })),
         },
-        creator: tryConnectCreator(creatorEmail),
+        creator: connectIfAny(creatorEmail),
       },
     });
   } catch (e) {
@@ -125,7 +125,7 @@ async function findAvailableSlug(input: CreateTargetSchema) {
  * Connects to a user if email is provided.
  * @param creatorEmail email of the user
  */
-function tryConnectCreator(creatorEmail?: string) {
+function connectIfAny(creatorEmail?: string) {
   if (!creatorEmail) return;
 
   return {
