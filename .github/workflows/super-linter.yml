@@ -1,9 +1,3 @@
-# This workflow executes several linters on changed files based on languages used in your code base whenever
-# you push a code or open a pull request.
-#
-# You can adjust the behavior by modifying this file.
-# For more information, see:
-# https://github.com/github/super-linter
 name: Lint Code Base
 
 on:
@@ -21,6 +15,7 @@ jobs:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
 
+      # For more information, see: https://github.com/github/super-linter
       - name: Lint Code Base
         uses: github/super-linter@v4
         env:
@@ -28,6 +23,20 @@ jobs:
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: TSC actions
-        uses: stepek/tsc-action@1.0.0
-
+  tsc:
+    name: tsc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: install node v16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: yarn install
+        run: yarn install
+      - name: tsc
+        uses: icrawl/action-tsc@v1
+#      - name: TSC actions
+#        uses: stepek/tsc-action@1.0.0
+#        with:
+#          args: --noEmit
