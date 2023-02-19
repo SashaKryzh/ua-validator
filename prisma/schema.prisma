@@ -11,27 +11,18 @@ datasource db {
 }
 
 model ViewOnWar {
-  id     String   @id @default(cuid())
-  code   String   @unique
+  code   String   @id
   target Target[]
-
-  @@index(code)
 }
 
 model Nationality {
-  id      String   @id @default(cuid())
-  code    String   @unique
+  code    String   @id
   targets Target[]
-
-  @@index(code)
 }
 
 model Job {
-  id      String   @id @default(cuid())
-  code    String   @unique
+  code    String   @id
   targets Target[] @relation("TargetJob")
-
-  @@index(code)
 }
 
 model Creator {
@@ -80,14 +71,14 @@ model Target {
   slug     String @unique
   imageUrl String
 
-  realName      String?
-  nicknames     Nickname[]
-  resources     TargetResource[]
-  jobs          Job[]            @relation("TargetJob")
-  nationality   Nationality      @relation(fields: [nationalityId], references: [id])
-  nationalityId String
-  viewOnWar     ViewOnWar        @relation(fields: [viewOnWarId], references: [id])
-  viewOnWarId   String
+  realName        String?
+  nicknames       Nickname[]
+  resources       TargetResource[]
+  jobs            Job[]            @relation("TargetJob")
+  nationality     Nationality      @relation(fields: [nationalityCode], references: [code])
+  nationalityCode String
+  viewOnWar       ViewOnWar        @relation(fields: [viewOnWarCode], references: [code])
+  viewOnWarCode   String
 
   mainEvidence   Evidence?  @relation("TargetMainEvidence", fields: [mainEvidenceId], references: [id])
   mainEvidenceId String?    @unique

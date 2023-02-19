@@ -1,4 +1,3 @@
-import type { Job, Nationality, ViewOnWar } from "@prisma/client";
 import { PrismaClient } from "@prisma/client";
 import { CountryCode, JobCode, ViewOnWarCode } from "../shared/common_types";
 
@@ -8,10 +7,8 @@ const prisma = new PrismaClient();
 async function main() {
   // Nationalities
 
-  const nationalities: { [key: string]: Nationality } = {};
-
   for (const code of Object.keys(CountryCode)) {
-    nationalities[code] = await prisma.nationality.upsert({
+    await prisma.nationality.upsert({
       where: { code: code },
       update: {},
       create: {
@@ -22,10 +19,8 @@ async function main() {
 
   // Jobs
 
-  const jobs: { [key: string]: Job } = {};
-
   for (const code of Object.keys(JobCode)) {
-    jobs[code] = await prisma.job.upsert({
+    await prisma.job.upsert({
       where: { code: code },
       update: {},
       create: {
@@ -36,10 +31,8 @@ async function main() {
 
   // View on war
 
-  const views: { [key: string]: ViewOnWar } = {};
-
   for (const code of Object.keys(ViewOnWarCode)) {
-    views[code] = await prisma.viewOnWar.upsert({
+    await prisma.viewOnWar.upsert({
       where: { code: code },
       update: {},
       create: {
@@ -66,16 +59,16 @@ async function main() {
     create: {
       id: "stas",
       slug: "i-kak-prosto",
-      imageUrl: "url",
+      imageUrl: "",
       realName: "Стас Васильев",
       jobs: {
-        connect: [{ id: jobs[JobCode.BLOGGER]?.id }],
+        connect: [{ code: JobCode.BLOGGER }],
       },
       nationality: {
-        connect: { id: nationalities[CountryCode.RU]?.id },
+        connect: { code: CountryCode.RU },
       },
       viewOnWar: {
-        connect: { id: views[ViewOnWarCode.WITH_ORKY]?.id },
+        connect: { code: ViewOnWarCode.WITH_ORKY },
       },
       nicknames: {
         create: [
@@ -106,16 +99,16 @@ async function main() {
     create: {
       id: "putin-huy",
       slug: "putin-huy",
-      imageUrl: "url",
+      imageUrl: "",
       realName: "Путин",
       jobs: {
-        connect: [{ id: jobs[JobCode.POLITICIAN]?.id }],
+        connect: [{ code: JobCode.POLITICIAN }],
       },
       nationality: {
-        connect: { id: nationalities[CountryCode.RU]?.id },
+        connect: { code: CountryCode.RU },
       },
       viewOnWar: {
-        connect: { id: views[ViewOnWarCode.WITH_ORKY]?.id },
+        connect: { code: ViewOnWarCode.WITH_ORKY },
       },
       nicknames: {
         create: [

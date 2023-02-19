@@ -1,23 +1,22 @@
 import { Layout, SearchField, TargetComponent } from "@/components";
-import { findTargetsHandler } from "@/server/controller/target.controller";
-import type { Target } from "@prisma/client";
+import { trpc } from "@/utils/trpc";
 import { useFormik } from "formik";
-import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import type { NextPageWithLayout } from "./_app";
 
-interface SearchProps {
-  targets: Target[];
-}
-
-const Search: NextPageWithLayout<SearchProps> = (props) => {
+const Search: NextPageWithLayout = () => {
   const router = useRouter();
+
+  const query = typeof router.query.q === "string" ? router.query.q : "";
+
   const formik = useFormik({
-    initialValues: { query: router.query.q },
+    initialValues: { query: (router.query.q as string) || "" },
     onSubmit: (values) => {
-      router.push(`/search?q=${values.query}`);
+      router.replace(`/search?q=${values.query}`);
     },
   });
+
+  const targets = trpc.target.find.useQuery({ query: query });
 
   return (
     <div className="flex flex-col items-center px-2">
@@ -36,9 +35,9 @@ const Search: NextPageWithLayout<SearchProps> = (props) => {
         <div className="px-2">Filters</div>
         <div className="h-2" />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {props.targets?.map((target) => (
-            // TODO update Target with TargetSelect type
-            <TargetComponent key={target.slug} target={target.slug} />
+          {targets.isLoading && <div>Loading...</div>}
+          {targets.data?.map((target) => (
+            <TargetComponent key={target.id} target={target} />
           ))}
         </div>
       </div>
@@ -48,20 +47,6 @@ const Search: NextPageWithLayout<SearchProps> = (props) => {
 
 Search.getLayout = (page) => {
   return <Layout>{page}</Layout>;
-};
-
-export const getServerSideProps: GetServerSideProps<SearchProps> = async (
-  context
-) => {
-  const query = context.query.q as string;
-
-  const targets = await findTargetsHandler({ query });
-
-  return {
-    props: {
-      targets: targets,
-    },
-  };
 };
 
 export default Search;

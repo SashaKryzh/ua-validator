@@ -1,4 +1,5 @@
-import { createTarget, findTargets } from "@/server/service/target.service";
+import { prisma } from "@/server/db/client";
+import { Prisma } from "@prisma/client";
 import CyrillicToTranslit from "cyrillic-to-translit-js";
 import { z } from "zod";
 import type { CreateTargetSchema } from "../schema/target.schema";
@@ -10,70 +11,74 @@ export const createTargetHandler = async ({
   creatorEmail,
 }: {
   input: CreateTargetSchema;
-  creatorEmail: string | null;
+  creatorEmail?: string;
 }) => {
   try {
     const slug = await findAvailableSlug(input);
 
-    return await createTarget({
-      slug: slug,
-      imageUrl: input.imageUrl,
-      realName: input.realName,
-      nationality: {
-        connect: {
-          code: input.nationality,
-        },
-      },
-      viewOnWar: {
-        connect: {
-          code: input.viewOnWar,
-        },
-      },
-      jobs: {
-        connect: [
-          {
-            code: input.job,
+    return await prisma.target.create({
+      data: {
+        slug: slug,
+        imageUrl: input.imageUrl,
+        realName: input.realName,
+        nationality: {
+          connect: {
+            code: input.nationality,
           },
-        ],
-      },
-      nicknames: {
-        create: input.nicknames.map((n) => ({ value: n })),
-      },
-      evidences: {
-        create: [
-          {
-            resume: input.evidence.resume,
-            images: {
-              create: input.evidence.images.map((i) => ({ path: i })),
+        },
+        viewOnWar: {
+          connect: {
+            code: input.viewOnWar,
+          },
+        },
+        jobs: {
+          connect: [
+            {
+              code: input.job,
             },
-            creator: connectIfAny(creatorEmail),
-          },
-        ],
+          ],
+        },
+        nicknames: {
+          create: input.nicknames.map((n) => ({ value: n })),
+        },
+        evidences: {
+          create: [
+            {
+              resume: input.evidence.resume,
+              images: {
+                create: input.evidence.images.map((i) => ({ path: i })),
+              },
+              creator: connectIfAny(creatorEmail),
+            },
+          ],
+        },
+        resources: {
+          create: input.resources.map((r) => ({ url: r })),
+        },
+        creator: connectIfAny(creatorEmail),
       },
-      resources: {
-        create: input.resources.map((r) => ({ url: r })),
-      },
-      creator: connectIfAny(creatorEmail),
     });
   } catch (e) {
     throw e; // TODO: turn into custom error
   }
 };
 
-export const findTargetsHandler = async ({
-  query = "",
-  page = 1,
-  limit = 10,
-}: {
-  query?: string;
-  page?: number;
-  limit?: number;
-}) => {
-  query = query.trim();
+const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
+  nicknames: true,
+  resources: true,
+  mainEvidence: true,
+});
+
+export const findTargetsHandler = async ({ query }: { query?: string }) => {
+  query = query?.trim();
+
+  if (!query) {
+    return prisma.target.findMany({ include: FindTargetsInclude });
+  }
 
   const isUrl = z.string().url().safeParse(query).success;
 
-  return findTargets({
+  return prisma.target.findMany({
     where: isUrl
       ? { resources: { some: { url: query } } }
       : {
@@ -82,10 +87,13 @@ export const findTargetsHandler = async ({
             { nicknames: { some: { value: { contains: query } } } },
           ],
         },
-    take: limit,
-    skip: (page - 1) * limit,
+    include: FindTargetsInclude,
   });
 };
+
+export type TargetFindTargets = Prisma.PromiseReturnType<
+  typeof findTargetsHandler
+>[number];
 
 /**
  * Converts target name to a slug.
@@ -96,7 +104,10 @@ async function findAvailableSlug(input: CreateTargetSchema) {
   const knownName = input.realName ?? input.nicknames[0] ?? "unknown";
   let slug = transliterator.transform(knownName, "-").toLowerCase();
 
-  const existingTargets = await findTargets({
+  // TODO: Improve checking for existing slug
+  // AR: new slug = "stas" and we already have "stasiv" - contains "stas", so we will get "stas-1"
+  // ER: new slug should be "stas"
+  const existingTargets = await prisma.target.findMany({
     where: {
       slug: {
         contains: slug,
@@ -114,17 +125,17 @@ async function findAvailableSlug(input: CreateTargetSchema) {
  * Connects to a user if email is provided.
  * @param creatorEmail email of the user
  */
-function connectIfAny(creatorEmail: string | null) {
-  return creatorEmail !== null
-    ? {
-        connectOrCreate: {
-          where: {
-            email: creatorEmail,
-          },
-          create: {
-            email: creatorEmail,
-          },
-        },
-      }
-    : undefined;
+function connectIfAny(creatorEmail?: string) {
+  if (!creatorEmail) return;
+
+  return {
+    connectOrCreate: {
+      where: {
+        email: creatorEmail,
+      },
+      create: {
+        email: creatorEmail,
+      },
+    },
+  };
 }
