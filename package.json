@@ -8,7 +8,7 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "checktype": "tsc --noEmit --noErrorTruncation --pretty false --incremental false"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.4",

@@ -1,4 +1,4 @@
-name: Validate Code Base
+name: Validate Code
 
 on:
   push:
@@ -6,38 +6,46 @@ on:
   pull_request:
     branches: [ "main" ]
 jobs:
-  run-lint:
-    name: esLint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Full git history is needed to get a proper list of changed files within `super-linter`
-
-      # For more information, see: https://github.com/github/super-linter
-      - name: Lint Code
-        uses: github/super-linter@v4
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: "main"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   tsc:
-    name: TCS
+    name: tsc
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
 
       - name: install node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: pnpm
 
-      - uses: egordm/gha-yarn-node-cache@v1
-      - name: install yarn
-        run: yarn install
+      - run: pnpm install --frozen-lockfile
+
+      - name: Check Types
+        run: pnpm run checktype
 
       - name: Check Types
         uses: icrawl/action-tsc@v1
+
+  esLint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
+      - name: install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: SKIP_ENV_VALIDATION=true pnpm run lint
