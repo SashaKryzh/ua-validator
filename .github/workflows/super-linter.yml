@@ -1,4 +1,4 @@
-name: Lint Code Base
+name: Validate Code Base
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0 # Full git history is needed to get a proper list of changed files within `super-linter`
 
       # For more information, see: https://github.com/github/super-linter
-      - name: Lint Code Base
+      - name: Lint Code
         uses: github/super-linter@v4
         env:
           VALIDATE_ALL_CODEBASE: false
@@ -35,10 +35,9 @@ jobs:
         with:
           node-version: 16
 
-      - name: yarn install
+      - uses: egordm/gha-yarn-node-cache@v1
+      - name: install yarn
         run: yarn install
 
-      - name: tsc
+      - name: Check Types
         uses: icrawl/action-tsc@v1
-
-
