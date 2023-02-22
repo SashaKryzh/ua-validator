@@ -5,6 +5,7 @@ import {
 import type { CreateTargetSchema } from "@/server/schema/target.schema";
 import { createTargetSchema } from "@/server/schema/target.schema";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,8 +31,19 @@ export default async function handler(
       try {
         targetList = createTargetSchema.array().parse(req.body);
       } catch (err) {
-        console.log(err);
-        res.status(400).json({ result: "Validation Error" });
+        if (!(err instanceof z.ZodError) || !Array.isArray(req.body)) {
+          res.status(400).json({ result: "Invalid body" });
+          break;
+        }
+
+        const errorMessages = err.issues.map((issue) => ({
+          message: issue.message,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          path: req.body[issue.path[0]][issue.path[1]],
+        }));
+
+        res.status(400).json({ result: "Validation Error", errorMessages });
         break;
       }
 
