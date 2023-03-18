@@ -69,6 +69,12 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
   mainEvidence: true,
 });
 
+/**
+ * Finds targets by name or resource.
+ * NOTE: search will be case-insensitive with MySQL by default
+ *       (use mode: 'insensitive' for PostgreSQL)
+ * @param query target name or resource url
+ */
 export const findTargetsHandler = async ({ query }: { query?: string }) => {
   query = query?.trim();
 
@@ -80,12 +86,17 @@ export const findTargetsHandler = async ({ query }: { query?: string }) => {
 
   return prisma.target.findMany({
     where: isUrl
-      ? { resources: { some: { url: query } } }
+      ? { resources: { some: { url: query } }, deleted: false }
       : {
           OR: [
             { realName: { contains: query } },
-            { nicknames: { some: { value: { contains: query } } } },
+            {
+              nicknames: {
+                some: { value: { contains: query } },
+              },
+            },
           ],
+          deleted: false,
         },
     include: FindTargetsInclude,
   });
@@ -94,6 +105,37 @@ export const findTargetsHandler = async ({ query }: { query?: string }) => {
 export type TargetFindTargets = Prisma.PromiseReturnType<
   typeof findTargetsHandler
 >[number];
+
+const FindTargetInclude = Prisma.validator<Prisma.TargetInclude>()({
+  nicknames: true,
+  resources: true,
+  mainEvidence: true,
+  evidences: {
+    include: {
+      images: true,
+    },
+  },
+});
+
+/**
+ * Finds a target by slug.
+ * @param slug unique target identifier
+ */
+export const findTargetHandler = async ({ slug }: { slug: string }) => {
+  slug = slug.trim();
+
+  return prisma.target.findFirst({
+    where: {
+      slug: slug,
+      deleted: false,
+    },
+    include: FindTargetInclude,
+  });
+};
+
+export type TargetFindTarget = Prisma.PromiseReturnType<
+  typeof findTargetHandler
+>;
 
 /**
  * Converts target name to a slug.
