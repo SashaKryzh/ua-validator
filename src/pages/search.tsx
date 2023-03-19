@@ -16,7 +16,7 @@ const Search: NextPageWithLayout = () => {
     },
   });
 
-  const targets = trpc.target.find.useQuery({ query: query });
+  const targets = trpc.target.findByNameOrResource.useQuery({ query: query });
 
   return (
     <div className="flex flex-col items-center px-2">
@@ -25,14 +25,13 @@ const Search: NextPageWithLayout = () => {
           <form onSubmit={formik.handleSubmit}>
             <SearchField
               inputProps={{
+                id: "query",
                 onChange: formik.handleChange,
                 value: formik.values.query,
               }}
             />
           </form>
         </div>
-        <div className="h-2" />
-        <div className="px-2">Filters</div>
         <div className="h-2" />
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {targets.isLoading && <div>Loading...</div>}

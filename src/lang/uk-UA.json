@@ -17,5 +17,9 @@
     "ViewOnWarCode.WITH_UKRAINE": "За Україну 🇺🇦",
     "ViewOnWarCode.WITH_ORKY": "За росію 🇷🇺",
     "ViewOnWarCode.QUIET": "Мовчить 😬",
-    "ViewOnWarCode.PEACE_DEATH": "За мір во всьом мірє 🤡"
+    "ViewOnWarCode.PEACE_DEATH": "За мір во всьом мірє 🤡",
+
+    "CountryCode.UA": "🇺🇦",
+    "CountryCode.RU": "🇷🇺",
+    "CountryCode.OTHER": "🌍"
 }
