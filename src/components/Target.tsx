@@ -15,7 +15,7 @@ export default function TargetComponent({ target }: TargetComponentProps) {
       <div className="aspect-[3/4]">
         <div className="relative h-full bg-slate-400">
           <Image
-            src="/img/stas.jpg"
+            src={`/images/${target.imageUrl}`}
             alt={`Фотографія ${target.realName}`}
             fill={true}
             className="overflow-hidden object-cover"

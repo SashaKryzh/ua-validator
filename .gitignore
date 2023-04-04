@@ -43,3 +43,6 @@ yarn-error.log*
 # tools
 .idea
 *.code-workspace
+
+# test files
+/public/images/*

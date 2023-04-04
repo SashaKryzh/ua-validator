@@ -21,7 +21,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
       <div className="flex w-full max-w-screen-md flex-col items-center">
         <div className="relative aspect-square w-full max-w-sm">
           <Image
-            src="/img/stas.jpg"
+            src={`/images/${target.imageUrl}`}
             alt={`Фотографія ${target.realName}`}
             fill={true}
             className="overflow-hidden object-cover"
@@ -44,7 +44,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
             .map((image, idx) => (
               <div key={image.id} className="relative aspect-square">
                 <Image
-                  src={"/img/stas.jpg"}
+                  src={`/images/${image.path}`}
                   alt={`Фотографія ${idx}`}
                   fill={true}
                   className="overflow-hidden object-cover"
