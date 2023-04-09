@@ -23,14 +23,12 @@ const inputStyle = cva("w-full outline-none text-h7", {
 
 export type inputStyleProps = VariantProps<typeof inputStyle>;
 
-export type InputProps = React.InputHTMLAttributes<HTMLInputElement> &
+export type InputProps = React.ComponentPropsWithRef<'input'> &
   inputStyleProps & {
     placeholderLabel?: string | null;
     error?: string;
-    // Don't know why, but the disabled property is always false
-    disabled2?: boolean;
-    prefix?: JSX.Element;
-    suffix?: JSX.Element;
+    prefixNode?: React.ReactNode;
+    suffixNode?:  React.ReactNode;
   };
 
 export const InputField = forwardRef<
@@ -63,11 +61,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   return (
     <div className="py-1">
       <div className="relative z-0">
-        {props.prefix && (
+        {props.prefixNode && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
             <div className="flex h-10 w-10 items-center justify-center">
               <IconContext.Provider value={{ className: "w-6 h-6" }}>
-                {props.prefix}
+                {props.prefixNode}
               </IconContext.Provider>
             </div>
           </div>
@@ -75,13 +73,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         <input
           ref={ref}
           {...props}
-          disabled={props.disabled2}
           placeholder=" "
           className={clsx(
             inputStyle({ variant: props.variant }),
             props.className,
             props.error && "border-error",
-            props.prefix && "pl-12"
+            props.prefixNode && "pl-12"
           )}
         />
         {props.placeholderLabel && (

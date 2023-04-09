@@ -25,7 +25,7 @@ export default function Dropdown(props: DropdownProps) {
       <div className="relative">
         <Listbox.Button as="div">
           <Input
-            disabled2={true}
+            disabled={true}
             placeholderLabel={props.placeholderLabel}
             value={selected}
           />
