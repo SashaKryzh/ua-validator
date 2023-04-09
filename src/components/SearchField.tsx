@@ -14,7 +14,7 @@ export default function SearchField(props: SearchFieldProps) {
       <Input
         placeholder="Пошук за іменем або нікнеймом"
         autoComplete="off"
-        prefix={<BiSearch />}
+        prefixNode={<BiSearch />}
         {...props.inputProps}
         className="pr-10"
         variant="rounded"
