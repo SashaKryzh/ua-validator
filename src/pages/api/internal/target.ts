@@ -51,7 +51,7 @@ export default async function handler(
         try {
           await createTargetHandler({
             input: target,
-            creatorEmail: "internal@mail.com",
+            creatorEmail: "admin@uavalidator.com",
           });
         } catch (err) {
           errorList.push(target.realName ?? target.nicknames[0] ?? "unknown");

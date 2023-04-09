@@ -101,7 +101,7 @@ model Target {
 
 model Evidence {
   id     String          @id @default(cuid())
-  resume String
+  resume String          @db.VarChar(512)
   urls   EvidenceUrl[]
   images EvidenceImage[]
 
