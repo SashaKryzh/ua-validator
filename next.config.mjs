@@ -16,5 +16,10 @@ const config = {
   experimental: {
     swcPlugins: [["next-superjson-plugin", {}]],
   },
+  images: {
+    domains: [
+      "uavalidator-images.s3.eu-central-1.amazonaws.com",
+    ]
+  }
 };
 export default config;

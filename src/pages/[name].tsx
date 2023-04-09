@@ -8,6 +8,7 @@ import {
   findTargetHandler,
   type TargetFindTarget,
 } from "@/server/controller/target.controller";
+import { env } from "@/env/client.mjs";
 
 interface TargetPageProps {
   target: NonNullable<TargetFindTarget>;
@@ -21,7 +22,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
       <div className="flex w-full max-w-screen-md flex-col items-center">
         <div className="relative aspect-square w-full max-w-sm">
           <Image
-            src={`/images/${target.imageUrl}`}
+            src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
             alt={`Фотографія ${target.realName}`}
             fill={true}
             className="overflow-hidden object-cover"
@@ -44,7 +45,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
             .map((image, idx) => (
               <div key={image.id} className="relative aspect-square">
                 <Image
-                  src={`/images/${image.path}`}
+                  src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`}
                   alt={`Фотографія ${idx}`}
                   fill={true}
                   className="overflow-hidden object-cover"
