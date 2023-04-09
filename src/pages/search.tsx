@@ -29,6 +29,7 @@ const Search: NextPageWithLayout = () => {
                 onChange: formik.handleChange,
                 value: formik.values.query,
               }}
+              onClear={() => { formik.setFieldValue("query", ""); }}
             />
           </form>
         </div>

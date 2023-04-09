@@ -24,10 +24,7 @@ export default function SearchField(props: SearchFieldProps) {
           "absolute inset-y-0 right-0 flex cursor-pointer items-center pr-2 ",
           { hidden: props.inputProps?.value === "" }
         )}
-        onClick={(e) => {
-          e.preventDefault();
-          props.onClear?.();
-        }}
+        onClick={() => props.onClear?.()}
       >
         <MdClear className="h-10 w-10 p-2" />
       </div>
