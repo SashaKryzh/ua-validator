@@ -1,13 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model ViewOnWar {
@@ -43,6 +41,7 @@ model Nickname {
   targetId String
 
   @@index(value)
+  @@index([targetId])
 }
 
 model TargetResource {
@@ -52,6 +51,7 @@ model TargetResource {
   targetId String
 
   @@index(url)
+  @@index([targetId])
 }
 
 model TargetReview {
@@ -94,16 +94,19 @@ model Target {
 
   @@index(realName)
   @@index(slug)
+  @@index([nationalityCode])
+  @@index([viewOnWarCode])
+  @@index([creatorId])
 }
 
 model Evidence {
   id     String          @id @default(cuid())
-  resume String
+  resume String          @db.VarChar(512)
   urls   EvidenceUrl[]
   images EvidenceImage[]
 
   targetId           String
-  target             Target   @relation(fields: [targetId], references: [id])
+  target             Target   @relation(fields: [targetId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   targetMainEvidence Target?  @relation("TargetMainEvidence")
   creator            Creator? @relation(fields: [creatorId], references: [id])
   creatorId          String
@@ -111,6 +114,9 @@ model Evidence {
   review    EvidenceReview?
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+
+  @@index([targetId])
+  @@index([creatorId])
 }
 
 model EvidenceReview {
@@ -132,6 +138,7 @@ model EvidenceUrl {
   evidenceId String
 
   @@index(url)
+  @@index([evidenceId])
 }
 
 model EvidenceImage {
@@ -139,4 +146,6 @@ model EvidenceImage {
   path       String
   evidence   Evidence @relation(fields: [evidenceId], references: [id])
   evidenceId String
+
+  @@index([evidenceId])
 }
