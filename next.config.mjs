@@ -19,6 +19,7 @@ const config = {
   images: {
     domains: [
       "uavalidator-images.s3.eu-central-1.amazonaws.com",
+      "res.cloudinary.com",
     ]
   }
 };
