@@ -72,7 +72,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
 };
 
 TargetPage.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
+  return <Layout title={"Огляд людини"}>{page}</Layout>;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

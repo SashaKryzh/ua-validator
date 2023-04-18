@@ -29,7 +29,9 @@ const Search: NextPageWithLayout = () => {
                 onChange: formik.handleChange,
                 value: formik.values.query,
               }}
-              onClear={() => { formik.setFieldValue("query", ""); }}
+              onClear={() => {
+                formik.setFieldValue("query", "");
+              }}
             />
           </form>
         </div>
@@ -46,7 +48,7 @@ const Search: NextPageWithLayout = () => {
 };
 
 Search.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
+  return <Layout title={"Пошук людини"}>{page}</Layout>;
 };
 
 export default Search;

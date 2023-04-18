@@ -1,11 +1,25 @@
 import clsx from "clsx";
 import { BiSearch } from "react-icons/bi";
 import { MdClear } from "react-icons/md";
-import { Input, type InputProps } from "../ui/Input";
+import { Input, type InputProps } from "@/ui/Input";
 
 export interface SearchFieldProps {
   inputProps?: InputProps;
   onClear?: () => void;
+}
+
+function ClearIcon({
+  hidden,
+  onClear,
+}: {
+  hidden: boolean;
+  onClear?: () => void;
+}) {
+  return (
+    <div className={clsx("cursor-pointer", { hidden })} onClick={onClear}>
+      <MdClear />
+    </div>
+  );
 }
 
 export default function SearchField(props: SearchFieldProps) {
@@ -14,20 +28,17 @@ export default function SearchField(props: SearchFieldProps) {
       <Input
         placeholder="Пошук за іменем або нікнеймом"
         autoComplete="off"
-        prefixNode={<BiSearch />}
         {...props.inputProps}
         className="pr-10"
         variant="rounded"
+        prefixNode={<BiSearch />}
+        suffixNode={
+          <ClearIcon
+            onClear={props.onClear}
+            hidden={props.inputProps?.value === ""}
+          />
+        }
       />
-      <div
-        className={clsx(
-          "absolute inset-y-0 right-0 flex cursor-pointer items-center pr-2 ",
-          { hidden: props.inputProps?.value === "" }
-        )}
-        onClick={() => props.onClear?.()}
-      >
-        <MdClear className="h-10 w-10 p-2" />
-      </div>
     </div>
   );
 }

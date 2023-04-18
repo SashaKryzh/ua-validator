@@ -26,7 +26,7 @@ interface AddTargetProps {
   nationalities: Nationality[];
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const jobs = await prisma?.job.findMany();
   const nationalities = await prisma?.nationality.findMany();
 
@@ -226,7 +226,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                     }
                   />
                   <Field name="proof">
-                    {({ field, form, meta }: FieldProps) => {
+                    {({ field, meta }: FieldProps) => {
                       return (
                         <TextArea
                           id="proof"
@@ -283,10 +283,6 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                   <Spacer className="h-10" />
                   <Button type="submit">Додати</Button>
                   <Spacer className="h-10" />
-                  {/* TODO: remove */}
-                  {formik.submitCount > 0 && !formik.isValid && (
-                    <div>{JSON.stringify(formik.errors)}</div>
-                  )}
                 </div>
               </div>
             </Form>
@@ -298,7 +294,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 };
 
 AddTarget.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
+  return <Layout title={"Додати людину"}>{page}</Layout>;
 };
 
 export default AddTarget;
@@ -310,12 +306,12 @@ function SectionHeader(props: {
   subtitle?: string | React.ReactNode;
 }) {
   return (
-    <div className="pt-6 pb-3">
+    <div className="pb-3 pt-6">
       <h2 className="text-h5">{props.title}</h2>
       {props.subtitle && (
         <>
           <Spacer className="h-1" />
-          <p className="text-h8 opacity-50">{props.subtitle}</p>
+          <div className="text-h8 opacity-50">{props.subtitle}</div>
         </>
       )}
     </div>
@@ -329,6 +325,7 @@ function ViewOnWar() {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-1">
+        {/*TODO: investigate general approach how to prevent internal properties from passing to standard once*/}
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_UKRAINE}`)}
           value1={ViewOnWarCode.WITH_UKRAINE}

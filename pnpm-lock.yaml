@@ -22,6 +22,9 @@ dependencies:
   '@trpc/server':
     specifier: 10.0.0-rc.0
     version: 10.0.0-rc.0
+  '@vercel/analytics':
+    specifier: ^0.1.11
+    version: 0.1.11(react@18.2.0)
   class-variance-authority:
     specifier: ^0.2.4
     version: 0.2.4(typescript@4.9.5)
@@ -675,6 +678,14 @@ packages:
       eslint-visitor-keys: 3.4.0
     dev: true
 
+  /@vercel/analytics@0.1.11(react@18.2.0):
+    resolution: {integrity: sha512-mj5CPR02y0BRs1tN3oZcBNAX9a8NxsIUl9vElDPcqxnMfP0RbRc9fI9Ud7+QDg/1Izvt5uMumsr+6YsmVHcyuw==}
+    peerDependencies:
+      react: ^16.8||^17||^18
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /acorn-jsx@5.3.2(acorn@8.8.2):
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
@@ -1197,7 +1208,7 @@ packages:
       eslint: 8.22.0
       eslint-import-resolver-node: 0.3.7
       eslint-import-resolver-typescript: 2.7.1(eslint-plugin-import@2.27.5)(eslint@8.22.0)
-      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-typescript@2.7.1)(eslint@8.22.0)
+      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.57.1)(eslint@8.22.0)
       eslint-plugin-jsx-a11y: 6.7.1(eslint@8.22.0)
       eslint-plugin-react: 7.32.2(eslint@8.22.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.22.0)
@@ -1226,7 +1237,7 @@ packages:
     dependencies:
       debug: 4.3.4
       eslint: 8.22.0
-      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-typescript@2.7.1)(eslint@8.22.0)
+      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.57.1)(eslint@8.22.0)
       glob: 7.2.3
       is-glob: 4.0.3
       resolve: 1.22.2
@@ -1235,7 +1246,7 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-module-utils@2.7.4(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@2.7.1)(eslint@8.22.0):
+  /eslint-module-utils@2.7.4(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-node@0.3.7)(eslint@8.22.0):
     resolution: {integrity: sha512-j4GT+rqzCoRKHwURX7pddtIPGySnX9Si/cgMI5ztrcqOPtk5dDEeZ34CQVPphnqkJytlc97Vuk05Um2mJ3gEQA==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -1260,12 +1271,11 @@ packages:
       debug: 3.2.7
       eslint: 8.22.0
       eslint-import-resolver-node: 0.3.7
-      eslint-import-resolver-typescript: 2.7.1(eslint-plugin-import@2.27.5)(eslint@8.22.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /eslint-plugin-import@2.27.5(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-typescript@2.7.1)(eslint@8.22.0):
+  /eslint-plugin-import@2.27.5(@typescript-eslint/parser@5.57.1)(eslint@8.22.0):
     resolution: {integrity: sha512-LmEt3GVofgiGuiE+ORpnvP+kAm3h6MLZJ4Q5HCyHADofsb4VzXFsRiWj3c0OFiV+3DWFh0qg3v9gcPlfc3zRow==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -1283,7 +1293,7 @@ packages:
       doctrine: 2.1.0
       eslint: 8.22.0
       eslint-import-resolver-node: 0.3.7
-      eslint-module-utils: 2.7.4(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-node@0.3.7)(eslint-import-resolver-typescript@2.7.1)(eslint@8.22.0)
+      eslint-module-utils: 2.7.4(@typescript-eslint/parser@5.57.1)(eslint-import-resolver-node@0.3.7)(eslint@8.22.0)
       has: 1.0.3
       is-core-module: 2.11.0
       is-glob: 4.0.3

@@ -23,14 +23,15 @@ const inputStyle = cva("w-full outline-none text-h7", {
 
 export type inputStyleProps = VariantProps<typeof inputStyle>;
 
-export type InputProps = React.ComponentPropsWithRef<'input'> &
+export type InputProps = React.ComponentPropsWithRef<"input"> &
   inputStyleProps & {
     placeholderLabel?: string | null;
     error?: string;
     prefixNode?: React.ReactNode;
-    suffixNode?:  React.ReactNode;
+    suffixNode?: React.ReactNode;
   };
 
+// TODO: extract to separate file with it's non-generic inputStyle and label
 export const InputField = forwardRef<
   HTMLInputElement,
   InputProps & { name: string; showError?: boolean }
@@ -39,13 +40,20 @@ export const InputField = forwardRef<
 
   return (
     <Field name={props.name}>
-      {({ field, form, meta }: FieldProps) => {
+      {({ field, meta }: FieldProps) => {
         const error = showError && meta.touched && meta.error;
+        const placeholder =
+          props.placeholderLabel === null ||
+          props.placeholderLabel === undefined
+            ? props.placeholder
+            : " ";
+        // TODO: rewrite to inject whole label node as prop from InputField
 
         return (
           <Input
             ref={ref}
             error={typeof error === "string" ? error : undefined}
+            placeholder={placeholder}
             {...field}
             {...props}
           />
@@ -58,27 +66,28 @@ export const InputField = forwardRef<
 InputField.displayName = "InputField";
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  const { prefixNode, suffixNode, ...rest } = props;
   return (
     <div className="py-1">
       <div className="relative z-0">
-        {props.prefixNode && (
+        {prefixNode && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
             <div className="flex h-10 w-10 items-center justify-center">
               <IconContext.Provider value={{ className: "w-6 h-6" }}>
-                {props.prefixNode}
+                {prefixNode}
               </IconContext.Provider>
             </div>
           </div>
         )}
         <input
           ref={ref}
-          {...props}
-          placeholder=" "
+          {...rest}
           className={clsx(
             inputStyle({ variant: props.variant }),
             props.className,
             props.error && "border-error",
-            props.prefixNode && "pl-12"
+            prefixNode && "pl-12",
+            suffixNode && "pr-12"
           )}
         />
         {props.placeholderLabel && (
@@ -91,6 +100,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           >
             {props.placeholderLabel}
           </label>
+        )}
+        {suffixNode && (
+          <div className="absolute inset-y-0 right-0 flex items-center pr-1">
+            <div className="flex h-10 w-10 items-center justify-center">
+              <IconContext.Provider value={{ className: "w-6 h-6" }}>
+                {suffixNode}
+              </IconContext.Provider>
+            </div>
+          </div>
         )}
       </div>
       {props.error && <p className="mt-1 text-h8 text-error">{props.error}</p>}

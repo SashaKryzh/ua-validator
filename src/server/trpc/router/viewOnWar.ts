@@ -1,6 +1,4 @@
-import { z } from "zod";
-
-import { router, publicProcedure } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 
 export const viewOnWarRouter = router({
   all: publicProcedure.query(({ ctx }) => {
