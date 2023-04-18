@@ -294,7 +294,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 };
 
 AddTarget.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
+  return <Layout title={"Додати людину"}>{page}</Layout>;
 };
 
 export default AddTarget;
@@ -311,7 +311,7 @@ function SectionHeader(props: {
       {props.subtitle && (
         <>
           <Spacer className="h-1" />
-          <p className="text-h8 opacity-50">{props.subtitle}</p>
+          <div className="text-h8 opacity-50">{props.subtitle}</div>
         </>
       )}
     </div>
@@ -325,6 +325,7 @@ function ViewOnWar() {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-1">
+        {/*TODO: investigate general approach how to prevent internal properties from passing to standard once*/}
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_UKRAINE}`)}
           value1={ViewOnWarCode.WITH_UKRAINE}

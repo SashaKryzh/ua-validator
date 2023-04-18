@@ -7,7 +7,6 @@ import "../styles/globals.css";
 import { useRouter } from "next/router";
 import { useScrollRestoration } from "@/utils/hooks/useScrollRestoration";
 import "../lang/i18n";
-import Head from "next/head";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -27,10 +26,6 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <div className="font-eUkraine">
-      <Head>
-        <title>My page title</title>
-        <meta property="og:title" content="My page title" key="title" />
-      </Head>
       {getLayout(<Component {...pageProps} />)}
       <Analytics />
     </div>
