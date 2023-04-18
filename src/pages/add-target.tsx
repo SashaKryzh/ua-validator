@@ -283,10 +283,6 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                   <Spacer className="h-10" />
                   <Button type="submit">Додати</Button>
                   <Spacer className="h-10" />
-                  {/* TODO: remove */}
-                  {formik.submitCount > 0 && !formik.isValid && (
-                    <div>{JSON.stringify(formik.errors)}</div>
-                  )}
                 </div>
               </div>
             </Form>
