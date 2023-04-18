@@ -26,7 +26,7 @@ interface AddTargetProps {
   nationalities: Nationality[];
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const jobs = await prisma?.job.findMany();
   const nationalities = await prisma?.nationality.findMany();
 
@@ -226,7 +226,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                     }
                   />
                   <Field name="proof">
-                    {({ field, form, meta }: FieldProps) => {
+                    {({ field, meta }: FieldProps) => {
                       return (
                         <TextArea
                           id="proof"
@@ -310,7 +310,7 @@ function SectionHeader(props: {
   subtitle?: string | React.ReactNode;
 }) {
   return (
-    <div className="pt-6 pb-3">
+    <div className="pb-3 pt-6">
       <h2 className="text-h5">{props.title}</h2>
       {props.subtitle && (
         <>

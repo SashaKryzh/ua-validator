@@ -1,11 +1,11 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import translationUK from '../lang/uk-UA.json';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import translationUK from "./uk-UA.json";
 
 const resources = {
-    uk: {
-        translation: translationUK
-    }
+  uk: {
+    translation: translationUK,
+  },
 };
 
 i18n.use(initReactI18next)

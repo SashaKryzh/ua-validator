@@ -23,12 +23,12 @@ const inputStyle = cva("w-full outline-none text-h7", {
 
 export type inputStyleProps = VariantProps<typeof inputStyle>;
 
-export type InputProps = React.ComponentPropsWithRef<'input'> &
+export type InputProps = React.ComponentPropsWithRef<"input"> &
   inputStyleProps & {
     placeholderLabel?: string | null;
     error?: string;
     prefixNode?: React.ReactNode;
-    suffixNode?:  React.ReactNode;
+    suffixNode?: React.ReactNode;
   };
 
 export const InputField = forwardRef<
@@ -39,7 +39,7 @@ export const InputField = forwardRef<
 
   return (
     <Field name={props.name}>
-      {({ field, form, meta }: FieldProps) => {
+      {({ field, meta }: FieldProps) => {
         const error = showError && meta.touched && meta.error;
 
         return (
