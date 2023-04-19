@@ -57,11 +57,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           <Spacer className="h-2" />
           {/* Jobs */}
           <h3>
-            {target.jobs.map(
-              (job, index) =>
-                t(`JobCode.${job.code}`) +
-                (index < target.jobs.length - 1 ? "/" : "")
-            )}
+            {target.jobs.map((job) => t(`JobCode.${job.code}`)).join(" / ")}
           </h3>
           <Spacer className="h-4" />
           {/* Resources */}
@@ -83,7 +79,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
                 key={image.id}
                 index={idx}
                 image={image}
-                onClick={() => setLightboxOpen(true)}
+                // onClick={() => setLightboxOpen(true)}
               />
             ))}
           </div>
