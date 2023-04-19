@@ -21,5 +21,15 @@
 
     "CountryCode.UA": "🇺🇦",
     "CountryCode.RU": "🇷🇺",
-    "CountryCode.OTHER": "🌍"
+    "CountryCode.OTHER": "🌍",
+
+    "JobCode.UNEMPLOYED": "Безробітний",
+    "JobCode.BLOGGER": "Блогер",
+    "JobCode.JOURNALIST": "Журналіст",
+    "JobCode.POLITICIAN": "Політик",
+    "JobCode.MILITARY": "Військовослужбовець",
+    "JobCode.SINGER": "Співак",
+    "JobCode.ACTOR": "Актор",
+    "JobCode.SPORTSMAN": "Спортсмен",
+    "JobCode.OTHER": "Інше"
 }
