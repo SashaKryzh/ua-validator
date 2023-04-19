@@ -11,6 +11,7 @@
     "checktype": "tsc --noEmit --noErrorTruncation --pretty false --incremental false"
   },
   "dependencies": {
+    "@datadog/browser-rum": "^4.39.0",
     "@headlessui/react": "^1.7.13",
     "@prisma/client": "^4.12.0",
     "@tanstack/react-query": "^4.28.0",
