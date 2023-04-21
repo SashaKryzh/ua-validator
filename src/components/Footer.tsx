@@ -2,36 +2,31 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 p-4  md:flex md:items-center md:justify-between md:p-6">
-      <span className="text-sm text-gray-500 dark:text-gray-400 sm:text-center">
-        © {new Date().getFullYear() + " "}
+    <footer className="flex flex-col bg-black p-6 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-center text-sm text-gray-300 sm:text-left">
+        © {new Date().getFullYear() + " - "}
         <Link href="/" className="hover:underline">
-          UA Validator
+          UA Validator 🇺🇦
         </Link>
-        . All Rights Reserved.
       </span>
-      <ul className="mt-3 flex flex-wrap items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-        <li>
-          <Link href="#" className="mr-4 hover:underline md:mr-6 ">
-            About
+      <div className="t flex flex-wrap items-center justify-center pt-3 text-sm text-gray-300 sm:pt-0">
+        <span className="mr-4">Created by</span>
+        <div className="flex gap-2">
+          <Link
+            href="https://github.com/SashaKryzh"
+            className="font-mono hover:underline"
+          >
+            @sashakryzh
           </Link>
-        </li>
-        <li>
-          <Link href="#" className="mr-4 hover:underline md:mr-6">
-            Privacy Policy
+          &
+          <Link
+            href="https://github.com/denitdao"
+            className="font-mono hover:underline"
+          >
+            @denitdao
           </Link>
-        </li>
-        <li>
-          <Link href="#" className="mr-4 hover:underline md:mr-6">
-            Licensing
-          </Link>
-        </li>
-        <li>
-          <Link href="#" className="hover:underline">
-            Contact
-          </Link>
-        </li>
-      </ul>
+        </div>
+      </div>
     </footer>
   );
 }
