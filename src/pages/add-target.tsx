@@ -113,183 +113,210 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   });
 
   return (
-    <NoSSRWrapper>
-      <Formik
-        initialValues={initialValues}
-        onSubmit={(values, actions) => {
-          console.log({ values, actions });
-        }}
-        validationSchema={validationSchema}
-        validateOnChange={true}
-        validate={validate}
-      >
-        {(formik) => {
-          return (
-            <Form>
-              <div className="flex flex-col items-center px-2">
-                <div className="w-full max-w-screen-md"></div>
-                <div className="flex w-full max-w-lg flex-col">
-                  <Spacer className="h-6" />
-                  <Photo className="w-1/2 self-center" />
-                  <Spacer className="h-6" />
-                  <InputField
-                    name="realName"
-                    autoComplete="off"
-                    placeholderLabel={t("page.add-target.real-name")}
-                  />
-                  <SectionHeader
-                    title={t("page.add-target.section-header.nickname")}
-                  />
-                  <InputFieldArray
-                    name="nicknames"
-                    placeholderLabel="Псевдонім"
-                  />
-                  <SectionHeader
-                    title={t("page.add-target.section-header.view-on-war")}
-                  />
-                  <ViewOnWar />
-                  <SectionHeader
-                    title={t("page.add-target.section-header.job")}
-                  />
-                  <Field name="jobs">
-                    {({ field, form, meta }: FieldProps) => {
-                      return (
-                        <div className="flex flex-wrap gap-1.5">
-                          {props.jobs.map((job, i) => (
-                            <Chip
-                              key={i}
-                              label={job.code}
-                              selected={meta.value.includes(job.code)}
-                              onClick={() => {
-                                let nextValue = [...meta.value];
-                                if (meta.value.includes(job.code)) {
-                                  nextValue = nextValue.filter(
-                                    (j) => j !== job.code
-                                  );
-                                } else {
-                                  nextValue.push(job.code);
-                                }
-                                form.setFieldValue(field.name, nextValue);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      );
-                    }}
-                  </Field>
-                  <SectionHeader
-                    title={t("page.add-target.section-header.resourses")}
-                    subtitle={t(
-                      "page.add-target.section-header.resourses.subtitle"
-                    )}
-                  />
-                  <InputFieldArray
-                    name="resourceLinks"
-                    placeholderLabel={`Посилання`}
-                  />
-                  <Spacer className="h-5" />
-                  <Field name="nationality">
-                    {({ field, form, meta }: FieldProps) => {
-                      const options = [
-                        ...props.nationalities.map((n) => n.code),
-                        "Unknown",
-                      ];
-
-                      return (
-                        <Dropdown
-                          placeholderLabel={t(
-                            "page.add-target.section-header.nationality"
-                          )}
-                          selected={meta.value}
-                          options={options}
-                          onChange={(value) =>
-                            form.setFieldValue(
-                              field.name,
-                              value === "Unknown" ? null : value
-                            )
-                          }
-                        />
-                      );
-                    }}
-                  </Field>
-                  <SectionHeader
-                    title={
-                      <div className="text-h3">
-                        Підтвердження позиції людини
-                      </div>
-                    }
-                    subtitle={
-                      <div className="text-h8">
-                        Заповніть хоча б{" "}
-                        <span className="font-bold">одне з полів нижче</span>.
-                      </div>
-                    }
-                  />
-                  <Field name="proof">
-                    {({ field, meta }: FieldProps) => {
-                      return (
-                        <TextArea
-                          id="proof"
-                          placeholderLabel="Короткий опис дій людини"
-                          autoComplete="off"
-                          error={meta.touched ? meta.error : undefined}
-                          {...field}
-                        />
-                      );
-                    }}
-                  </Field>
-                  <SectionHeader
-                    title={t("page.add-target.section-header.evidence")}
-                    subtitle={t(
-                      "page.add-target.section-header.evidence.subtitle"
-                    )}
-                  />
-                  <InputFieldArray
-                    name="proofLinks"
-                    placeholderLabel="Посилання"
-                  />
-                  <SectionHeader
-                    title="Фотопідтвердження доказів (до 10)"
-                    subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
-                  />
-                  <div className="grid grid-cols-2 gap-2">
-                    <Photo />
-                    <Photo />
-                  </div>
-                  <Spacer className="h-10" />
-                  <GradientContainer>
-                    <div className="flex flex-col px-4 py-5 text-h8">
-                      <div className="text-h4">Про додавання</div>
-                      <br />
-                      <p>
-                        Після додавання людини, вона буде перевірена адміном і
-                        додана на сайт.
-                      </p>
-                      <br />
-                      <p>
-                        Якщо бажаєте{" "}
-                        <span className="font-bold">отримати сповіщення</span>,
-                        коли адмін перевірить додану вами людини, будь ласка,
-                        залишіть ваш email.
-                      </p>
-                      <br />
+    <>
+      <Spacer className="h-16" />
+      <div className="mx-auto max-w-screen-sm px-2 ">
+        <GradientContainer>
+          <div className=" px-4 py-5 text-sm font-light">
+            <span className="font-normal">На жаль, ця частина ще не готова</span>,
+            але Ви можете відправити нам інформацію на пошту{" "}
+            <a
+              className="font-mono text-blue-600"
+              href="mailto:sad.xprod@gmail.com"
+            >
+              sad.xprod@gmail.com
+            </a>{" "}
+            🙂
+          </div>
+        </GradientContainer>
+      </div>
+      <Spacer className="h-16" />
+      <div className="relative">
+        <div className="absolute z-50 h-full w-full bg-red-500 opacity-5" />
+        <NoSSRWrapper>
+          <Formik
+            initialValues={initialValues}
+            onSubmit={(values, actions) => {
+              console.log({ values, actions });
+            }}
+            validationSchema={validationSchema}
+            validateOnChange={true}
+            validate={validate}
+          >
+            {(formik) => {
+              return (
+                <Form>
+                  <div className="flex flex-col items-center px-2">
+                    <div className="w-full max-w-screen-md"></div>
+                    <div className="flex w-full max-w-lg flex-col">
+                      <Spacer className="h-6" />
+                      <Photo className="w-1/2 self-center" />
+                      <Spacer className="h-6" />
                       <InputField
-                        name="email"
-                        showError={true}
-                        placeholderLabel="Ваш email (необовʼязково)"
+                        name="realName"
+                        autoComplete="off"
+                        placeholderLabel={t("page.add-target.real-name")}
                       />
+                      <SectionHeader
+                        title={t("page.add-target.section-header.nickname")}
+                      />
+                      <InputFieldArray
+                        name="nicknames"
+                        placeholderLabel="Псевдонім"
+                      />
+                      <SectionHeader
+                        title={t("page.add-target.section-header.view-on-war")}
+                      />
+                      <ViewOnWar />
+                      <SectionHeader
+                        title={t("page.add-target.section-header.job")}
+                      />
+                      <Field name="jobs">
+                        {({ field, form, meta }: FieldProps) => {
+                          return (
+                            <div className="flex flex-wrap gap-1.5">
+                              {props.jobs.map((job, i) => (
+                                <Chip
+                                  key={i}
+                                  label={job.code}
+                                  selected={meta.value.includes(job.code)}
+                                  onClick={() => {
+                                    let nextValue = [...meta.value];
+                                    if (meta.value.includes(job.code)) {
+                                      nextValue = nextValue.filter(
+                                        (j) => j !== job.code
+                                      );
+                                    } else {
+                                      nextValue.push(job.code);
+                                    }
+                                    form.setFieldValue(field.name, nextValue);
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          );
+                        }}
+                      </Field>
+                      <SectionHeader
+                        title={t("page.add-target.section-header.resourses")}
+                        subtitle={t(
+                          "page.add-target.section-header.resourses.subtitle"
+                        )}
+                      />
+                      <InputFieldArray
+                        name="resourceLinks"
+                        placeholderLabel={`Посилання`}
+                      />
+                      <Spacer className="h-5" />
+                      <Field name="nationality">
+                        {({ field, form, meta }: FieldProps) => {
+                          const options = [
+                            ...props.nationalities.map((n) => n.code),
+                            "Unknown",
+                          ];
+
+                          return (
+                            <Dropdown
+                              placeholderLabel={t(
+                                "page.add-target.section-header.nationality"
+                              )}
+                              selected={meta.value}
+                              options={options}
+                              onChange={(value) =>
+                                form.setFieldValue(
+                                  field.name,
+                                  value === "Unknown" ? null : value
+                                )
+                              }
+                            />
+                          );
+                        }}
+                      </Field>
+                      <SectionHeader
+                        title={
+                          <div className="text-h3">
+                            Підтвердження позиції людини
+                          </div>
+                        }
+                        subtitle={
+                          <div className="text-h8">
+                            Заповніть хоча б{" "}
+                            <span className="font-bold">
+                              одне з полів нижче
+                            </span>
+                            .
+                          </div>
+                        }
+                      />
+                      <Field name="proof">
+                        {({ field, meta }: FieldProps) => {
+                          return (
+                            <TextArea
+                              id="proof"
+                              placeholderLabel="Короткий опис дій людини"
+                              autoComplete="off"
+                              error={meta.touched ? meta.error : undefined}
+                              {...field}
+                            />
+                          );
+                        }}
+                      </Field>
+                      <SectionHeader
+                        title={t("page.add-target.section-header.evidence")}
+                        subtitle={t(
+                          "page.add-target.section-header.evidence.subtitle"
+                        )}
+                      />
+                      <InputFieldArray
+                        name="proofLinks"
+                        placeholderLabel="Посилання"
+                      />
+                      <SectionHeader
+                        title="Фотопідтвердження доказів (до 10)"
+                        subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
+                      />
+                      <div className="grid grid-cols-2 gap-2">
+                        <Photo />
+                        <Photo />
+                      </div>
+                      <Spacer className="h-10" />
+                      <GradientContainer>
+                        <div className="flex flex-col px-4 py-5 text-h8">
+                          <div className="text-h4">Про додавання</div>
+                          <br />
+                          <p>
+                            Після додавання людини, вона буде перевірена адміном
+                            і додана на сайт.
+                          </p>
+                          <br />
+                          <p>
+                            Якщо бажаєте{" "}
+                            <span className="font-bold">
+                              отримати сповіщення
+                            </span>
+                            , коли адмін перевірить додану вами людини, будь
+                            ласка, залишіть ваш email.
+                          </p>
+                          <br />
+                          <InputField
+                            name="email"
+                            showError={true}
+                            placeholderLabel="Ваш email (необовʼязково)"
+                          />
+                        </div>
+                      </GradientContainer>
+                      <Spacer className="h-10" />
+                      <Button type="submit">Додати</Button>
+                      <Spacer className="h-10" />
                     </div>
-                  </GradientContainer>
-                  <Spacer className="h-10" />
-                  <Button type="submit">Додати</Button>
-                  <Spacer className="h-10" />
-                </div>
-              </div>
-            </Form>
-          );
-        }}
-      </Formik>
-    </NoSSRWrapper>
+                  </div>
+                </Form>
+              );
+            }}
+          </Formik>
+        </NoSSRWrapper>
+      </div>
+    </>
   );
 };
 
