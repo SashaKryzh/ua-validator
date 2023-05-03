@@ -1,4 +1,4 @@
-import Layout from "@/components/Layout";
+import { Head, Layout } from "@/components";
 import { env } from "@/env/client.mjs";
 import {
   findTargetHandler,
@@ -32,6 +32,10 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
 
   return (
     <>
+      <Head
+        title={target.realName ?? target.nicknames[0]?.value}
+        titleSuffix={true}
+      />
       <div className="flex flex-col items-center px-2 pb-10">
         <div className="flex w-full max-w-screen-md flex-col items-center">
           <div className="relative aspect-square w-full max-w-sm">
@@ -109,7 +113,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
 };
 
 TargetPage.getLayout = (page) => {
-  return <Layout title={"Огляд людини"}>{page}</Layout>;
+  return <Layout>{page}</Layout>;
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {

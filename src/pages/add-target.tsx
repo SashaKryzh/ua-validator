@@ -1,5 +1,4 @@
-import Layout from "@/components/Layout";
-import NoSSRWrapper from "@/components/NoSSRWrapper";
+import { Head, Layout, NoSSRWrapper } from "@/components";
 import { prisma } from "@/server/db/client";
 import { Button } from "@/ui/Button";
 import Chip from "@/ui/Chip";
@@ -114,12 +113,15 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 
   return (
     <>
+      <Head title={"Додати людину"} titleSuffix={true} />
       <Spacer className="h-16" />
       <div className="mx-auto max-w-screen-sm px-2 ">
         <GradientContainer>
           <div className=" px-4 py-5 text-sm font-light">
-            <span className="font-normal">На жаль, ця частина ще не готова</span>,
-            але Ви можете відправити нам інформацію на пошту{" "}
+            <span className="font-normal">
+              На жаль, ця частина ще не готова
+            </span>
+            , але Ви можете відправити нам інформацію на пошту{" "}
             <a
               className="font-mono text-blue-600"
               href="mailto:sad.xprod@gmail.com"
@@ -321,7 +323,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 };
 
 AddTarget.getLayout = (page) => {
-  return <Layout title={"Додати людину"}>{page}</Layout>;
+  return <Layout>{page}</Layout>;
 };
 
 export default AddTarget;

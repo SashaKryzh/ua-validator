@@ -1,4 +1,4 @@
-import { Layout, SearchField, TargetComponent } from "@/components";
+import { Head, Layout, SearchField, TargetComponent } from "@/components";
 import { trpc } from "@/utils/trpc";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
@@ -20,6 +20,7 @@ const Search: NextPageWithLayout = () => {
 
   return (
     <div className="flex flex-col items-center px-2">
+      <Head title={"Знайти людину"} titleSuffix={true} />
       <div className="w-full max-w-screen-md">
         <div className="">
           <form onSubmit={formik.handleSubmit}>
@@ -48,7 +49,7 @@ const Search: NextPageWithLayout = () => {
 };
 
 Search.getLayout = (page) => {
-  return <Layout title={"Пошук людини"}>{page}</Layout>;
+  return <Layout>{page}</Layout>;
 };
 
 export default Search;
