@@ -17,6 +17,7 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
   NEXT_PUBLIC_IMAGE_BUCKET_URL: z.string(),
+  NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL: z.string(),
   NEXT_PUBLIC_DD_APPLICATION_ID: z.string(),
   NEXT_PUBLIC_DD_CLIENT_TOKEN: z.string(),
   NEXT_PUBLIC_DD_ENV: z.string(),
@@ -30,6 +31,7 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   NEXT_PUBLIC_IMAGE_BUCKET_URL: process.env.NEXT_PUBLIC_IMAGE_BUCKET_URL,
+  NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL: process.env.NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL,
   NEXT_PUBLIC_DD_APPLICATION_ID: process.env.NEXT_PUBLIC_DD_APPLICATION_ID,
   NEXT_PUBLIC_DD_CLIENT_TOKEN: process.env.NEXT_PUBLIC_DD_CLIENT_TOKEN,
   NEXT_PUBLIC_DD_ENV: process.env.NEXT_PUBLIC_DD_ENV,

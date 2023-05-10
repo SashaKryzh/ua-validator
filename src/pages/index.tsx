@@ -1,5 +1,4 @@
-import Layout from "@/components/Layout";
-import SearchField from "@/components/SearchField";
+import { Head, Layout, SearchField } from "@/components";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import type { NextPageWithLayout } from "./_app";
@@ -15,6 +14,7 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <div className="flex flex-col items-center">
+      <Head />
       <div className="h-24" />
       <h1 className="text-h1">Ukrainian validator</h1>
       <div className="h-6" />
