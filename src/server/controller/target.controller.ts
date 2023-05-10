@@ -75,36 +75,53 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
  *       (use mode: 'insensitive' for PostgreSQL)
  * @param query target name or resource url
  */
-export const findTargetsHandler = async ({ query }: { query?: string }) => {
+export const findTargetsHandler = async ({
+  query,
+  limit = 20,
+  cursor,
+}: {
+  query?: string;
+  limit?: number;
+  cursor?: string;
+}) => {
   query = query?.trim();
-
-  if (!query) {
-    return prisma.target.findMany({ include: FindTargetsInclude });
-  }
 
   const isUrl = z.string().url().safeParse(query).success;
 
-  return prisma.target.findMany({
-    where: isUrl
-      ? { resources: { some: { url: query } }, deleted: false }
-      : {
-          OR: [
-            { realName: { contains: query } },
-            {
-              nicknames: {
-                some: { value: { contains: query } },
+  const targets = await prisma.target.findMany({
+    where: query
+      ? isUrl
+        ? { resources: { some: { url: query } }, deleted: false }
+        : {
+            OR: [
+              { realName: { contains: query } },
+              {
+                nicknames: {
+                  some: { value: { contains: query } },
+                },
               },
-            },
-          ],
-          deleted: false,
-        },
+            ],
+            deleted: false,
+          }
+      : undefined,
     include: FindTargetsInclude,
+    take: limit,
+    skip: cursor ? 1 : 0,
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
   });
+
+  const newCursor = targets.at(-1)?.id;
+
+  return { targets, cursor: newCursor };
 };
 
 export type TargetFindTargets = Prisma.PromiseReturnType<
   typeof findTargetsHandler
->[number];
+>["targets"][number];
 
 const FindTargetInclude = Prisma.validator<Prisma.TargetInclude>()({
   nicknames: true,
