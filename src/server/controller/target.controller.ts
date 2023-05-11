@@ -105,8 +105,7 @@ export const findTargetsHandler = async ({
           }
       : undefined,
     include: FindTargetsInclude,
-    take: limit,
-    skip: cursor ? 1 : 0,
+    take: limit + 1,
     cursor: cursor
       ? {
           id: cursor,
@@ -114,9 +113,14 @@ export const findTargetsHandler = async ({
       : undefined,
   });
 
-  const newCursor = targets.at(-1)?.id;
+  let nextCursor: string | undefined = undefined;
+  if (targets.length > limit) {
+    const nextTarget = targets.pop();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    nextCursor = nextTarget!.id;
+  }
 
-  return { targets, cursor: newCursor };
+  return { targets, cursor: nextCursor };
 };
 
 export type TargetFindTargets = Prisma.PromiseReturnType<

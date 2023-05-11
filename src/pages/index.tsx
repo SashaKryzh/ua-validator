@@ -2,6 +2,7 @@ import { Head, Layout, SearchField, TargetComponent } from "@/components";
 import { trpc } from "@/utils/trpc";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import InfiniteScroll from "react-infinite-scroll-component";
 import type { NextPageWithLayout } from "./_app";
 
 const Home: NextPageWithLayout = () => {
@@ -17,9 +18,16 @@ const Home: NextPageWithLayout = () => {
     },
   });
 
-  const result = trpc.target.findByNameOrResource.useQuery({
-    query: query,
-  });
+  const result = trpc.target.findByNameOrResource.useInfiniteQuery(
+    {
+      query: query,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.cursor,
+    }
+  );
+
+  const allLoadedTargets = result.data?.pages.flatMap((page) => page.targets);
 
   return (
     <>
@@ -28,7 +36,7 @@ const Home: NextPageWithLayout = () => {
         {query === "" && <Heading />}
       </div>
       <div className="flex flex-col items-center">
-        <div className="w-full max-w-screen-md ">
+        <div className="w-full max-w-screen-md px-1.5">
           <form onSubmit={formik.handleSubmit}>
             <SearchField
               inputProps={{
@@ -41,11 +49,20 @@ const Home: NextPageWithLayout = () => {
           </form>
         </div>
         <div className="h-8" />
-        <div className="grid w-full max-w-screen-md grid-cols-2 gap-4 md:grid-cols-3">
-          {result.isLoading && <div>Loading...</div>}
-          {result.data?.targets.map((target) => (
-            <TargetComponent key={target.id} target={target} />
-          ))}
+        <div className="w-full max-w-screen-md px-2">
+          <InfiniteScroll
+            dataLength={allLoadedTargets?.length ?? 1}
+            loader={<Loading />}
+            next={result.fetchNextPage}
+            hasMore={result.hasNextPage ?? true}
+            className="grid grid-cols-2 gap-4 md:grid-cols-3"
+          >
+            {allLoadedTargets?.map((target) => (
+              <TargetComponent key={target.id} target={target} />
+            ))}
+            <Loading />
+            {allLoadedTargets?.length === 0 && <Empty />}
+          </InfiniteScroll>
         </div>
       </div>
       <div className="h-8" />
@@ -65,6 +82,14 @@ const Heading = () => {
       <div className="h-14" />
     </>
   );
+};
+
+const Loading = () => {
+  return <div className="col-span-3 flex justify-center p-4">Loading...</div>;
+};
+
+const Empty = () => {
+  return <>Empty</>;
 };
 
 Home.getLayout = (page) => {
