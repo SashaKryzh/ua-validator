@@ -51,6 +51,8 @@ interface AddTargetForm {
   email: string;
 }
 
+// TODO: Remove call to db on page open. Make this page static.
+
 const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const { t } = useTranslation();
   const router = useRouter();
