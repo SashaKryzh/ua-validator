@@ -21,7 +21,7 @@ export default function TargetComponent({ target }: TargetComponentProps) {
             fill={true}
             className="overflow-hidden object-cover"
           />
-          <div className="absolute bottom-3 left-3 rounded-full bg-white px-3 py-1 text-sm opacity-90">
+          <div className="absolute bottom-3 left-[0.5rem] rounded-full bg-white px-3 py-1 text-sm opacity-90">
             {t(`CountryCode.${target.nationalityCode}`) +
               " " +
               t(`JobCode.${target.jobs[0]?.code}`)}

@@ -74,9 +74,9 @@ const Heading = () => {
   return (
     <>
       <div className="h-14" />
-      <h1 className="text-h1">🇺🇦 Ukrainian validator</h1>
+      <h1 className="text-h1 ">🇺🇦 Ukrainian validator</h1>
       <div className="h-4" />
-      <p className="px-4 text-center text-h3">
+      <p className="px-4 text-center text-h3 font-light">
         Перевір ставлення людини до війни в Україні
       </p>
       <div className="h-14" />
