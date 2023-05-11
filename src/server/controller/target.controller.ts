@@ -67,6 +67,7 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
   nicknames: true,
   resources: true,
   mainEvidence: true,
+  jobs: true,
 });
 
 /**
