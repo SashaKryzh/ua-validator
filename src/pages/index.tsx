@@ -84,7 +84,9 @@ const Heading = () => {
 };
 
 const Loading = () => {
-  return <div className="col-span-3 flex justify-center p-4">Loading...</div>;
+  return (
+    <div className="col-span-full flex justify-center p-4">Loading...</div>
+  );
 };
 
 const Empty = () => {
