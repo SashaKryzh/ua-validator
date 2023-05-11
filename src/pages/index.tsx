@@ -60,7 +60,6 @@ const Home: NextPageWithLayout = () => {
             {allLoadedTargets?.map((target) => (
               <TargetComponent key={target.id} target={target} />
             ))}
-            <Loading />
             {allLoadedTargets?.length === 0 && <Empty />}
           </InfiniteScroll>
         </div>
