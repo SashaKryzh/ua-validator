@@ -75,6 +75,8 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
  * NOTE: search will be case-insensitive with MySQL by default
  *       (use mode: 'insensitive' for PostgreSQL)
  * @param query target name or resource url
+ * @param limit
+ * @param cursor
  */
 export const findTargetsHandler = async ({
   query,
@@ -89,36 +91,31 @@ export const findTargetsHandler = async ({
 
   const isUrl = z.string().url().safeParse(query).success;
 
+  const where: Prisma.TargetWhereInput = isUrl
+    ? { resources: { some: { url: query } }, deleted: false }
+    : {
+        OR: [
+          { realName: { contains: query } },
+          {
+            nicknames: {
+              some: { value: { contains: query } },
+            },
+          },
+        ],
+        deleted: false,
+      };
+
   const targets = await prisma.target.findMany({
-    where: query
-      ? isUrl
-        ? { resources: { some: { url: query } }, deleted: false }
-        : {
-            OR: [
-              { realName: { contains: query } },
-              {
-                nicknames: {
-                  some: { value: { contains: query } },
-                },
-              },
-            ],
-            deleted: false,
-          }
-      : undefined,
+    where: query ? where : undefined,
     include: FindTargetsInclude,
     take: limit + 1,
-    cursor: cursor
-      ? {
-          id: cursor,
-        }
-      : undefined,
+    cursor: cursor ? { id: cursor } : undefined,
   });
 
   let nextCursor: string | undefined = undefined;
   if (targets.length > limit) {
     const nextTarget = targets.pop();
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    nextCursor = nextTarget!.id;
+    nextCursor = nextTarget?.id;
   }
 
   return { targets, cursor: nextCursor };

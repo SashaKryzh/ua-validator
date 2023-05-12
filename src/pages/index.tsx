@@ -58,6 +58,7 @@ const Home: NextPageWithLayout = () => {
             next={result.fetchNextPage}
             hasMore={result.hasNextPage ?? true}
             className="grid grid-cols-2 gap-4 md:grid-cols-3"
+            scrollThreshold={0.69}
           >
             {allLoadedTargets?.map((target) => (
               <TargetComponent key={target.id} target={target} />
