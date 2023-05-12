@@ -67,6 +67,7 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
   nicknames: true,
   resources: true,
   mainEvidence: true,
+  jobs: true,
 });
 
 /**
@@ -74,37 +75,55 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
  * NOTE: search will be case-insensitive with MySQL by default
  *       (use mode: 'insensitive' for PostgreSQL)
  * @param query target name or resource url
+ * @param limit
+ * @param cursor
  */
-export const findTargetsHandler = async ({ query }: { query?: string }) => {
+export const findTargetsHandler = async ({
+  query,
+  limit = 20,
+  cursor,
+}: {
+  query?: string;
+  limit?: number;
+  cursor?: string;
+}) => {
   query = query?.trim();
-
-  if (!query) {
-    return prisma.target.findMany({ include: FindTargetsInclude });
-  }
 
   const isUrl = z.string().url().safeParse(query).success;
 
-  return prisma.target.findMany({
-    where: isUrl
-      ? { resources: { some: { url: query } }, deleted: false }
-      : {
-          OR: [
-            { realName: { contains: query } },
-            {
-              nicknames: {
-                some: { value: { contains: query } },
-              },
+  const where: Prisma.TargetWhereInput = isUrl
+    ? { resources: { some: { url: query } }, deleted: false }
+    : {
+        OR: [
+          { realName: { contains: query } },
+          {
+            nicknames: {
+              some: { value: { contains: query } },
             },
-          ],
-          deleted: false,
-        },
+          },
+        ],
+        deleted: false,
+      };
+
+  const targets = await prisma.target.findMany({
+    where: query ? where : undefined,
     include: FindTargetsInclude,
+    take: limit + 1,
+    cursor: cursor ? { id: cursor } : undefined,
   });
+
+  let nextCursor: string | undefined = undefined;
+  if (targets.length > limit) {
+    const nextTarget = targets.pop();
+    nextCursor = nextTarget?.id;
+  }
+
+  return { targets, cursor: nextCursor };
 };
 
 export type TargetFindTargets = Prisma.PromiseReturnType<
   typeof findTargetsHandler
->[number];
+>["targets"][number];
 
 const FindTargetInclude = Prisma.validator<Prisma.TargetInclude>()({
   nicknames: true,

@@ -21,12 +21,20 @@ export default function TargetComponent({ target }: TargetComponentProps) {
             fill={true}
             className="overflow-hidden object-cover"
           />
+          <div className="absolute bottom-3 left-[0.5rem] rounded-full bg-white px-3 py-1 text-sm text-gray-900 opacity-90">
+            {t(`CountryCode.${target.nationalityCode}`) +
+              " " +
+              t(`JobCode.${target.jobs[0]?.code}`)}
+          </div>
         </div>
-        <div>
-          {t(`CountryCode.${target.nationalityCode}`) + " "}
+      </div>
+      <div className="flex flex-col items-center py-2">
+        <div className="text-center md:text-lg">
           {target.realName ?? target.nicknames[0]?.value}
         </div>
-        <div>{t(`ViewOnWarCode.${target.viewOnWarCode}`)}</div>
+        <div className="text-center font-light">
+          {t(`ViewOnWarCode.${target.viewOnWarCode}`)}
+        </div>
       </div>
     </Link>
   );
