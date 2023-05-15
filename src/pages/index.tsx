@@ -33,8 +33,8 @@ const Home: NextPageWithLayout = () => {
 
   return (
     <>
+      <Head />
       <div className="flex flex-col items-center">
-        <Head />
         {query === "" && <Heading />}
       </div>
       <div className="flex flex-col items-center">

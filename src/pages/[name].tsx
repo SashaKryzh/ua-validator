@@ -30,11 +30,22 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
     [target.evidences]
   );
 
+  let description = target.evidences
+    .map((e) => e.resume)
+    .reduce((acc, curr) => acc + curr, "");
+  description =
+    description.length > 100
+      ? description.substring(0, 100).concat("...")
+      : description;
+
   return (
     <>
       <Head
-        title={target.realName ?? target.nicknames[0]?.value}
-        titleSuffix={true}
+        title={`${target.realName ?? target.nicknames[0]?.value} – ${t(
+          `OG.ViewOnWarCode.${target.viewOnWarCode}`
+        )}`}
+        description={description}
+        imageUrl={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
       />
       <div className="flex flex-col items-center px-2 pb-10">
         <div className="flex w-full max-w-screen-md flex-col items-center">
