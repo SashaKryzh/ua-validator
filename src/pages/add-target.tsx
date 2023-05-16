@@ -115,7 +115,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 
   return (
     <>
-      <Head title={"Додати людину"} titleSuffix={true} />
+      <Head title={"Додати людину"} />
       <Spacer className="h-16" />
       <div className="mx-auto max-w-screen-sm px-2 ">
         <GradientContainer>
