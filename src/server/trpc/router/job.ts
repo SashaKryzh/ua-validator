@@ -1,4 +1,4 @@
-import { publicProcedure, router } from "../trpc";
+import { publicProcedure, router } from '../trpc';
 
 export const jobRouter = router({
   all: publicProcedure.query(({ ctx }) => {

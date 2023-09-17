@@ -5,9 +5,9 @@ This is an app bootstrapped according to the T3-Stack.
 ## What's next? How do I make an app with this?
 
 Next steps:
-  `cd ua-validator`
-  `pnpm prisma db push`
-  `pnpm dev`
+`cd ua-validator`
+`pnpm prisma db push`
+`pnpm dev`
 
 We try to keep this project as simple as possible, so you can start with the most basic configuration and then move on to more advanced configuration.
 

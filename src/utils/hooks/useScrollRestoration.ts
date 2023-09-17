@@ -1,5 +1,5 @@
-import Router, { type NextRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import Router, { type NextRouter } from 'next/router';
+import { useEffect, useRef } from 'react';
 
 /**
  * Scroll restoration to work around bugs in NextJS. At time of writing,
@@ -25,7 +25,7 @@ export const useScrollRestoration = (router: NextRouter) => {
     () => {
       if (
         typeof window === undefined ||
-        !("scrollRestoration" in window.history)
+        !('scrollRestoration' in window.history)
       ) {
         return;
       }
@@ -34,12 +34,12 @@ export const useScrollRestoration = (router: NextRouter) => {
       // Manual doesn't work well on iOS Safari https://github.com/vercel/next.js/issues/20951#issuecomment-1231966865
       const ua = window.navigator.userAgent.toLowerCase();
       const isMobileSafari = /safari/.test(ua) && /iphone|ipod|ipad/.test(ua);
-      window.history.scrollRestoration = isMobileSafari ? "auto" : "manual";
+      window.history.scrollRestoration = isMobileSafari ? 'auto' : 'manual';
 
       const saveScrollPos = (url: string) => {
         sessionStorage.setItem(
           `scrollPos:${url}`,
-          JSON.stringify({ x: window.scrollX, y: window.scrollY })
+          JSON.stringify({ x: window.scrollX, y: window.scrollY }),
         );
       };
 
@@ -53,7 +53,7 @@ export const useScrollRestoration = (router: NextRouter) => {
 
       const onBeforeUnload = (event: BeforeUnloadEvent) => {
         saveScrollPos(router.asPath);
-        delete event["returnValue"];
+        delete event['returnValue'];
       };
 
       const onRouteChangeStart = () => {
@@ -74,9 +74,9 @@ export const useScrollRestoration = (router: NextRouter) => {
         }
       };
 
-      window.addEventListener("beforeunload", onBeforeUnload);
-      Router.events.on("routeChangeStart", onRouteChangeStart);
-      Router.events.on("routeChangeComplete", triggerRestore);
+      window.addEventListener('beforeunload', onBeforeUnload);
+      Router.events.on('routeChangeStart', onRouteChangeStart);
+      Router.events.on('routeChangeComplete', triggerRestore);
       Router.beforePopState(() => {
         shouldScrollRestore.current = true;
         return true;
@@ -89,14 +89,14 @@ export const useScrollRestoration = (router: NextRouter) => {
 
       return () => {
         clearTimeout(timer);
-        window.removeEventListener("beforeunload", onBeforeUnload);
-        Router.events.off("routeChangeStart", onRouteChangeStart);
-        Router.events.off("routeChangeComplete", triggerRestore);
+        window.removeEventListener('beforeunload', onBeforeUnload);
+        Router.events.off('routeChangeStart', onRouteChangeStart);
+        Router.events.off('routeChangeComplete', triggerRestore);
         Router.beforePopState(() => true);
       };
     },
     // Run only once - inputs can be safely treated as non-reactive
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 };

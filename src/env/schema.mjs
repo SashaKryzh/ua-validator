@@ -1,5 +1,5 @@
 // @ts-check
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Specify your server-side environment variables schema here.
@@ -7,7 +7,7 @@ import { z } from "zod";
  */
 export const serverSchema = z.object({
   DATABASE_URL: z.string().url(),
-  NODE_ENV: z.enum(["development", "test", "production"]),
+  NODE_ENV: z.enum(['development', 'test', 'production']),
 });
 
 /**
@@ -31,7 +31,8 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   NEXT_PUBLIC_IMAGE_BUCKET_URL: process.env.NEXT_PUBLIC_IMAGE_BUCKET_URL,
-  NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL: process.env.NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL,
+  NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL:
+    process.env.NEXT_PUBLIC_STATIC_IMAGE_BUCKET_URL,
   NEXT_PUBLIC_DD_APPLICATION_ID: process.env.NEXT_PUBLIC_DD_APPLICATION_ID,
   NEXT_PUBLIC_DD_CLIENT_TOKEN: process.env.NEXT_PUBLIC_DD_CLIENT_TOKEN,
   NEXT_PUBLIC_DD_ENV: process.env.NEXT_PUBLIC_DD_ENV,

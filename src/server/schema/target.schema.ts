@@ -1,9 +1,9 @@
-import { z } from "zod";
+import { z } from 'zod';
 import {
   CountryCode,
   JobCode,
   ViewOnWarCode,
-} from "../../../shared/common_types";
+} from '../../../shared/common_types';
 
 export const createTargetSchema = z.object({
   job: z.nativeEnum(JobCode),

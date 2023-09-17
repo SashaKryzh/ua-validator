@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { CountryCode, JobCode, ViewOnWarCode } from "../shared/common_types";
+import { PrismaClient } from '@prisma/client';
+import { CountryCode, JobCode, ViewOnWarCode } from '../shared/common_types';
 
 const prisma = new PrismaClient();
 

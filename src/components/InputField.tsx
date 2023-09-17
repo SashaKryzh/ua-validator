@@ -1,6 +1,6 @@
-import { Input, type InputProps } from "@/components/ui/Input";
-import { Field, type FieldProps } from "formik";
-import { forwardRef } from "react";
+import { Input, type InputProps } from '@/components/ui/Input';
+import { Field, type FieldProps } from 'formik';
+import { forwardRef } from 'react';
 
 const InputField = forwardRef<
   HTMLInputElement,
@@ -16,13 +16,13 @@ const InputField = forwardRef<
           props.placeholderLabel === null ||
           props.placeholderLabel === undefined
             ? props.placeholder
-            : " ";
+            : ' ';
         // TODO: rewrite to inject whole label node as prop from InputField
 
         return (
           <Input
             ref={ref}
-            error={typeof error === "string" ? error : undefined}
+            error={typeof error === 'string' ? error : undefined}
             placeholder={placeholder}
             {...field}
             {...props}
@@ -33,6 +33,6 @@ const InputField = forwardRef<
   );
 });
 
-InputField.displayName = "InputField";
+InputField.displayName = 'InputField';
 
 export default InputField;

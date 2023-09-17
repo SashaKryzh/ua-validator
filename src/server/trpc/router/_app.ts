@@ -1,8 +1,8 @@
-import { router } from "../trpc";
-import { jobRouter } from "./job";
-import { nationalityRouter } from "./nationality";
-import { targetRouter } from "./target";
-import { viewOnWarRouter } from "./viewOnWar";
+import { router } from '../trpc';
+import { jobRouter } from './job';
+import { nationalityRouter } from './nationality';
+import { targetRouter } from './target';
+import { viewOnWarRouter } from './viewOnWar';
 
 export const appRouter = router({
   target: targetRouter,

@@ -1,10 +1,10 @@
-import { prisma } from "@/server/db/client";
-import { Prisma } from "@prisma/client";
-import CyrillicToTranslit from "cyrillic-to-translit-js";
-import { z } from "zod";
-import type { CreateTargetSchema } from "../schema/target.schema";
+import { prisma } from '@/server/db/client';
+import { Prisma } from '@prisma/client';
+import CyrillicToTranslit from 'cyrillic-to-translit-js';
+import { z } from 'zod';
+import type { CreateTargetSchema } from '../schema/target.schema';
 
-const transliterator = CyrillicToTranslit({ preset: "uk" });
+const transliterator = CyrillicToTranslit({ preset: 'uk' });
 
 export const createTargetHandler = async ({
   input,
@@ -123,7 +123,7 @@ export const findTargetsHandler = async ({
 
 export type TargetFindTargets = Prisma.PromiseReturnType<
   typeof findTargetsHandler
->["targets"][number];
+>['targets'][number];
 
 const FindTargetInclude = Prisma.validator<Prisma.TargetInclude>()({
   nicknames: true,
@@ -163,8 +163,8 @@ export type TargetFindTarget = Prisma.PromiseReturnType<
  * @param input target data
  */
 async function findAvailableSlug(input: CreateTargetSchema) {
-  const knownName = input.realName ?? input.nicknames[0] ?? "unknown";
-  let slug = transliterator.transform(knownName, "-").toLowerCase();
+  const knownName = input.realName ?? input.nicknames[0] ?? 'unknown';
+  let slug = transliterator.transform(knownName, '-').toLowerCase();
 
   // TODO: Improve checking for existing slug
   // AR: new slug = "stas" and we already have "stasiv" - contains "stas", so we will get "stas-1"

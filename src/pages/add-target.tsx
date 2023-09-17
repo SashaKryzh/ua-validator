@@ -1,23 +1,23 @@
-import { Head, Layout, NoSSRWrapper } from "@/components";
-import { prisma } from "@/server/db/client";
-import { Button } from "@/components/ui/Button";
-import Chip from "@/ui/Chip";
-import Dropdown from "@/ui/Dropdown";
-import { GradientContainer } from "@/ui/GradientContainer";
-import { TextArea } from "@/components/ui/Input";
-import Photo from "@/ui/Photo";
-import SelectBox from "@/ui/SelectBox";
-import Spacer from "@/ui/Spacer";
-import type { Job, Nationality } from "@prisma/client";
-import type { FieldProps, FormikErrors } from "formik";
-import { Field, FieldArray, Form, Formik, useField } from "formik";
-import type { GetServerSideProps } from "next";
-import * as React from "react";
-import { useTranslation } from "react-i18next";
-import { ViewOnWarCode } from "shared/common_types";
-import * as yup from "yup";
-import type { NextPageWithLayout } from "./_app";
-import InputField from "@/components/InputField";
+import { Head, Layout, NoSSRWrapper } from '@/components';
+import { prisma } from '@/server/db/client';
+import { Button } from '@/components/ui/Button';
+import Chip from '@/ui/Chip';
+import Dropdown from '@/ui/Dropdown';
+import { GradientContainer } from '@/ui/GradientContainer';
+import { TextArea } from '@/components/ui/Input';
+import Photo from '@/ui/Photo';
+import SelectBox from '@/ui/SelectBox';
+import Spacer from '@/ui/Spacer';
+import type { Job, Nationality } from '@prisma/client';
+import type { FieldProps, FormikErrors } from 'formik';
+import { Field, FieldArray, Form, Formik, useField } from 'formik';
+import type { GetServerSideProps } from 'next';
+import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { ViewOnWarCode } from 'shared/common_types';
+import * as yup from 'yup';
+import type { NextPageWithLayout } from './_app';
+import InputField from '@/components/InputField';
 
 interface AddTargetProps {
   jobs: Job[];
@@ -66,32 +66,32 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   // };
 
   const initialValues: AddTargetForm = {
-    photo: "",
-    realName: "",
-    nicknames: [""],
+    photo: '',
+    realName: '',
+    nicknames: [''],
     viewOnWar: undefined,
     jobs: [],
     nationality: undefined,
-    resourceLinks: [""],
-    proof: "",
-    proofLinks: [""],
+    resourceLinks: [''],
+    proof: '',
+    proofLinks: [''],
     photos: [],
-    email: "",
+    email: '',
   };
 
   const validate = (values: AddTargetForm) => {
     const errors: FormikErrors<AddTargetForm> = {};
 
-    if (!values.nicknames.find((n) => n !== "")) {
-      errors.nicknames = "Required";
+    if (!values.nicknames.find((n) => n !== '')) {
+      errors.nicknames = 'Required';
     }
 
-    if (!values.resourceLinks.find((n) => n !== "")) {
-      errors.resourceLinks = "Required";
+    if (!values.resourceLinks.find((n) => n !== '')) {
+      errors.resourceLinks = 'Required';
     }
 
-    if (!values.proofLinks.find((n) => n !== "")) {
-      errors.proofLinks = "Required";
+    if (!values.proofLinks.find((n) => n !== '')) {
+      errors.proofLinks = 'Required';
     }
 
     return errors;
@@ -114,28 +114,28 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
 
   return (
     <>
-      <Head title={"Додати людину"} />
-      <Spacer className="h-16" />
-      <div className="mx-auto max-w-screen-sm px-2 ">
+      <Head title={'Додати людину'} />
+      <Spacer className='h-16' />
+      <div className='mx-auto max-w-screen-sm px-2 '>
         <GradientContainer>
-          <div className=" px-4 py-5 text-sm font-light">
-            <span className="font-normal">
+          <div className=' px-4 py-5 text-sm font-light'>
+            <span className='font-normal'>
               На жаль, ця частина ще не готова
             </span>
-            , але Ви можете відправити нам інформацію на пошту{" "}
+            , але Ви можете відправити нам інформацію на пошту{' '}
             <a
-              className="font-mono text-blue-600"
-              href="mailto:sad.xprod@gmail.com"
+              className='font-mono text-blue-600'
+              href='mailto:sad.xprod@gmail.com'
             >
               sad.xprod@gmail.com
-            </a>{" "}
+            </a>{' '}
             🙂
           </div>
         </GradientContainer>
       </div>
-      <Spacer className="h-16" />
-      <div className="relative">
-        <div className="absolute z-50 h-full w-full bg-red-500 opacity-5" />
+      <Spacer className='h-16' />
+      <div className='relative'>
+        <div className='absolute z-50 h-full w-full bg-red-500 opacity-5' />
         <NoSSRWrapper>
           <Formik
             initialValues={initialValues}
@@ -149,35 +149,35 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
             {(formik) => {
               return (
                 <Form>
-                  <div className="flex flex-col items-center px-2">
-                    <div className="w-full max-w-screen-md"></div>
-                    <div className="flex w-full max-w-lg flex-col">
-                      <Spacer className="h-6" />
-                      <Photo className="w-1/2 self-center" />
-                      <Spacer className="h-6" />
+                  <div className='flex flex-col items-center px-2'>
+                    <div className='w-full max-w-screen-md'></div>
+                    <div className='flex w-full max-w-lg flex-col'>
+                      <Spacer className='h-6' />
+                      <Photo className='w-1/2 self-center' />
+                      <Spacer className='h-6' />
                       <InputField
-                        name="realName"
-                        autoComplete="off"
-                        placeholderLabel={t("page.add-target.real-name")}
+                        name='realName'
+                        autoComplete='off'
+                        placeholderLabel={t('page.add-target.real-name')}
                       />
                       <SectionHeader
-                        title={t("page.add-target.section-header.nickname")}
+                        title={t('page.add-target.section-header.nickname')}
                       />
                       <InputFieldArray
-                        name="nicknames"
-                        placeholderLabel="Псевдонім"
+                        name='nicknames'
+                        placeholderLabel='Псевдонім'
                       />
                       <SectionHeader
-                        title={t("page.add-target.section-header.view-on-war")}
+                        title={t('page.add-target.section-header.view-on-war')}
                       />
                       <ViewOnWar />
                       <SectionHeader
-                        title={t("page.add-target.section-header.job")}
+                        title={t('page.add-target.section-header.job')}
                       />
-                      <Field name="jobs">
+                      <Field name='jobs'>
                         {({ field, form, meta }: FieldProps) => {
                           return (
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className='flex flex-wrap gap-1.5'>
                               {props.jobs.map((job, i) => (
                                 <Chip
                                   key={i}
@@ -201,34 +201,34 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                         }}
                       </Field>
                       <SectionHeader
-                        title={t("page.add-target.section-header.resourses")}
+                        title={t('page.add-target.section-header.resourses')}
                         subtitle={t(
-                          "page.add-target.section-header.resourses.subtitle",
+                          'page.add-target.section-header.resourses.subtitle',
                         )}
                       />
                       <InputFieldArray
-                        name="resourceLinks"
+                        name='resourceLinks'
                         placeholderLabel={`Посилання`}
                       />
-                      <Spacer className="h-5" />
-                      <Field name="nationality">
+                      <Spacer className='h-5' />
+                      <Field name='nationality'>
                         {({ field, form, meta }: FieldProps) => {
                           const options = [
                             ...props.nationalities.map((n) => n.code),
-                            "Unknown",
+                            'Unknown',
                           ];
 
                           return (
                             <Dropdown
                               placeholderLabel={t(
-                                "page.add-target.section-header.nationality",
+                                'page.add-target.section-header.nationality',
                               )}
                               selected={meta.value}
                               options={options}
                               onChange={(value) =>
                                 form.setFieldValue(
                                   field.name,
-                                  value === "Unknown" ? null : value,
+                                  value === 'Unknown' ? null : value,
                                 )
                               }
                             />
@@ -237,27 +237,27 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       </Field>
                       <SectionHeader
                         title={
-                          <div className="text-h3">
+                          <div className='text-h3'>
                             Підтвердження позиції людини
                           </div>
                         }
                         subtitle={
-                          <div className="text-h8">
-                            Заповніть хоча б{" "}
-                            <span className="font-bold">
+                          <div className='text-h8'>
+                            Заповніть хоча б{' '}
+                            <span className='font-bold'>
                               одне з полів нижче
                             </span>
                             .
                           </div>
                         }
                       />
-                      <Field name="proof">
+                      <Field name='proof'>
                         {({ field, meta }: FieldProps) => {
                           return (
                             <TextArea
-                              id="proof"
-                              placeholderLabel="Короткий опис дій людини"
-                              autoComplete="off"
+                              id='proof'
+                              placeholderLabel='Короткий опис дій людини'
+                              autoComplete='off'
                               error={meta.touched ? meta.error : undefined}
                               {...field}
                             />
@@ -265,27 +265,27 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                         }}
                       </Field>
                       <SectionHeader
-                        title={t("page.add-target.section-header.evidence")}
+                        title={t('page.add-target.section-header.evidence')}
                         subtitle={t(
-                          "page.add-target.section-header.evidence.subtitle",
+                          'page.add-target.section-header.evidence.subtitle',
                         )}
                       />
                       <InputFieldArray
-                        name="proofLinks"
-                        placeholderLabel="Посилання"
+                        name='proofLinks'
+                        placeholderLabel='Посилання'
                       />
                       <SectionHeader
-                        title="Фотопідтвердження доказів (до 10)"
-                        subtitle="Фото або скріни на яких видно ставлення людини до війни в Україні"
+                        title='Фотопідтвердження доказів (до 10)'
+                        subtitle='Фото або скріни на яких видно ставлення людини до війни в Україні'
                       />
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className='grid grid-cols-2 gap-2'>
                         <Photo />
                         <Photo />
                       </div>
-                      <Spacer className="h-10" />
+                      <Spacer className='h-10' />
                       <GradientContainer>
-                        <div className="flex flex-col px-4 py-5 text-h8">
-                          <div className="text-h4">Про додавання</div>
+                        <div className='flex flex-col px-4 py-5 text-h8'>
+                          <div className='text-h4'>Про додавання</div>
                           <br />
                           <p>
                             Після додавання людини, вона буде перевірена адміном
@@ -293,8 +293,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                           </p>
                           <br />
                           <p>
-                            Якщо бажаєте{" "}
-                            <span className="font-bold">
+                            Якщо бажаєте{' '}
+                            <span className='font-bold'>
                               отримати сповіщення
                             </span>
                             , коли адмін перевірить додану вами людини, будь
@@ -302,17 +302,17 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                           </p>
                           <br />
                           <InputField
-                            name="email"
+                            name='email'
                             showError={true}
-                            placeholderLabel="Ваш email (необовʼязково)"
+                            placeholderLabel='Ваш email (необовʼязково)'
                           />
                         </div>
                       </GradientContainer>
-                      <Spacer className="h-10" />
-                      <Button className="rounded-full" type="submit">
+                      <Spacer className='h-10' />
+                      <Button className='rounded-full' type='submit'>
                         Додати
                       </Button>
-                      <Spacer className="h-10" />
+                      <Spacer className='h-10' />
                     </div>
                   </div>
                 </Form>
@@ -338,12 +338,12 @@ function SectionHeader(props: {
   subtitle?: string | React.ReactNode;
 }) {
   return (
-    <div className="pb-3 pt-6">
-      <h2 className="text-h5">{props.title}</h2>
+    <div className='pb-3 pt-6'>
+      <h2 className='text-h5'>{props.title}</h2>
       {props.subtitle && (
         <>
-          <Spacer className="h-1" />
-          <div className="text-h8 opacity-50">{props.subtitle}</div>
+          <Spacer className='h-1' />
+          <div className='text-h8 opacity-50'>{props.subtitle}</div>
         </>
       )}
     </div>
@@ -352,24 +352,24 @@ function SectionHeader(props: {
 
 function ViewOnWar() {
   const { t } = useTranslation();
-  const [field, meta, helpers] = useField("viewOnWar");
+  const [field, meta, helpers] = useField('viewOnWar');
 
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex gap-1">
+    <div className='flex flex-col gap-1'>
+      <div className='flex gap-1'>
         {/*TODO: investigate general approach how to prevent internal properties from passing to standard once*/}
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_UKRAINE}`)}
           value1={ViewOnWarCode.WITH_UKRAINE}
           groupValue={meta.value}
-          className="grow py-5"
+          className='grow py-5'
           handleClick={(i) => helpers.setValue(i)}
         />
         <SelectBox
           label={t(`ViewOnWarCode.${ViewOnWarCode.WITH_ORKY}`)}
           value1={ViewOnWarCode.WITH_ORKY}
           groupValue={meta.value}
-          className="grow py-5"
+          className='grow py-5'
           handleClick={(i) => helpers.setValue(i)}
         />
       </div>
@@ -377,14 +377,14 @@ function ViewOnWar() {
         label={t(`ViewOnWarCode.${ViewOnWarCode.PEACE_DEATH}`)}
         value1={ViewOnWarCode.PEACE_DEATH}
         groupValue={meta.value}
-        className="py-5"
+        className='py-5'
         handleClick={(i) => helpers.setValue(i)}
       />
       <SelectBox
         label={t(`ViewOnWarCode.${ViewOnWarCode.QUIET}`)}
         value1={ViewOnWarCode.QUIET}
         groupValue={meta.value}
-        className="py-5"
+        className='py-5'
         handleClick={(i) => helpers.setValue(i)}
       />
     </div>
@@ -401,26 +401,26 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
     <FieldArray
       name={props.name}
       render={(arrayHelpers: unknown) => {
-        const errorString = typeof error === "string" && error;
+        const errorString = typeof error === 'string' && error;
 
         return (
-          <div className="flex flex-col gap-2.5">
+          <div className='flex flex-col gap-2.5'>
             {/* TODO: make better error component */}
             {meta.touched && errorString && (
-              <p className="text-error">{errorString}</p>
+              <p className='text-error'>{errorString}</p>
             )}
             {values.map((value, i) => (
               <InputField
                 key={i}
                 name={`${props.name}.${i}`}
                 showError={!errorString}
-                autoComplete="off"
+                autoComplete='off'
                 placeholderLabel={`${props.placeholderLabel} ${i + 1}`}
               />
             ))}
             {meta.value.length < 10 && (
               <AddMoreButton
-                onClick={() => console.log("more") /* arrayHelpers.push("") */}
+                onClick={() => console.log('more') /* arrayHelpers.push("") */}
               />
             )}
           </div>
@@ -432,7 +432,7 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
 
 const AddMoreButton = (props: { onClick: () => void }) => {
   return (
-    <Button type="button" variant="ghost" onClick={props.onClick}>
+    <Button type='button' variant='ghost' onClick={props.onClick}>
       Add more
     </Button>
   );

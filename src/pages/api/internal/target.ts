@@ -1,20 +1,20 @@
 import {
   createTargetHandler,
   findTargetsHandler,
-} from "@/server/controller/target.controller";
-import type { CreateTargetSchema } from "@/server/schema/target.schema";
-import { createTargetSchema } from "@/server/schema/target.schema";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
+} from '@/server/controller/target.controller';
+import type { CreateTargetSchema } from '@/server/schema/target.schema';
+import { createTargetSchema } from '@/server/schema/target.schema';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { z } from 'zod';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   verifyAuth(req, res);
 
   switch (req.method) {
-    case "GET": {
+    case 'GET': {
       const { name } = req.query;
       findTargetsHandler({ query: name as string }).then((data) => {
         res.status(200).json(data);
@@ -23,7 +23,7 @@ export default async function handler(
       break;
     }
 
-    case "POST": {
+    case 'POST': {
       const errorList: string[] = [];
       const failedTargets = [];
       let targetList: CreateTargetSchema[];
@@ -32,7 +32,7 @@ export default async function handler(
         targetList = createTargetSchema.array().parse(req.body);
       } catch (err) {
         if (!(err instanceof z.ZodError) || !Array.isArray(req.body)) {
-          res.status(400).json({ result: "Invalid body" });
+          res.status(400).json({ result: 'Invalid body' });
           break;
         }
 
@@ -43,7 +43,7 @@ export default async function handler(
           path: req.body[issue.path[0]][issue.path[1]],
         }));
 
-        res.status(400).json({ result: "Validation Error", errorMessages });
+        res.status(400).json({ result: 'Validation Error', errorMessages });
         break;
       }
 
@@ -51,10 +51,10 @@ export default async function handler(
         try {
           await createTargetHandler({
             input: target,
-            creatorEmail: "admin@uavalidator.com",
+            creatorEmail: 'admin@uavalidator.com',
           });
         } catch (err) {
-          errorList.push(target.realName ?? target.nicknames[0] ?? "unknown");
+          errorList.push(target.realName ?? target.nicknames[0] ?? 'unknown');
           failedTargets.push(target);
         }
       }
@@ -66,19 +66,19 @@ export default async function handler(
           failedTargets: failedTargets,
         });
       } else {
-        res.status(200).json({ result: "Success" });
+        res.status(200).json({ result: 'Success' });
       }
 
       break;
     }
 
     default:
-      res.status(400).json({ result: "Error" });
+      res.status(400).json({ result: 'Error' });
   }
 }
 
 function verifyAuth(req: NextApiRequest, res: NextApiResponse) {
-  if (req.headers["user_name"] !== process.env.USER_NAME) {
-    res.status(401).json({ result: "Unauthorized" });
+  if (req.headers['user_name'] !== process.env.USER_NAME) {
+    res.status(401).json({ result: 'Unauthorized' });
   }
 }

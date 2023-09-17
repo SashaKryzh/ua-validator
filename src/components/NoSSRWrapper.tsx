@@ -1,5 +1,5 @@
-import dynamic from "next/dynamic";
-import { Fragment } from "react";
+import dynamic from 'next/dynamic';
+import { Fragment } from 'react';
 
 const NonSSRWrapper = (props: { children: React.ReactNode }) => (
   <Fragment>{props.children}</Fragment>
