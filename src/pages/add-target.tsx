@@ -1,6 +1,6 @@
 import { Head, Layout, NoSSRWrapper } from "@/components";
 import { prisma } from "@/server/db/client";
-import { Button } from "@/ui/Button";
+import { Button } from "@/components/ui/Button";
 import Chip from "@/ui/Chip";
 import Dropdown from "@/ui/Dropdown";
 import { GradientContainer } from "@/ui/GradientContainer";
@@ -310,7 +310,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                         </div>
                       </GradientContainer>
                       <Spacer className="h-10" />
-                      <Button type="submit">Додати</Button>
+                      <Button className='rounded-full' type="submit">Додати</Button>
                       <Spacer className="h-10" />
                     </div>
                   </div>
@@ -429,7 +429,7 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
 
 const AddMoreButton = (props: { onClick: () => void }) => {
   return (
-    <Button type="button" variant="triatery" onClick={props.onClick}>
+    <Button type="button" variant="ghost" onClick={props.onClick}>
       Add more
     </Button>
   );
