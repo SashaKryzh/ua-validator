@@ -164,7 +164,7 @@ export default TargetPage;
 
 const ResourceItem = (props: { resource: TargetResource }) => {
   return (
-    <a href={props.resource.url} target="_blank" rel="noreferrer">
+    <a key={props.resource.id} href={props.resource.url} target="_blank" rel="noreferrer">
       <div className="flex aspect-square w-10 items-center justify-center rounded-full bg-gray-100">
         {/* TODO: Use different icons for instagram, telegram, website... */}
         <AiOutlineLink />
