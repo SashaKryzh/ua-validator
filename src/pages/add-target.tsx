@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import Chip from "@/ui/Chip";
 import Dropdown from "@/ui/Dropdown";
 import { GradientContainer } from "@/ui/GradientContainer";
-import { InputField, TextArea } from "@/ui/Input";
+import { TextArea } from "@/ui/Input";
 import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";
@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import { ViewOnWarCode } from "shared/common_types";
 import * as yup from "yup";
 import type { NextPageWithLayout } from "./_app";
+import InputField from "@/components/InputField";
 
 interface AddTargetProps {
   jobs: Job[];
@@ -145,8 +146,6 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
             validateOnChange={true}
             validate={validate}
           >
-
-            {/* {eslint-disable-next-line @typescript-eslint/no-unused-vars} */}
             {(formik) => {
               return (
                 <Form>
@@ -188,7 +187,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                                     let nextValue = [...meta.value];
                                     if (meta.value.includes(job.code)) {
                                       nextValue = nextValue.filter(
-                                        (j) => j !== job.code
+                                        (j) => j !== job.code,
                                       );
                                     } else {
                                       nextValue.push(job.code);
@@ -204,7 +203,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       <SectionHeader
                         title={t("page.add-target.section-header.resourses")}
                         subtitle={t(
-                          "page.add-target.section-header.resourses.subtitle"
+                          "page.add-target.section-header.resourses.subtitle",
                         )}
                       />
                       <InputFieldArray
@@ -222,14 +221,14 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                           return (
                             <Dropdown
                               placeholderLabel={t(
-                                "page.add-target.section-header.nationality"
+                                "page.add-target.section-header.nationality",
                               )}
                               selected={meta.value}
                               options={options}
                               onChange={(value) =>
                                 form.setFieldValue(
                                   field.name,
-                                  value === "Unknown" ? null : value
+                                  value === "Unknown" ? null : value,
                                 )
                               }
                             />
@@ -268,7 +267,7 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                       <SectionHeader
                         title={t("page.add-target.section-header.evidence")}
                         subtitle={t(
-                          "page.add-target.section-header.evidence.subtitle"
+                          "page.add-target.section-header.evidence.subtitle",
                         )}
                       />
                       <InputFieldArray
@@ -310,7 +309,9 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
                         </div>
                       </GradientContainer>
                       <Spacer className="h-10" />
-                      <Button className='rounded-full' type="submit">Додати</Button>
+                      <Button className="rounded-full" type="submit">
+                        Додати
+                      </Button>
                       <Spacer className="h-10" />
                     </div>
                   </div>
@@ -418,7 +419,9 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
               />
             ))}
             {meta.value.length < 10 && (
-              <AddMoreButton onClick={() => console.log('more') /* arrayHelpers.push("") */ } />
+              <AddMoreButton
+                onClick={() => console.log("more") /* arrayHelpers.push("") */}
+              />
             )}
           </div>
         );

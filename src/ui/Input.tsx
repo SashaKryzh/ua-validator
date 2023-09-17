@@ -1,14 +1,12 @@
+import { cn } from "@/utils/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import clsx from "clsx";
-import type { FieldProps } from "formik";
-import { Field } from "formik";
 import { forwardRef } from "react";
 import { IconContext } from "react-icons";
 import TextareaAutosize, {
   type TextareaAutosizeProps,
 } from "react-textarea-autosize";
 
-const inputStyle = cva("w-full outline-none text-h7", {
+const inputVariants = cva("w-full outline-none text-h7", {
   variants: {
     variant: {
       default:
@@ -21,108 +19,70 @@ const inputStyle = cva("w-full outline-none text-h7", {
   },
 });
 
-export type inputStyleProps = VariantProps<typeof inputStyle>;
-
 export type InputProps = React.ComponentPropsWithRef<"input"> &
-  inputStyleProps & {
-    placeholderLabel?: string | null;
+  VariantProps<typeof inputVariants> & {
+    placeholderLabel?: string;
     error?: string;
     prefixNode?: React.ReactNode;
     suffixNode?: React.ReactNode;
   };
 
-// TODO: extract to separate file with it's non-generic inputStyle and label
-export const InputField = forwardRef<
-  HTMLInputElement,
-  InputProps & { name: string; showError?: boolean }
->((props, ref) => {
-  const showError = props.showError ?? true;
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ variant, className, ...props }, ref) => {
+    const { prefixNode, suffixNode, ...rest } = props;
 
-  return (
-    <Field name={props.name}>
-      {({ field, meta }: FieldProps) => {
-        const error = showError && meta.touched && meta.error;
-        const placeholder =
-          props.placeholderLabel === null ||
-          props.placeholderLabel === undefined
-            ? props.placeholder
-            : " ";
-        // TODO: rewrite to inject whole label node as prop from InputField
-
-        return (
-          <Input
-            ref={ref}
-            error={typeof error === "string" ? error : undefined}
-            placeholder={placeholder}
-            {...field}
-            {...props}
-          />
-        );
-      }}
-    </Field>
-  );
-});
-
-InputField.displayName = "InputField";
-
-export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { prefixNode, suffixNode, ...rest } = props;
-  return (
-    <div className="py-1">
-      <div className="relative z-0">
-        {prefixNode && (
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
-            <div className="flex h-10 w-10 items-center justify-center">
-              <IconContext.Provider value={{ className: "w-6 h-6" }}>
-                {prefixNode}
-              </IconContext.Provider>
+    return (
+      <div className="py-1">
+        <div className="relative z-0">
+          {prefixNode && (
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-1">
+              <div className="flex h-10 w-10 items-center justify-center">
+                <IconContext.Provider value={{ className: "w-6 h-6" }}>
+                  {prefixNode}
+                </IconContext.Provider>
+              </div>
             </div>
-          </div>
-        )}
-        <input
-          ref={ref}
-          {...rest}
-          className={clsx(
-            inputStyle({ variant: props.variant }),
-            props.className,
-            props.error && "border-error",
-            prefixNode && "pl-12",
-            suffixNode && "pr-12"
           )}
-        />
-        {props.placeholderLabel && (
-          <label
-            htmlFor={props.id}
-            className={clsx(
-              "absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-h7 text-black opacity-50 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75",
-              props.error && "text-error opacity-100"
+          <input
+            className={cn(
+              inputVariants({ variant, className }),
+              props.error && "border-error",
+              prefixNode && "pl-12",
+              suffixNode && "pr-12",
             )}
-          >
-            {props.placeholderLabel}
-          </label>
-        )}
-        {suffixNode && (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-1">
-            <div className="flex h-10 w-10 items-center justify-center">
-              <IconContext.Provider value={{ className: "w-6 h-6" }}>
-                {suffixNode}
-              </IconContext.Provider>
+            ref={ref}
+            {...rest}
+          />
+          {props.placeholderLabel && (
+            <label
+              htmlFor={props.id}
+              className={cn(
+                "absolute top-3 -z-10 origin-[0] -translate-y-6 scale-75 transform text-h7 text-black opacity-50 duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-6 peer-focus:scale-75",
+                props.error && "text-error opacity-100",
+              )}
+            >
+              {props.placeholderLabel}
+            </label>
+          )}
+          {suffixNode && (
+            <div className="absolute inset-y-0 right-0 flex items-center pr-1">
+              <div className="flex h-10 w-10 items-center justify-center">
+                <IconContext.Provider value={{ className: "w-6 h-6" }}>
+                  {suffixNode}
+                </IconContext.Provider>
+              </div>
             </div>
-          </div>
+          )}
+        </div>
+        {props.error && (
+          <p className="mt-1 text-h8 text-error">{props.error}</p>
         )}
       </div>
-      {props.error && <p className="mt-1 text-h8 text-error">{props.error}</p>}
-    </div>
-  );
-});
+    );
+  },
+);
 
 Input.displayName = "Input";
-
-export const Label: React.FC<{ slug: string; children: string }> = (props) => (
-  <label className="pb-1" htmlFor={props.slug}>
-    {props.children}
-  </label>
-);
 
 type TextAreaProps = TextareaAutosizeProps &
   React.RefAttributes<HTMLTextAreaElement> & {
@@ -140,19 +100,19 @@ export function TextArea(props: TextAreaProps) {
           id={props.id}
           minRows={3}
           placeholder=" "
-          className={clsx(
+          className={cn(
             "peer block w-full resize-none appearance-none border-0 border-b-2 border-black bg-transparent px-1 py-3 text-h7 text-black outline-none autofill:bg-transparent focus:outline-none focus:ring-0",
             "bg-gray-50",
             props.error && "border-error",
-            props.className
+            props.className,
           )}
         />
         {props.placeholderLabel && (
           <label
             htmlFor={props.id}
-            className={clsx(
+            className={cn(
               "absolute top-3 z-10 origin-[0] -translate-y-7 scale-75 transform text-h7 text-black opacity-50 duration-300 peer-placeholder-shown:left-1 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:left-0 peer-focus:-translate-y-7 peer-focus:scale-75",
-              props.error && "text-error opacity-100"
+              props.error && "text-error opacity-100",
             )}
           >
             {props.placeholderLabel}
