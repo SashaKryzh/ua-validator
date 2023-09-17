@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import Link from "next/link";
+import React from 'react';
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   href?: never;
@@ -45,11 +46,11 @@ export type ButtonBaseProps = {
   loading?: boolean;
 } & VariantProps<typeof buttonStyle>;
 
-export function Button(props: ButtonBaseProps & (ButtonProps | LinkProps)) {
-  const className = buttonStyle(props);
+export const Button : React.FC<ButtonBaseProps & (ButtonProps | LinkProps)> = ({variant, size, rounded, className, ...props}) => {
+  const cn = buttonStyle({variant, size, rounded, className});
 
   return (
-    <ButtonOrLink {...props} className={className}>
+    <ButtonOrLink {...props} className={cn}>
       {props.children}
     </ButtonOrLink>
   );

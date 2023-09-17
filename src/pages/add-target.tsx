@@ -12,9 +12,7 @@ import type { Job, Nationality } from "@prisma/client";
 import type { FieldProps, FormikErrors } from "formik";
 import { Field, FieldArray, Form, Formik, useField } from "formik";
 import type { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
 import * as React from "react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ViewOnWarCode } from "shared/common_types";
 import * as yup from "yup";
@@ -55,16 +53,16 @@ interface AddTargetForm {
 
 const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [unsavedChanges, setUnsavedChanges] = useState(true);
+  // const router = useRouter();
+  // const [unsavedChanges, setUnsavedChanges] = useState(true);
 
   // usePreventNavigation(router, unsavedChanges, "You have unsaved changes");
 
-  const handleSubmit: React.MouseEventHandler = (e) => {
-    e.preventDefault();
-    // setUnsavedChanges(false);
-    // router.replace("/");
-  };
+  // const handleSubmit: React.MouseEventHandler = (e) => {
+  //   e.preventDefault();
+  //   // setUnsavedChanges(false);
+  //   // router.replace("/");
+  // };
 
   const initialValues: AddTargetForm = {
     photo: "",
@@ -147,6 +145,8 @@ const AddTarget: NextPageWithLayout<AddTargetProps> = (props) => {
             validateOnChange={true}
             validate={validate}
           >
+
+            {/* {eslint-disable-next-line @typescript-eslint/no-unused-vars} */}
             {(formik) => {
               return (
                 <Form>
@@ -399,7 +399,7 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
   return (
     <FieldArray
       name={props.name}
-      render={(arrayHelpers) => {
+      render={(arrayHelpers: unknown) => {
         const errorString = typeof error === "string" && error;
 
         return (
@@ -418,7 +418,7 @@ const InputFieldArray = (props: { name: string; placeholderLabel: string }) => {
               />
             ))}
             {meta.value.length < 10 && (
-              <AddMoreButton onClick={() => arrayHelpers.push("")} />
+              <AddMoreButton onClick={() => console.log('more') /* arrayHelpers.push("") */ } />
             )}
           </div>
         );
