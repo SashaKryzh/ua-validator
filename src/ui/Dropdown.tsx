@@ -1,7 +1,7 @@
 import { Listbox, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import { useState } from "react";
-import { Input } from "./Input";
+import { Input } from "../components/ui/Input";
 
 export interface DropdownProps {
   placeholderLabel: string;

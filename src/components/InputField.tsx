@@ -1,4 +1,4 @@
-import { Input, type InputProps } from "@/ui/Input";
+import { Input, type InputProps } from "@/components/ui/Input";
 import { Field, type FieldProps } from "formik";
 import { forwardRef } from "react";
 

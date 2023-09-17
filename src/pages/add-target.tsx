@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import Chip from "@/ui/Chip";
 import Dropdown from "@/ui/Dropdown";
 import { GradientContainer } from "@/ui/GradientContainer";
-import { TextArea } from "@/ui/Input";
+import { TextArea } from "@/components/ui/Input";
 import Photo from "@/ui/Photo";
 import SelectBox from "@/ui/SelectBox";
 import Spacer from "@/ui/Spacer";

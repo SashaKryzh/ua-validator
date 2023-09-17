@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { BiSearch } from "react-icons/bi";
 import { MdClear } from "react-icons/md";
-import { Input, type InputProps } from "@/ui/Input";
+import { Input, type InputProps } from "@/components/ui/Input";
 
 export interface SearchFieldProps {
   inputProps?: InputProps;
