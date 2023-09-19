@@ -13,6 +13,8 @@ import type { NextPageWithLayout } from './_app';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { MdNotificationsNone } from 'react-icons/md';
+import * as Yup from 'yup';
+import type { NextPageWithLayout } from './_app';
 
 const AddTarget: NextPageWithLayout = () => {
   return (
