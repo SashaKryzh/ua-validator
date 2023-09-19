@@ -4,6 +4,7 @@ import Spacer from '@/ui/Spacer';
 import type { NextPageWithLayout } from './_app';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { MdNotificationsNone } from 'react-icons/md';
 
 const AddTarget: NextPageWithLayout = () => {
   return (
@@ -40,14 +41,20 @@ export default AddTarget;
 
 function NotifyUser() {
   return (
-    <GradientContainer className='px-10 py-14'>
-      <div className='text-center'>
-        Ми вас повідомимо, коли цей функціонал буде додано
+    <GradientContainer className='px-10'>
+      <div className='h-6' />
+      <div className='flex items-center justify-center'>
+        <MdNotificationsNone size={50} />
+      </div>
+      <div className='h-4' />
+      <div className='text-center font-light'>
+        Ми повідомимо, коли цей функціонал буде додано
       </div>
       <div className='h-4' />
       <Input name='email' placeholderLabel='Email' placeholder=' ' />
       <div className='h-6' />
       <Button className='w-full rounded-full py-6'>Повідомте мене</Button>
+      <div className='h-8' />
     </GradientContainer>
   );
 }
