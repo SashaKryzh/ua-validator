@@ -10,6 +10,8 @@ import { MdNotificationsNone } from 'react-icons/md';
 import z from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import type { NextPageWithLayout } from './_app';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 const AddTarget: NextPageWithLayout = () => {
   return (
