@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/Button';
 import { GradientContainer } from '@/ui/GradientContainer';
 import Spacer from '@/ui/Spacer';
 import { trpc } from '@/utils/trpc';
-import { type Shape } from '@/utils/yupShape';
 import { Form, Formik } from 'formik';
+import { useRouter } from 'next/router';
 import { MdNotificationsNone } from 'react-icons/md';
-import * as Yup from 'yup';
+import z from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 import type { NextPageWithLayout } from './_app';
 
 const AddTarget: NextPageWithLayout = () => {
@@ -43,26 +44,35 @@ AddTarget.getLayout = (page) => {
 
 export default AddTarget;
 
-interface EmailForm {
-  email: string;
-}
-
-const validationSchema = Yup.object<Shape<EmailForm>>({
-  email: Yup.string().email('Невалідний email').required('Уведіть Ваш email'),
+const validationSchema = z.object({
+  email: z
+    .string({ required_error: 'Уведіть email' })
+    .email('Невалідний email'),
 });
 
+type EmailForm = z.infer<typeof validationSchema>;
+
 function NotifyUser() {
+  const router = useRouter();
   const mutation = trpc.waitingList.add.useMutation();
 
   function handleSubmit(values: EmailForm) {
-    mutation.mutate(values);
+    mutation.mutate(values, {
+      onSuccess() {
+        alert('Дякуємо! Ми повідомимо Вас, коли цей функціонал буде готовий.');
+        router.push('/');
+      },
+      onError() {
+        alert('Щось пішло не так, спробуйте, будь ласка, ще раз.');
+      },
+    });
   }
 
   return (
     <Formik
       initialValues={{ email: '' }}
       onSubmit={handleSubmit}
-      validationSchema={validationSchema}
+      validationSchema={toFormikValidationSchema(validationSchema)}
     >
       {({}) => (
         <Form>
