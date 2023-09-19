@@ -88,7 +88,7 @@ function NotifyUser() {
             <div className='h-4' />
             <InputField name='email' type='email' placeholderLabel='Email' />
             <div className='h-6' />
-            <Button type='submit' className='w-full rounded-full py-6'>
+            <Button type='submit' className='w-full rounded-full py-6' disabled={mutation.isLoading}>
               Повідомте мене
             </Button>
             <div className='h-8' />

@@ -1,7 +1,6 @@
-import { type Message, sendMail } from '@/server/sendMail';
-import { z } from 'zod';
-import { publicProcedure, router } from '../trpc';
 import { addToWaitListSchema } from '@/server/schema/waitList.schema';
+import { sendMail, type Message } from '@/server/sendMail';
+import { publicProcedure, router } from '../trpc';
 
 export const waitingListRouter = router({
   add: publicProcedure
