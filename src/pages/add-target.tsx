@@ -1,10 +1,14 @@
 import { Head, Layout } from '@/components';
+import InputField from '@/components/InputField';
+import { Button } from '@/components/ui/Button';
 import { GradientContainer } from '@/ui/GradientContainer';
 import Spacer from '@/ui/Spacer';
-import type { NextPageWithLayout } from './_app';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { trpc } from '@/utils/trpc';
+import { type Shape } from '@/utils/yupShape';
+import { Form, Formik } from 'formik';
 import { MdNotificationsNone } from 'react-icons/md';
+import * as Yup from 'yup';
+import type { NextPageWithLayout } from './_app';
 
 const AddTarget: NextPageWithLayout = () => {
   return (
@@ -39,22 +43,48 @@ AddTarget.getLayout = (page) => {
 
 export default AddTarget;
 
+interface EmailForm {
+  email: string;
+}
+
+const validationSchema = Yup.object<Shape<EmailForm>>({
+  email: Yup.string().email('Невалідний email').required('Уведіть Ваш email'),
+});
+
 function NotifyUser() {
+  const mutation = trpc.waitingList.add.useMutation();
+
+  function handleSubmit(values: EmailForm) {
+    mutation.mutate(values);
+  }
+
   return (
-    <GradientContainer className='px-10'>
-      <div className='h-6' />
-      <div className='flex items-center justify-center'>
-        <MdNotificationsNone size={50} />
-      </div>
-      <div className='h-4' />
-      <div className='text-center font-light'>
-        Ми повідомимо, коли цей функціонал буде додано
-      </div>
-      <div className='h-4' />
-      <Input name='email' placeholderLabel='Email' placeholder=' ' />
-      <div className='h-6' />
-      <Button className='w-full rounded-full py-6'>Повідомте мене</Button>
-      <div className='h-8' />
-    </GradientContainer>
+    <Formik
+      initialValues={{ email: '' }}
+      onSubmit={handleSubmit}
+      validationSchema={validationSchema}
+    >
+      {({}) => (
+        <Form>
+          <GradientContainer className='px-10'>
+            <div className='h-6' />
+            <div className='flex items-center justify-center'>
+              <MdNotificationsNone size={50} />
+            </div>
+            <div className='h-4' />
+            <div className='text-center font-light'>
+              Ми повідомимо, коли цей функціонал буде додано
+            </div>
+            <div className='h-4' />
+            <InputField name='email' type='email' placeholderLabel='Email' />
+            <div className='h-6' />
+            <Button type='submit' className='w-full rounded-full py-6'>
+              Повідомте мене
+            </Button>
+            <div className='h-8' />
+          </GradientContainer>
+        </Form>
+      )}
+    </Formik>
   );
 }
