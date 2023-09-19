@@ -15,7 +15,7 @@ const AddTarget: NextPageWithLayout = () => {
   return (
     <main className='mx-auto max-w-screen-sm px-2'>
       <Head title={'Додати людину'} />
-      <Spacer className='h-12' />
+      <div className='h-7 md:h-12' />
       <div className='font-light'>
         <span className='font-normal'>На жаль, ця частина ще не готова</span>,
         але Ви можете відправити нам інформацію на пошту{' '}

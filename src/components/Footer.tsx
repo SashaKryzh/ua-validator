@@ -15,6 +15,7 @@ export default function Footer() {
           <div className='flex gap-2'>
             <Link
               href='https://github.com/SashaKryzh'
+              target='_blank'
               className='font-mono hover:underline'
             >
               @sashakryzh
@@ -22,6 +23,7 @@ export default function Footer() {
             &
             <Link
               href='https://github.com/denitdao'
+              target='_blank'
               className='font-mono hover:underline'
             >
               @denitdao
