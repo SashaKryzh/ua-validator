@@ -13,7 +13,7 @@ import type { NextPageWithLayout } from './_app';
 
 const AddTarget: NextPageWithLayout = () => {
   return (
-    <main className='mx-auto max-w-screen-sm'>
+    <main className='mx-auto max-w-screen-sm px-2'>
       <Head title={'Додати людину'} />
       <Spacer className='h-12' />
       <div className='font-light'>
@@ -76,14 +76,14 @@ function NotifyUser() {
     >
       {({}) => (
         <Form>
-          <GradientContainer className='px-10'>
+          <GradientContainer className='px-4 md:px-10'>
             <div className='h-6' />
             <div className='flex items-center justify-center'>
               <MdNotificationsNone size={50} />
             </div>
             <div className='h-4' />
             <div className='text-center font-light'>
-              Ми повідомимо, коли цей функціонал буде додано
+              Ми повідомимо Вас, коли цей функціонал буде додано
             </div>
             <div className='h-4' />
             <InputField name='email' type='email' placeholderLabel='Email' />
