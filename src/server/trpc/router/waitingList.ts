@@ -24,6 +24,6 @@ export const waitingListRouter = router({
         text: 'Ми повідомимо Ваc, коли буде можливо додавати людей до списку.\n\n🇺🇦 UA validator',
       };
 
-      sendMail(message);
+      await sendMail(message);
     }),
 });

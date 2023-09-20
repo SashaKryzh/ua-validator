@@ -11,11 +11,7 @@ export type GradientProps = HTMLAttributes<HTMLDivElement> & {
 
 export function GradientContainer(props: GradientProps) {
   return (
-    <div
-      className={cn(
-        'bg-gradient-to-br from-[#F1ACAC] via-[#BF98C6] to-[#2833D0] p-[0.20rem]',
-      )}
-    >
+    <div className='bg-gradient-to-br from-[#F1ACAC] via-[#BF98C6] to-[#2833D0] p-[0.20rem]'>
       <div className={cn('h-full w-full bg-white', props.className)}>
         {props.children}
       </div>

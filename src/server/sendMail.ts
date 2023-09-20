@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import type Mail from 'nodemailer/lib/mailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -11,7 +12,9 @@ const transporter = nodemailer.createTransport({
 
 export interface Message extends Omit<Mail.Options, 'from' | 'bcc'> {}
 
-export function sendMail(message: Message) {
+export function sendMail(
+  message: Message,
+): Promise<SMTPTransport.SentMessageInfo | Error> {
   const bcc = process.env.NODEMAILER_EMAIL;
 
   const mail: Mail.Options = {
@@ -20,8 +23,15 @@ export function sendMail(message: Message) {
     bcc: bcc,
   };
 
-  transporter.sendMail(mail, (err, info) => {
-    console.log(err);
-    console.log(info);
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mail, (err, info) => {
+      if (err) {
+        console.log(err);
+        reject(err);
+      } else {
+        console.log(info);
+        resolve(info);
+      }
+    });
   });
 }
