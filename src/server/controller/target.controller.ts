@@ -80,7 +80,7 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
  */
 export const findTargetsHandler = async ({
   query,
-  limit = 20,
+  limit = 25,
   cursor,
 }: {
   query?: string;
