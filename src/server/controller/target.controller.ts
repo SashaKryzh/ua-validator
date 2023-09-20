@@ -80,14 +80,14 @@ const FindTargetsInclude = Prisma.validator<Prisma.TargetInclude>()({
  */
 export const findTargetsHandler = async ({
   query,
-  limit = 20,
+  limit = 25,
   cursor,
 }: {
   query?: string;
   limit?: number;
   cursor?: string;
 }) => {
-  query = query?.trim();
+  query = query?.trim() ?? '';
 
   const isUrl = z.string().url().safeParse(query).success;
 
@@ -121,9 +121,11 @@ export const findTargetsHandler = async ({
   return { targets, cursor: nextCursor };
 };
 
-export type TargetFindTargets = Prisma.PromiseReturnType<
+export type TargetFindResult = Prisma.PromiseReturnType<
   typeof findTargetsHandler
->['targets'][number];
+>;
+
+export type TargetFindTargets = TargetFindResult['targets'][number];
 
 const FindTargetInclude = Prisma.validator<Prisma.TargetInclude>()({
   nicknames: true,

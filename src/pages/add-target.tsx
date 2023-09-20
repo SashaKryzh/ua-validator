@@ -2,7 +2,6 @@ import { Head, Layout } from '@/components';
 import InputField from '@/components/InputField';
 import { Button } from '@/components/ui/Button';
 import { GradientContainer } from '@/ui/GradientContainer';
-import Spacer from '@/ui/Spacer';
 import { trpc } from '@/utils/trpc';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';

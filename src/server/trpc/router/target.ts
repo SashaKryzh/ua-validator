@@ -16,7 +16,7 @@ export const targetRouter = router({
     .input(
       z.object({
         query: z.string().optional(),
-        limit: z.number().default(20),
+        limit: z.number().default(25),
         cursor: z.string().optional(),
       }),
     )
