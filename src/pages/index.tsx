@@ -1,24 +1,40 @@
 import { Head, Layout, SearchField, TargetComponent } from '@/components';
+import { ssgInit } from '@/server/trpc/ssg-init';
 import { trpc } from '@/utils/trpc';
 import { useFormik } from 'formik';
+import type { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import type { NextPageWithLayout } from './_app';
 
 // TODO: Save scroll !!!
 
-const Home: NextPageWithLayout = () => {
+// Prefetching example:
+// https://trpc.io/docs/client/nextjs/ssg
+// https://github.com/trpc/examples-next-prisma-todomvc/blob/main/src/pages/%5Bfilter%5D.tsx
+
+type HomeProps = InferGetStaticPropsType<typeof getStaticProps>;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const ssg = await ssgInit();
+
+  await ssg.target.findByNameOrResource.prefetchInfinite({
+    query: '',
+  });
+
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+    },
+    revalidate: 60 * 60 * 24 * 7, // 1 week
+  };
+};
+
+const Home: NextPageWithLayout<HomeProps> = () => {
   const router = useRouter();
 
   const query =
     typeof router.query.search === 'string' ? router.query.search : '';
-
-  const formik = useFormik({
-    initialValues: { query: '' },
-    onSubmit: (values) => {
-      router.replace(`?search=${values.query}`);
-    },
-  });
 
   const result = trpc.target.findByNameOrResource.useInfiniteQuery(
     {
@@ -26,10 +42,19 @@ const Home: NextPageWithLayout = () => {
     },
     {
       getNextPageParam: (lastPage) => lastPage.cursor,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
     },
   );
 
   const allLoadedTargets = result.data?.pages.flatMap((page) => page.targets);
+
+  const formik = useFormik({
+    initialValues: { query: '' },
+    onSubmit: (values) => {
+      router.replace(`?search=${values.query}`);
+    },
+  });
 
   return (
     <>
@@ -72,6 +97,12 @@ const Home: NextPageWithLayout = () => {
   );
 };
 
+Home.getLayout = (page) => {
+  return <Layout>{page}</Layout>;
+};
+
+export default Home;
+
 const Heading = () => {
   return (
     <>
@@ -95,9 +126,3 @@ const Loading = () => {
 const Empty = () => {
   return <>Empty</>;
 };
-
-Home.getLayout = (page) => {
-  return <Layout>{page}</Layout>;
-};
-
-export default Home;
