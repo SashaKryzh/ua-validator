@@ -1,4 +1,5 @@
 import { Head, Layout, SearchField, TargetComponent } from '@/components';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ssgInit } from '@/server/trpc/ssg-init';
 import { trpc } from '@/utils/trpc';
 import { useFormik } from 'formik';
@@ -118,9 +119,7 @@ const Heading = () => {
 };
 
 const Loading = () => {
-  return (
-    <div className='col-span-full flex justify-center p-4'>Loading...</div>
-  );
+  return <LoadingSpinner className='col-span-full flex justify-center p-5' />;
 };
 
 const Empty = () => {
