@@ -27,6 +27,8 @@ export type InputProps = React.ComponentPropsWithRef<'input'> &
     suffixNode?: React.ReactNode;
   };
 
+// TODO: Use empty placeholder if placeholderLabel is provided for animation to work.
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ variant, className, ...props }, ref) => {
     const { prefixNode, suffixNode, ...rest } = props;

@@ -149,3 +149,9 @@ model EvidenceImage {
 
   @@index([evidenceId])
 }
+
+model WaitingList {
+  id          Int    @id @default(autoincrement())
+  email       String @unique
+  submitCount Int    @default(1)
+}
