@@ -37,13 +37,13 @@ export const getStaticProps: GetStaticProps = async () => {
 
 const Home: NextPageWithLayout<HomeProps> = () => {
   const router = useRouter();
-
   const isSearching = router.query.search !== undefined;
-
-  const urlQuery =
+  const searchInUrl =
     typeof router.query.search === 'string' ? router.query.search : '';
 
-  const [query, setQuery] = useState(urlQuery);
+  const [query, setQuery] = useState(searchInUrl);
+
+  const searchFieldRef = useRef<HTMLInputElement>(null);
 
   const result = trpc.target.findByNameOrResource.useInfiniteQuery(
     {
@@ -58,56 +58,48 @@ const Home: NextPageWithLayout<HomeProps> = () => {
   );
   const allLoadedTargets = result.data?.pages.flatMap((page) => page.targets);
 
-  const updateUrlQuery = (nextQuery: string) => {
-    router.push(`?search=${nextQuery}`);
+  const updateSearchInUrl = (query: string) => {
+    if (query === '') {
+      router.push('/');
+    } else {
+      router.push(`?search=${query}`);
+    }
   };
 
-  const handleSearch = useCallback((nextQuery: string) => {
-    setQuery(nextQuery);
+  const handleSearch = useCallback((query: string) => {
+    setQuery(query);
   }, []);
-
-  const searchFieldRef = useRef<HTMLInputElement>(null);
-
-  const formik = useFormik({
-    initialValues: { query: query },
-    onSubmit: (values) => {
-      updateUrlQuery(values.query);
-      searchFieldRef.current?.blur();
-      handleSearch(values.query);
-    },
-  });
-
-  const formikQueryRef = useRef(formik.values.query);
-  const setQueryValue = formik.setFieldValue;
-
-  useEffect(() => {
-    formikQueryRef.current = formik.values.query;
-  }, [formik.values.query]);
-
-  useEffect(() => {
-    if (query.trim() !== formikQueryRef.current.trim()) {
-      setQueryValue('query', query);
-    }
-  }, [query, setQueryValue]);
-
-  useEffect(() => {
-    setQueryValue('query', urlQuery);
-    setQuery(urlQuery);
-  }, [urlQuery, setQueryValue]);
 
   const debounceSearch = useMemo(
     () => debounce(handleSearch, 500),
     [handleSearch],
   );
 
+  const formik = useFormik({
+    initialValues: { query: query },
+    onSubmit: (values) => {
+      searchFieldRef.current?.blur();
+      handleSearch(values.query);
+      updateSearchInUrl(values.query);
+    },
+  });
+
+  const setFormikQueryValue = formik.setFieldValue;
+
+  // Set formik value from url
+  useEffect(() => {
+    setFormikQueryValue('query', searchInUrl);
+  }, [searchInUrl, setFormikQueryValue]);
+
+  // Debounce search on formik value change
   useEffect(() => {
     debounceSearch(formik.values.query);
   }, [formik.values.query, debounceSearch]);
 
   const handleClear = () => {
+    updateSearchInUrl('');
     formik.setFieldValue('query', '');
     handleSearch('');
-    router.push('/');
     searchFieldRef.current?.blur();
   };
 
@@ -127,7 +119,7 @@ const Home: NextPageWithLayout<HomeProps> = () => {
               value={formik.values.query}
               onClear={handleClear}
               onBlur={() => {
-                updateUrlQuery(formik.values.query);
+                updateSearchInUrl(formik.values.query);
               }}
             />
           </form>
