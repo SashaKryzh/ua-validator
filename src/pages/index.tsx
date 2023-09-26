@@ -53,8 +53,6 @@ const Home: NextPageWithLayout<HomeProps> = () => {
 
   const handleSearch = useCallback(
     (nextQuery: string) => {
-      console.log('Replace url');
-
       if (nextQuery === query) {
         return;
       } else if (nextQuery !== '') {
@@ -85,7 +83,6 @@ const Home: NextPageWithLayout<HomeProps> = () => {
   );
 
   useEffect(() => {
-    console.log('Call debounce');
     debounceSearch(formik.values.query);
   }, [formik.values.query, debounceSearch]);
 
