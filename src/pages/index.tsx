@@ -6,9 +6,11 @@ import { useFormik } from 'formik';
 import debounce from 'lodash.debounce';
 import type { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import type { NextPageWithLayout } from './_app';
+import { HiOutlineFaceFrown } from 'react-icons/hi2';
+import { Button } from '@/components/ui/Button';
 
 // TODO: Save scroll !!!
 
@@ -35,6 +37,8 @@ export const getStaticProps: GetStaticProps = async () => {
 
 const Home: NextPageWithLayout<HomeProps> = () => {
   const router = useRouter();
+
+  const isSearching = router.query.search !== undefined;
   const query =
     typeof router.query.search === 'string' ? router.query.search : '';
 
@@ -55,10 +59,8 @@ const Home: NextPageWithLayout<HomeProps> = () => {
     (nextQuery: string) => {
       if (nextQuery === query) {
         return;
-      } else if (nextQuery !== '') {
-        router.replace(`?search=${nextQuery}`);
       } else {
-        router.replace('/');
+        router.replace(`?search=${nextQuery}`);
       }
     },
     [query, router],
@@ -73,8 +75,23 @@ const Home: NextPageWithLayout<HomeProps> = () => {
 
   const setQueryValue = formik.setFieldValue;
 
+  const formikQueryRef = useRef(formik.values.query);
+
   useEffect(() => {
-    setQueryValue('query', query);
+    formikQueryRef.current = formik.values.query;
+  }, [formik.values.query]);
+
+  const queryRef = useRef(query);
+
+  useEffect(() => {
+    if (
+      query.trim() !== formikQueryRef.current.trim() &&
+      query.trim() !== queryRef.current.trim()
+    ) {
+      setQueryValue('query', query);
+    }
+
+    queryRef.current = query;
   }, [query, setQueryValue]);
 
   const debounceSearch = useMemo(
@@ -86,11 +103,15 @@ const Home: NextPageWithLayout<HomeProps> = () => {
     debounceSearch(formik.values.query);
   }, [formik.values.query, debounceSearch]);
 
+  const handleClear = () => {
+    router.replace('/');
+  };
+
   return (
     <>
       <Head />
       <div className='flex flex-col items-center'>
-        {query === '' && <Heading />}
+        {!isSearching && <Heading />}
       </div>
       <div className='flex flex-col items-center'>
         <div className='w-full max-w-screen-md px-1.5'>
@@ -99,7 +120,7 @@ const Home: NextPageWithLayout<HomeProps> = () => {
               name='query'
               onChange={formik.handleChange}
               value={formik.values.query}
-              onClear={() => formik.setFieldValue('query', '')}
+              onClear={handleClear}
             />
           </form>
         </div>
@@ -113,10 +134,16 @@ const Home: NextPageWithLayout<HomeProps> = () => {
             className='grid grid-cols-2 gap-4 md:grid-cols-3'
             scrollThreshold={0.69}
           >
-            {allLoadedTargets?.map((target) => (
-              <TargetComponent key={target.id} target={target} />
+            {allLoadedTargets?.map((target, index) => (
+              <TargetComponent
+                key={target.id}
+                target={target}
+                imagePriority={index < 7}
+              />
             ))}
-            {allLoadedTargets?.length === 0 && <Empty />}
+            {allLoadedTargets?.length === 0 && (
+              <EmptyResult onClear={handleClear} />
+            )}
           </InfiniteScroll>
         </div>
       </div>
@@ -149,6 +176,35 @@ const Loading = () => {
   return <LoadingSpinner className='col-span-full flex justify-center p-5' />;
 };
 
-const Empty = () => {
-  return <>Empty</>;
+interface EmptyResultProps {
+  onClear: () => void;
+}
+
+const EmptyResult: React.FC<EmptyResultProps> = (props) => {
+  return (
+    <div className='col-span-full flex flex-col items-center justify-center'>
+      <HiOutlineFaceFrown className='h-16 w-16' />
+      <div className='h-4' />
+      <p className='text-center text-h2 font-light'>Нічого не знайдено</p>
+      <div className='h-2' />
+      <p className='text-center text-sm font-light'>
+        Спробуйте, будь ласка, ще раз. Або напишіть нам на{' '}
+        <a
+          className='font-mono text-blue-600'
+          href='mailto:sad.xprod@gmail.com'
+        >
+          sad.xprod@gmail.com
+        </a>{' '}
+        і ми виправимо помилку.
+      </p>
+      <div className='h-4' />
+      <Button
+        variant={'secondary'}
+        className='rounded-full'
+        onClick={props.onClear}
+      >
+        Прибрати пошук
+      </Button>
+    </div>
+  );
 };
