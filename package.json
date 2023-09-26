@@ -27,6 +27,7 @@
     "cyrillic-to-translit-js": "^3.2.1",
     "formik": "^2.4.4",
     "i18next": "^23.5.1",
+    "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.279.0",
     "next": "13.4.19",
     "next-superjson-plugin": "^0.5.9",
@@ -47,6 +48,7 @@
     "zod-formik-adapter": "^1.2.0"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.7",
     "@types/node": "^20.6.2",
     "@types/nodemailer": "^6.4.10",
     "@types/react": "18.2.21",

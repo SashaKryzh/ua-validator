@@ -3,8 +3,10 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ssgInit } from '@/server/trpc/ssg-init';
 import { trpc } from '@/utils/trpc';
 import { useFormik } from 'formik';
+import debounce from 'lodash.debounce';
 import type { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import type { NextPageWithLayout } from './_app';
 
@@ -33,7 +35,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
 const Home: NextPageWithLayout<HomeProps> = () => {
   const router = useRouter();
-
   const query =
     typeof router.query.search === 'string' ? router.query.search : '';
 
@@ -45,17 +46,48 @@ const Home: NextPageWithLayout<HomeProps> = () => {
       getNextPageParam: (lastPage) => lastPage.cursor,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
+      keepPreviousData: true,
     },
   );
-
   const allLoadedTargets = result.data?.pages.flatMap((page) => page.targets);
 
+  const handleSearch = useCallback(
+    (nextQuery: string) => {
+      console.log('Replace url');
+
+      if (nextQuery === query) {
+        return;
+      } else if (nextQuery !== '') {
+        router.replace(`?search=${nextQuery}`);
+      } else {
+        router.replace('/');
+      }
+    },
+    [query, router],
+  );
+
   const formik = useFormik({
-    initialValues: { query: '' },
+    initialValues: { query: query },
     onSubmit: (values) => {
-      router.replace(`?search=${values.query}`);
+      handleSearch(values.query);
     },
   });
+
+  const setQueryValue = formik.setFieldValue;
+
+  useEffect(() => {
+    setQueryValue('query', query);
+  }, [query, setQueryValue]);
+
+  const debounceSearch = useMemo(
+    () => debounce(handleSearch, 500),
+    [handleSearch],
+  );
+
+  useEffect(() => {
+    console.log('Call debounce');
+    debounceSearch(formik.values.query);
+  }, [formik.values.query, debounceSearch]);
 
   return (
     <>
@@ -67,11 +99,9 @@ const Home: NextPageWithLayout<HomeProps> = () => {
         <div className='w-full max-w-screen-md px-1.5'>
           <form onSubmit={formik.handleSubmit}>
             <SearchField
-              inputProps={{
-                name: 'query',
-                onChange: formik.handleChange,
-                value: formik.values.query,
-              }}
+              name='query'
+              onChange={formik.handleChange}
+              value={formik.values.query}
               onClear={() => formik.setFieldValue('query', '')}
             />
           </form>
