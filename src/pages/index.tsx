@@ -39,8 +39,11 @@ const Home: NextPageWithLayout<HomeProps> = () => {
   const router = useRouter();
 
   const isSearching = router.query.search !== undefined;
-  const query =
+
+  const urlQuery =
     typeof router.query.search === 'string' ? router.query.search : '';
+
+  const [query, setQuery] = useState(urlQuery);
 
   const result = trpc.target.findByNameOrResource.useInfiniteQuery(
     {
@@ -55,44 +58,42 @@ const Home: NextPageWithLayout<HomeProps> = () => {
   );
   const allLoadedTargets = result.data?.pages.flatMap((page) => page.targets);
 
-  const handleSearch = useCallback(
-    (nextQuery: string) => {
-      if (nextQuery === query) {
-        return;
-      } else {
-        router.replace(`?search=${nextQuery}`);
-      }
-    },
-    [query, router],
-  );
+  const updateUrlQuery = (nextQuery: string) => {
+    router.push(`?search=${nextQuery}`);
+  };
+
+  const handleSearch = useCallback((nextQuery: string) => {
+    setQuery(nextQuery);
+  }, []);
+
+  const searchFieldRef = useRef<HTMLInputElement>(null);
 
   const formik = useFormik({
     initialValues: { query: query },
     onSubmit: (values) => {
+      updateUrlQuery(values.query);
+      searchFieldRef.current?.blur();
       handleSearch(values.query);
     },
   });
 
-  const setQueryValue = formik.setFieldValue;
-
   const formikQueryRef = useRef(formik.values.query);
+  const setQueryValue = formik.setFieldValue;
 
   useEffect(() => {
     formikQueryRef.current = formik.values.query;
   }, [formik.values.query]);
 
-  const queryRef = useRef(query);
-
   useEffect(() => {
-    if (
-      query.trim() !== formikQueryRef.current.trim() &&
-      query.trim() !== queryRef.current.trim()
-    ) {
+    if (query.trim() !== formikQueryRef.current.trim()) {
       setQueryValue('query', query);
     }
-
-    queryRef.current = query;
   }, [query, setQueryValue]);
+
+  useEffect(() => {
+    setQueryValue('query', urlQuery);
+    setQuery(urlQuery);
+  }, [urlQuery, setQueryValue]);
 
   const debounceSearch = useMemo(
     () => debounce(handleSearch, 500),
@@ -104,7 +105,10 @@ const Home: NextPageWithLayout<HomeProps> = () => {
   }, [formik.values.query, debounceSearch]);
 
   const handleClear = () => {
-    router.replace('/');
+    formik.setFieldValue('query', '');
+    handleSearch('');
+    router.push('/');
+    searchFieldRef.current?.blur();
   };
 
   return (
@@ -117,10 +121,14 @@ const Home: NextPageWithLayout<HomeProps> = () => {
         <div className='w-full max-w-screen-md px-1.5'>
           <form onSubmit={formik.handleSubmit}>
             <SearchField
+              ref={searchFieldRef}
               name='query'
               onChange={formik.handleChange}
               value={formik.values.query}
               onClear={handleClear}
+              onBlur={() => {
+                updateUrlQuery(formik.values.query);
+              }}
             />
           </form>
         </div>
