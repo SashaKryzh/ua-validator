@@ -138,7 +138,7 @@ const Home: NextPageWithLayout<HomeProps> = () => {
               <TargetComponent
                 key={target.id}
                 target={target}
-                imagePriority={index < 7}
+                imagePriority={index < 4}
               />
             ))}
             {allLoadedTargets?.length === 0 && (
