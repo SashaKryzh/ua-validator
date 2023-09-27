@@ -3,10 +3,14 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ssgInit } from '@/server/trpc/ssg-init';
 import { trpc } from '@/utils/trpc';
 import { useFormik } from 'formik';
+import debounce from 'lodash.debounce';
 import type { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import type { NextPageWithLayout } from './_app';
+import { HiOutlineFaceFrown } from 'react-icons/hi2';
+import { Button } from '@/components/ui/Button';
 
 // TODO: Save scroll !!!
 
@@ -33,9 +37,13 @@ export const getStaticProps: GetStaticProps = async () => {
 
 const Home: NextPageWithLayout<HomeProps> = () => {
   const router = useRouter();
-
-  const query =
+  const isSearching = router.query.search !== undefined;
+  const searchInUrl =
     typeof router.query.search === 'string' ? router.query.search : '';
+
+  const [query, setQuery] = useState(searchInUrl);
+
+  const searchFieldRef = useRef<HTMLInputElement>(null);
 
   const result = trpc.target.findByNameOrResource.useInfiniteQuery(
     {
@@ -45,34 +53,74 @@ const Home: NextPageWithLayout<HomeProps> = () => {
       getNextPageParam: (lastPage) => lastPage.cursor,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
+      keepPreviousData: true,
     },
   );
-
   const allLoadedTargets = result.data?.pages.flatMap((page) => page.targets);
 
+  const updateSearchInUrl = (query: string) => {
+    if (query === '') {
+      router.push('/');
+    } else {
+      router.push(`?search=${query}`);
+    }
+  };
+
+  const handleSearch = useCallback((query: string) => {
+    setQuery(query);
+  }, []);
+
+  const debounceSearch = useMemo(
+    () => debounce(handleSearch, 500),
+    [handleSearch],
+  );
+
   const formik = useFormik({
-    initialValues: { query: '' },
+    initialValues: { query: query },
     onSubmit: (values) => {
-      router.replace(`?search=${values.query}`);
+      searchFieldRef.current?.blur();
+      handleSearch(values.query);
+      updateSearchInUrl(values.query);
     },
   });
+
+  const setFormikQueryValue = formik.setFieldValue;
+
+  // Set formik value from url
+  useEffect(() => {
+    setFormikQueryValue('query', searchInUrl);
+  }, [searchInUrl, setFormikQueryValue]);
+
+  // Debounce search on formik value change
+  useEffect(() => {
+    debounceSearch(formik.values.query);
+  }, [formik.values.query, debounceSearch]);
+
+  const handleClear = () => {
+    updateSearchInUrl('');
+    formik.setFieldValue('query', '');
+    handleSearch('');
+    searchFieldRef.current?.blur();
+  };
 
   return (
     <>
       <Head />
       <div className='flex flex-col items-center'>
-        {query === '' && <Heading />}
+        {!isSearching && <Heading />}
       </div>
       <div className='flex flex-col items-center'>
         <div className='w-full max-w-screen-md px-1.5'>
           <form onSubmit={formik.handleSubmit}>
             <SearchField
-              inputProps={{
-                name: 'query',
-                onChange: formik.handleChange,
-                value: formik.values.query,
+              ref={searchFieldRef}
+              name='query'
+              onChange={formik.handleChange}
+              value={formik.values.query}
+              onClear={handleClear}
+              onBlur={() => {
+                updateSearchInUrl(formik.values.query);
               }}
-              onClear={() => formik.setFieldValue('query', '')}
             />
           </form>
         </div>
@@ -86,10 +134,16 @@ const Home: NextPageWithLayout<HomeProps> = () => {
             className='grid grid-cols-2 gap-4 md:grid-cols-3'
             scrollThreshold={0.69}
           >
-            {allLoadedTargets?.map((target) => (
-              <TargetComponent key={target.id} target={target} />
+            {allLoadedTargets?.map((target, index) => (
+              <TargetComponent
+                key={target.id}
+                target={target}
+                imagePriority={index < 4}
+              />
             ))}
-            {allLoadedTargets?.length === 0 && <Empty />}
+            {allLoadedTargets?.length === 0 && (
+              <EmptyResult onClear={handleClear} />
+            )}
           </InfiniteScroll>
         </div>
       </div>
@@ -122,6 +176,35 @@ const Loading = () => {
   return <LoadingSpinner className='col-span-full flex justify-center p-5' />;
 };
 
-const Empty = () => {
-  return <>Empty</>;
+interface EmptyResultProps {
+  onClear: () => void;
+}
+
+const EmptyResult: React.FC<EmptyResultProps> = (props) => {
+  return (
+    <div className='col-span-full flex flex-col items-center justify-center'>
+      <HiOutlineFaceFrown className='h-16 w-16' />
+      <div className='h-4' />
+      <p className='text-center text-h2 font-light'>Нічого не знайдено</p>
+      <div className='h-2' />
+      <p className='text-center text-sm font-light'>
+        Спробуйте, будь ласка, ще раз. Або напишіть нам на{' '}
+        <a
+          className='font-mono text-blue-600'
+          href='mailto:sad.xprod@gmail.com'
+        >
+          sad.xprod@gmail.com
+        </a>{' '}
+        і ми виправимо помилку.
+      </p>
+      <div className='h-4' />
+      <Button
+        variant={'secondary'}
+        className='rounded-full'
+        onClick={props.onClear}
+      >
+        Прибрати пошук
+      </Button>
+    </div>
+  );
 };

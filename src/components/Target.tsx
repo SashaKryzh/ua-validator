@@ -6,9 +6,10 @@ import { env } from '@/env/client.mjs';
 
 export interface TargetComponentProps {
   target: TargetFindTargets;
+  imagePriority?: boolean;
 }
 
-export default function TargetComponent({ target }: TargetComponentProps) {
+export default function TargetComponent({ target, imagePriority }: TargetComponentProps) {
   const { t } = useTranslation();
 
   return (
@@ -20,6 +21,8 @@ export default function TargetComponent({ target }: TargetComponentProps) {
             alt={`Фотографія ${target.realName}`}
             fill={true}
             className='overflow-hidden object-cover'
+            sizes='(min-width: 768) 33vw, 50vw'
+            priority={imagePriority}
           />
           <div className='absolute bottom-3 left-[0.5rem] rounded-full bg-white px-3 py-1 text-sm text-gray-900 opacity-90'>
             {t(`CountryCode.${target.nationalityCode}`) +
