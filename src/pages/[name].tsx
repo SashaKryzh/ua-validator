@@ -1,4 +1,5 @@
 import { Head, Layout } from '@/components';
+import NextJsImage from '@/components/NextJsImage';
 import ResourceIcon from '@/components/ResourceIcon';
 import { env } from '@/env/client.mjs';
 import {
@@ -13,7 +14,8 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoIosResize } from 'react-icons/io';
-import { Lightbox } from 'yet-another-react-lightbox';
+import Lightbox from 'yet-another-react-lightbox';
+import 'yet-another-react-lightbox/styles.css';
 import { type NextPageWithLayout } from './_app';
 
 interface TargetPageProps {
@@ -22,7 +24,9 @@ interface TargetPageProps {
 
 const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
   const { t } = useTranslation();
+
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const evidenceImages = useMemo(
     () => target.evidences.flatMap((e) => e.images),
@@ -90,7 +94,10 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
                 key={image.id}
                 index={idx}
                 image={image}
-                onClick={() => setLightboxOpen(true)}
+                onClick={() => {
+                  setLightboxIndex(idx);
+                  setLightboxOpen(true);
+                }}
               />
             ))}
           </div>
@@ -101,18 +108,17 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </p>
         </div>
       </div>
-      {/* TODO: Fix it (not working correctly) */}
       <Lightbox
         open={lightboxOpen}
         close={() => setLightboxOpen(false)}
-        // slides={evidenceImages.map((image) => ({
-        //   src: `${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`,
-        // }))}
-        slides={[
-          {
-            src: 'https://camo.githubusercontent.com/40c0380be796f32f9e65885e212c8512eb991b2c146b1dbb242c371b8d561a90/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f67657268796e65732f696d6167652f75706c6f61642f715f6175746f2f76313538373232353838302f53637265656e73686f745f323032302d30342d31385f52656163745f5461696c77696e645f47616c6c6572795f73767764746d2e6a7067',
-          },
-        ]}
+        slides={evidenceImages.map((image) => ({
+          src: `${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`,
+        }))}
+        render={{ slide: NextJsImage }}
+        index={lightboxIndex}
+        carousel={{
+          finite: true,
+        }}
         className='absolute left-0 top-0 z-50'
       />
     </>
