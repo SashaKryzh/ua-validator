@@ -22,7 +22,6 @@ interface TargetPageProps {
 
 const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
   const { t } = useTranslation();
-
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const evidenceImages = useMemo(
@@ -30,13 +29,16 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
     [target.evidences],
   );
 
-  let description = target.evidences
-    .map((e) => e.resume)
-    .reduce((acc, curr) => acc + curr, '');
-  description =
-    description.length > 100
-      ? description.substring(0, 100).concat('...')
-      : description;
+  const description = useMemo(() => {
+    let description = target.evidences
+      .map((e) => e.resume)
+      .reduce((acc, curr) => acc + curr, '');
+
+    return (description =
+      description.length > 100
+        ? description.substring(0, 100).concat('...')
+        : description);
+  }, [target.evidences]);
 
   return (
     <>
@@ -52,7 +54,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           <TargetProfilePhoto target={target} />
           <Spacer className='h-6' />
           {/* View on war */}
-          <div className='rounded-md border px-3 py-1'>
+          <div className='rounded-md border px-3 py-1 font-light'>
             {t(`ViewOnWarCode.${target.viewOnWarCode}`)}
           </div>
           <Spacer className='h-4' />
@@ -63,7 +65,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </h1>
           <Spacer className='h-2' />
           {/* Jobs */}
-          <h3>
+          <h3 className='font-light'>
             {target.jobs.map((job) => t(`JobCode.${job.code}`)).join(' / ')}
           </h3>
           <Spacer className='h-4' />
@@ -76,7 +78,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           <Spacer className='h-4' />
           {/* Main evidence */}
           {target.evidences.map((evid) => (
-            <p key={evid.id} className='max-w-xl'>
+            <p key={evid.id} className='max-w-xl font-light'>
               {evid.resume}
             </p>
           ))}
@@ -88,7 +90,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
                 key={image.id}
                 index={idx}
                 image={image}
-                // onClick={() => setLightboxOpen(true)}
+                onClick={() => setLightboxOpen(true)}
               />
             ))}
           </div>
@@ -188,7 +190,10 @@ const EvidenceImage = (props: {
 }) => {
   const { image } = props;
   return (
-    <div className='relative aspect-square' onClick={props.onClick}>
+    <div
+      className='relative aspect-square hover:cursor-pointer'
+      onClick={props.onClick}
+    >
       <Image
         src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`}
         alt={`Фотографія ${props.index}`}
