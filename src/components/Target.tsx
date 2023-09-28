@@ -9,13 +9,16 @@ export interface TargetComponentProps {
   imagePriority?: boolean;
 }
 
-export default function TargetComponent({ target, imagePriority }: TargetComponentProps) {
+export default function TargetComponent({
+  target,
+  imagePriority,
+}: TargetComponentProps) {
   const { t } = useTranslation();
 
   return (
     <Link href={`/${target.slug}`}>
       <div className='aspect-[3/4]'>
-        <div className='relative h-full bg-slate-400'>
+        <div className='relative h-full bg-gray-50'>
           <Image
             src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
             alt={`Фотографія ${target.realName}`}
