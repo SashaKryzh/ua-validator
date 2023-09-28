@@ -1,4 +1,5 @@
 import { Head, Layout } from '@/components';
+import ResourceIcon from '@/components/ResourceIcon';
 import { env } from '@/env/client.mjs';
 import {
   findTargetHandler,
@@ -6,12 +7,11 @@ import {
 } from '@/server/controller/target.controller';
 import { prisma } from '@/server/db/client';
 import Spacer from '@/ui/Spacer';
-import { EvidenceImage, type TargetResource } from '@prisma/client';
+import { EvidenceImage } from '@prisma/client';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineLink } from 'react-icons/ai';
 import { IoIosResize } from 'react-icons/io';
 import { Lightbox } from 'yet-another-react-lightbox';
 import { type NextPageWithLayout } from './_app';
@@ -68,8 +68,10 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </h3>
           <Spacer className='h-4' />
           {/* Resources */}
-          <div className='flex gap-4'>
-            {target.resources.map((resource) => ResourceItem({ resource }))}
+          <div className='flex flex-wrap justify-center gap-4'>
+            {target.resources.map((resource) => (
+              <ResourceIcon key={resource.id} url={resource.url} />
+            ))}
           </div>
           <Spacer className='h-4' />
           {/* Main evidence */}
@@ -174,22 +176,6 @@ const TargetProfilePhoto: React.FC<TargetProfilePhotoProps> = ({ target }) => {
         className='overflow-hidden rounded-lg object-cover'
       />
     </div>
-  );
-};
-
-const ResourceItem = (props: { resource: TargetResource }) => {
-  return (
-    <a
-      key={props.resource.id}
-      href={props.resource.url}
-      target='_blank'
-      rel='noreferrer'
-    >
-      <div className='flex aspect-square w-10 items-center justify-center rounded-full bg-gray-100'>
-        {/* TODO: Use different icons for instagram, telegram, website... */}
-        <AiOutlineLink />
-      </div>
-    </a>
   );
 };
 
