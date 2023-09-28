@@ -49,15 +49,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
       />
       <div className='flex flex-col items-center px-2 pb-10'>
         <div className='flex w-full max-w-screen-md flex-col items-center'>
-          <div className='relative aspect-square w-full max-w-sm'>
-            <div className='absolute left-0 top-0 h-full w-full rounded-lg bg-red-700 blur-md' />
-            <Image
-              src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
-              alt={`Фотографія ${target.realName}`}
-              fill={true}
-              className='overflow-hidden rounded-lg object-cover'
-            />
-          </div>
+          <TargetProfilePhoto target={target} />
           <Spacer className='h-6' />
           {/* View on war */}
           <div className='rounded-md border px-3 py-1'>
@@ -161,6 +153,29 @@ export const getStaticProps: GetStaticProps<TargetPageProps> = async (
 };
 
 export default TargetPage;
+
+interface TargetProfilePhotoProps {
+  target: NonNullable<TargetFindTarget>;
+}
+
+const TargetProfilePhoto: React.FC<TargetProfilePhotoProps> = ({ target }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  return (
+    <div className='relative aspect-square w-full max-w-sm'>
+      {imageLoaded && (
+        <div className='fadeInAnimation absolute left-0 top-0 h-full w-full rounded-lg bg-red-700 blur-md' />
+      )}
+      <Image
+        src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
+        alt={`Фотографія ${target.realName}`}
+        fill={true}
+        onLoadingComplete={() => setImageLoaded(true)}
+        className='overflow-hidden rounded-lg object-cover'
+      />
+    </div>
+  );
+};
 
 const ResourceItem = (props: { resource: TargetResource }) => {
   return (
