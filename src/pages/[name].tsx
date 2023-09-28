@@ -1,4 +1,5 @@
 import { Head, Layout } from '@/components';
+import ResourceIcon from '@/components/ResourceIcon';
 import { env } from '@/env/client.mjs';
 import {
   findTargetHandler,
@@ -6,12 +7,11 @@ import {
 } from '@/server/controller/target.controller';
 import { prisma } from '@/server/db/client';
 import Spacer from '@/ui/Spacer';
-import { EvidenceImage, type TargetResource } from '@prisma/client';
+import { EvidenceImage } from '@prisma/client';
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineLink } from 'react-icons/ai';
 import { IoIosResize } from 'react-icons/io';
 import { Lightbox } from 'yet-another-react-lightbox';
 import { type NextPageWithLayout } from './_app';
@@ -49,15 +49,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
       />
       <div className='flex flex-col items-center px-2 pb-10'>
         <div className='flex w-full max-w-screen-md flex-col items-center'>
-          <div className='relative aspect-square w-full max-w-sm'>
-            <div className='absolute left-0 top-0 h-full w-full rounded-lg bg-red-700 blur-md' />
-            <Image
-              src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
-              alt={`Фотографія ${target.realName}`}
-              fill={true}
-              className='overflow-hidden rounded-lg object-cover'
-            />
-          </div>
+          <TargetProfilePhoto target={target} />
           <Spacer className='h-6' />
           {/* View on war */}
           <div className='rounded-md border px-3 py-1'>
@@ -76,8 +68,10 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </h3>
           <Spacer className='h-4' />
           {/* Resources */}
-          <div className='flex gap-4'>
-            {target.resources.map((resource) => ResourceItem({ resource }))}
+          <div className='flex flex-wrap justify-center gap-4'>
+            {target.resources.map((resource) => (
+              <ResourceIcon key={resource.id} url={resource.url} />
+            ))}
           </div>
           <Spacer className='h-4' />
           {/* Main evidence */}
@@ -162,19 +156,28 @@ export const getStaticProps: GetStaticProps<TargetPageProps> = async (
 
 export default TargetPage;
 
-const ResourceItem = (props: { resource: TargetResource }) => {
+interface TargetProfilePhotoProps {
+  target: NonNullable<TargetFindTarget>;
+}
+
+const TargetProfilePhoto: React.FC<TargetProfilePhotoProps> = ({ target }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   return (
-    <a
-      key={props.resource.id}
-      href={props.resource.url}
-      target='_blank'
-      rel='noreferrer'
-    >
-      <div className='flex aspect-square w-10 items-center justify-center rounded-full bg-gray-100'>
-        {/* TODO: Use different icons for instagram, telegram, website... */}
-        <AiOutlineLink />
-      </div>
-    </a>
+    <div className='relative aspect-square w-full max-w-sm'>
+      {imageLoaded && (
+        <div className='fadeInAnimation absolute left-0 top-0 h-full w-full rounded-lg bg-red-700 blur-md' />
+      )}
+      <Image
+        src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${target.imageUrl}`}
+        alt={`Фотографія ${target.realName}`}
+        fill={true}
+        onLoadingComplete={() => setImageLoaded(true)}
+        className='overflow-hidden rounded-lg object-cover'
+        priority={true}
+        sizes='(max-width: 640px) 100vw, 640px'
+      />
+    </div>
   );
 };
 
@@ -191,6 +194,7 @@ const EvidenceImage = (props: {
         alt={`Фотографія ${props.index}`}
         fill={true}
         className='overflow-hidden object-cover'
+        sizes='(max-width: 750px) 50vw, 200px'
       />
       <div className='duration-15 absolute flex h-full w-full items-center justify-center bg-gray-100 opacity-0 duration-150 hover:opacity-40'>
         <IoIosResize size={25} />
