@@ -174,6 +174,8 @@ const TargetProfilePhoto: React.FC<TargetProfilePhotoProps> = ({ target }) => {
         fill={true}
         onLoadingComplete={() => setImageLoaded(true)}
         className='overflow-hidden rounded-lg object-cover'
+        priority={true}
+        sizes='(max-width: 640px) 100vw, 640px'
       />
     </div>
   );
@@ -192,6 +194,7 @@ const EvidenceImage = (props: {
         alt={`Фотографія ${props.index}`}
         fill={true}
         className='overflow-hidden object-cover'
+        sizes='(max-width: 750px) 50vw, 200px'
       />
       <div className='duration-15 absolute flex h-full w-full items-center justify-center bg-gray-100 opacity-0 duration-150 hover:opacity-40'>
         <IoIosResize size={25} />
