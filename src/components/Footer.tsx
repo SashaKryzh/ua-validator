@@ -9,6 +9,15 @@ export default function Footer() {
           <Link href='/' className='hover:underline'>
             UA Validator 🇺🇦
           </Link>
+          <div className='inline-block w-2' />
+          {'('}
+          <Link
+            className='font-mono hover:underline'
+            href='https://github.com/SashaKryzh/ua-validator/'
+          >
+            GitHub
+          </Link>
+          {')'}
         </span>
         <div className='t flex flex-wrap items-center justify-center pt-3 text-sm font-light text-gray-300 sm:pt-0'>
           <span className='mr-4'>Створили</span>
