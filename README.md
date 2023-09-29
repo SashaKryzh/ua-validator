@@ -1,6 +1,6 @@
 # 🇺🇦 UA Validator
 
-![UA Validator preview](resources/preview.jpg)
+![UA Validator preview](resources/preview.jpeg)
 
 ⭐️ **[uavalidator.com](https://uavalidator.com/)**
 
