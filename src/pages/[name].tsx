@@ -14,9 +14,8 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoIosResize } from 'react-icons/io';
-import Lightbox from 'yet-another-react-lightbox';
-import 'yet-another-react-lightbox/styles.css';
 import { type NextPageWithLayout } from './_app';
+import useLightbox from '@/utils/hooks/useLightbox';
 
 interface TargetPageProps {
   target: NonNullable<TargetFindTarget>;
@@ -25,7 +24,7 @@ interface TargetPageProps {
 const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
   const { t } = useTranslation();
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const { openLightbox, renderLightbox } = useLightbox();
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const evidenceImages = useMemo(
@@ -96,7 +95,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
                 image={image}
                 onClick={() => {
                   setLightboxIndex(idx);
-                  setLightboxOpen(true);
+                  openLightbox();
                 }}
               />
             ))}
@@ -108,19 +107,20 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </p>
         </div>
       </div>
-      <Lightbox
-        open={lightboxOpen}
-        close={() => setLightboxOpen(false)}
-        slides={evidenceImages.map((image) => ({
+      {renderLightbox({
+        slides: evidenceImages.map((image) => ({
           src: `${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`,
-        }))}
-        render={{ slide: NextJsImage }}
-        index={lightboxIndex}
-        carousel={{
+        })),
+        render: { slide: NextJsImage },
+        index: lightboxIndex,
+        carousel: {
           finite: true,
-        }}
-        className='absolute left-0 top-0 z-50'
-      />
+        },
+        controller: {
+          closeOnBackdropClick: true,
+          closeOnPullDown: true,
+        },
+      })}
     </>
   );
 };
