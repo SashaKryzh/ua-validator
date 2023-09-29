@@ -1,4 +1,5 @@
 import { Head, Layout } from '@/components';
+import NextJsImage from '@/components/NextJsImage';
 import ResourceIcon from '@/components/ResourceIcon';
 import { env } from '@/env/client.mjs';
 import {
@@ -13,8 +14,8 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IoIosResize } from 'react-icons/io';
-import { Lightbox } from 'yet-another-react-lightbox';
 import { type NextPageWithLayout } from './_app';
+import useLightbox from '@/utils/hooks/useLightbox';
 
 interface TargetPageProps {
   target: NonNullable<TargetFindTarget>;
@@ -23,20 +24,24 @@ interface TargetPageProps {
 const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
   const { t } = useTranslation();
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const { openLightbox, renderLightbox } = useLightbox();
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const evidenceImages = useMemo(
     () => target.evidences.flatMap((e) => e.images),
     [target.evidences],
   );
 
-  let description = target.evidences
-    .map((e) => e.resume)
-    .reduce((acc, curr) => acc + curr, '');
-  description =
-    description.length > 100
-      ? description.substring(0, 100).concat('...')
-      : description;
+  const description = useMemo(() => {
+    let description = target.evidences
+      .map((e) => e.resume)
+      .reduce((acc, curr) => acc + curr, '');
+
+    return (description =
+      description.length > 100
+        ? description.substring(0, 100).concat('...')
+        : description);
+  }, [target.evidences]);
 
   return (
     <>
@@ -52,7 +57,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           <TargetProfilePhoto target={target} />
           <Spacer className='h-6' />
           {/* View on war */}
-          <div className='rounded-md border px-3 py-1'>
+          <div className='rounded-md border px-3 py-1 font-light'>
             {t(`ViewOnWarCode.${target.viewOnWarCode}`)}
           </div>
           <Spacer className='h-4' />
@@ -63,7 +68,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </h1>
           <Spacer className='h-2' />
           {/* Jobs */}
-          <h3>
+          <h3 className='font-light'>
             {target.jobs.map((job) => t(`JobCode.${job.code}`)).join(' / ')}
           </h3>
           <Spacer className='h-4' />
@@ -76,7 +81,7 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           <Spacer className='h-4' />
           {/* Main evidence */}
           {target.evidences.map((evid) => (
-            <p key={evid.id} className='max-w-xl'>
+            <p key={evid.id} className='max-w-xl font-light'>
               {evid.resume}
             </p>
           ))}
@@ -88,7 +93,10 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
                 key={image.id}
                 index={idx}
                 image={image}
-                // onClick={() => setLightboxOpen(true)}
+                onClick={() => {
+                  setLightboxIndex(idx);
+                  openLightbox();
+                }}
               />
             ))}
           </div>
@@ -99,20 +107,20 @@ const TargetPage: NextPageWithLayout<TargetPageProps> = ({ target }) => {
           </p>
         </div>
       </div>
-      {/* TODO: Fix it (not working correctly) */}
-      <Lightbox
-        open={lightboxOpen}
-        close={() => setLightboxOpen(false)}
-        // slides={evidenceImages.map((image) => ({
-        //   src: `${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`,
-        // }))}
-        slides={[
-          {
-            src: 'https://camo.githubusercontent.com/40c0380be796f32f9e65885e212c8512eb991b2c146b1dbb242c371b8d561a90/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f67657268796e65732f696d6167652f75706c6f61642f715f6175746f2f76313538373232353838302f53637265656e73686f745f323032302d30342d31385f52656163745f5461696c77696e645f47616c6c6572795f73767764746d2e6a7067',
-          },
-        ]}
-        className='absolute left-0 top-0 z-50'
-      />
+      {renderLightbox({
+        slides: evidenceImages.map((image) => ({
+          src: `${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`,
+        })),
+        render: { slide: NextJsImage },
+        index: lightboxIndex,
+        carousel: {
+          finite: true,
+        },
+        controller: {
+          closeOnBackdropClick: true,
+          closeOnPullDown: true,
+        },
+      })}
     </>
   );
 };
@@ -188,7 +196,10 @@ const EvidenceImage = (props: {
 }) => {
   const { image } = props;
   return (
-    <div className='relative aspect-square' onClick={props.onClick}>
+    <div
+      className='relative aspect-square hover:cursor-pointer'
+      onClick={props.onClick}
+    >
       <Image
         src={`${env.NEXT_PUBLIC_IMAGE_BUCKET_URL}/${image.path}`}
         alt={`Фотографія ${props.index}`}
