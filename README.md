@@ -4,7 +4,7 @@
 
 ⭐️ **[uavalidator.com](https://uavalidator.com/)**
 
-Проект створений [@sashakryzh](https://github.com/SashaKryzh) та [@denitdao](https://github.com/denitdao) з метою вивчення web-розробки. І якщо він допоможе комусь уникнути перегляду орків - це буде найкращим результатом.
+Проект створений [@sashakryzh](https://github.com/SashaKryzh) та [@denitdao](https://github.com/denitdao) з метою вивчення web-розробки. А якщо він допоможе комусь уникнути перегляду орків - це буде найкращим результатом!
 
 [TODOs.md](TODOs.md) - список для вдосконалення.
 
